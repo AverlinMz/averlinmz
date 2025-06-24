@@ -256,4 +256,75 @@ FALLBACK_REPLIES = [
 # Helper for fuzzy keyword detection
 def contains_keyword(msg, keywords, cutoff=0.75):
     msg = msg.lower()
-    words
+    words = msg.split()
+    for kw in keywords:
+        if kw in msg:
+            return True
+        for w in words:
+            if difflib.SequenceMatcher(None, w, kw).ratio() >= cutoff:
+                return True
+    return False
+
+# Generate reply based on user message
+def generate_reply(user_msg):
+    user_msg_lower = user_msg.lower()
+
+    # Check responses
+    for category, data in RESPONSES.items():
+        if contains_keyword(user_msg_lower, data["keywords"]):
+            return data["reply"]
+
+    # Handle some subject-specific advice requiring multiple keywords
+    if contains_keyword(user_msg_lower, ["biology"]) and contains_keyword(user_msg_lower, ["tip", "tips"]):
+        return RESPONSES["biology_tips"]["reply"]
+
+    if contains_keyword(user_msg_lower, ["history"]) and contains_keyword(user_msg_lower, ["tip", "tips"]):
+        return RESPONSES["history_tips"]["reply"]
+
+    if contains_keyword(user_msg_lower, ["geography"]) and contains_keyword(user_msg_lower, ["tip", "tips"]):
+        return RESPONSES["geography_tips"]["reply"]
+
+    if contains_keyword(user_msg_lower, ["language", "english", "russian"]) and contains_keyword(user_msg_lower, ["tip", "tips"]):
+        return RESPONSES["language_tips"]["reply"]
+
+    if contains_keyword(user_msg_lower, ["sad", "down", "depressed"]):
+        return RESPONSES["sad"]["reply"]
+
+    # Default fallback
+    return random.choice(FALLBACK_REPLIES)
+
+
+# --- Page content ---
+
+# Title
+st.markdown('<div class="title-container"><h1>AverlinMz – Study Chatbot</h1></div>', unsafe_allow_html=True)
+
+# Input form
+with st.form(key="chat_form", clear_on_submit=True):
+    user_input = st.text_input("", placeholder="Write your message...", key="input_field", label_visibility="collapsed")
+    submit = st.form_submit_button("Send")
+    if submit and user_input.strip():
+        # Add user message
+        st.session_state.messages.append({"role": "user", "content": user_input})
+
+        # Add bot reply
+        bot_response = generate_reply(user_input)
+        st.session_state.messages.append({"role": "bot", "content": bot_response})
+
+        # Rerun to clear input and show new messages
+        st.experimental_rerun()
+
+# Chat container and window
+st.markdown('<div class="chat-container">', unsafe_allow_html=True)
+st.markdown('<div class="chat-window">', unsafe_allow_html=True)
+
+# Show messages in reverse (newest bottom)
+for msg in reversed(st.session_state.messages):
+    content_safe = escape(msg["content"])
+    if msg["role"] == "user":
+        st.markdown(f'<div class="user">{content_safe}</div>', unsafe_allow_html=True)
+    else:
+        st.markdown(f'<div class="bot">{content_safe}</div>', unsafe_allow_html=True)
+
+st.markdown('</div>', unsafe_allow_html=True)  # close chat-window
+st.markdown('</div>', unsafe_allow_html=True)  # close chat-container

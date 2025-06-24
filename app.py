@@ -252,11 +252,12 @@ KEYWORDS = {
     "how_are_you":["how are you","how're you","how r u","how you doing","how do you do"],
     "user_feeling_good":[
         "i'm doing well", "i am doing well", "i'm good", "i am good", "i'm fine", "i am fine",
-        "doing great", "feeling good", "feeling great", "all good", "i'm okay", "i am okay"
+        "doing great", "feeling good", "feeling great", "all good", "i'm okay", "i am okay",
+        "happy", "great", "awesome"
     ],
     "user_feeling_bad":[
         "tired", "sad", "burnout", "overwhelmed", "anxious", "stress", "not good", "bad day",
-        "exhausted", "frustrated", "upset", "worried", "depressed", "unhappy"
+        "exhausted", "frustrated", "upset", "worried", "depressed", "unhappy", "down", "nervous"
     ],
     "introduction":["who are you","introduce","your name","introduce yourself"],
     "creator_info":["tell me about your creator","who is your creator","who created you"],
@@ -284,25 +285,24 @@ def clean_text(text):
 
 def get_bot_reply(user_input):
     msg = clean_text(user_input)
-    response = []
 
-    # Handle feeling categories with priority:
-    # Respond to user feelings first (good or bad)
-    if any(word in msg for word in KEYWORDS["user_feeling_good"]):
+    # Priority: positive feelings
+    if any(kw in msg for kw in KEYWORDS["user_feeling_good"]):
         return random.choice(RESPONSE_DATA["user_feeling_good"])
 
-    if any(word in msg for word in KEYWORDS["user_feeling_bad"]):
+    # Then negative feelings
+    if any(kw in msg for kw in KEYWORDS["user_feeling_bad"]):
         return random.choice(RESPONSE_DATA["user_feeling_bad"])
 
-    # How are you questions next
-    if any(word in msg for word in KEYWORDS["how_are_you"]):
+    # How are you
+    if any(kw in msg for kw in KEYWORDS["how_are_you"]):
         return random.choice(RESPONSE_DATA["how_are_you"])
 
     # Greetings
-    if any(word in msg for word in KEYWORDS["greetings"]):
+    if any(kw in msg for kw in KEYWORDS["greetings"]):
         return random.choice(RESPONSE_DATA["greetings"])
 
-    # Subjects category (detailed)
+    # Subjects (detailed)
     if any(subj in msg for subj in KEYWORDS["subjects"]):
         for subj_key in RESPONSE_DATA["subjects"]:
             if subj_key in msg:
@@ -312,10 +312,10 @@ def get_bot_reply(user_input):
     for category, keywords in KEYWORDS.items():
         if category in ["user_feeling_good", "user_feeling_bad", "how_are_you", "greetings", "subjects"]:
             continue
-        if any(word in msg for word in keywords) and category in RESPONSE_DATA:
+        if any(kw in msg for kw in keywords) and category in RESPONSE_DATA:
             return random.choice(RESPONSE_DATA[category])
 
-    # Fallback if no match
+    # Fallback
     return random.choice(RESPONSE_DATA["fallback"])
 
 # Chat input form

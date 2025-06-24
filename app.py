@@ -26,9 +26,6 @@ st.markdown("""
     max-width: 80%;
     word-wrap: break-word;
 }
-input[type="text"] {
-    width: 80%;
-}
 </style>
 """, unsafe_allow_html=True)
 
@@ -41,81 +38,94 @@ if "messages" not in st.session_state:
 def generate_reply(user_msg):
     msg = user_msg.lower()
 
+    # 1) Introduce / creator
     if any(x in msg for x in ["introduce", "who are you", "your name", "about you", "creator", "who made you"]):
-        return ("Hello. My name is AverlinMz, your study chatbot 🌱. "
+        return ("Hello! I’m AverlinMz, your study chatbot 🌱. "
                 "My creator is Aylin Muzaffarli, born in 2011 in Azerbaijan. "
-                "She's passionate about music, programming, robotics, AI, physics, top universities, and more. "
-                "If you have questions, write to: muzaffaraylin@gmail.com 💌. Good luck on your journey!")
+                "She's into music, programming, robotics, AI, physics, and more. "
+                "Questions? Reach her at muzaffaraylin@gmail.com. Good luck!")
+    # 2) What can you do?
     if "what can you do" in msg or "what you can do" in msg:
-        return ("I’m here to support your studying journey 💡. I can give motivation, advice, and emotional support. "
-                "Just chat with me when you need a boost, tips on Olympiad prep, or a friendly ear!")
-    if any(greet in msg for greet in ["hey", "hi", "hello"]):
-        return ("Hey! I'm here for you. What are you studying today? "
-                "Taking the first step is always the hardest — but you've already done it!")
+        return ("I can cheer you on, give study tips, emotional support, and subject-specific advice. "
+                "Just type your thoughts or questions anytime!")
+    # 3) Affection
+    if any(x in msg for x in ["i love you", "i like you"]):
+        return ("Aww, that means a lot! 💖 I’m here to help you study and stay motivated anytime.")
+    # 4) Talk to me
+    if "talk to me" in msg:
+        return ("I’m all ears! 🎧 Tell me what’s on your mind or how your study went today.")
+    # 5) Subject-specific Olympiad advice
+    if "prep for biology" in msg or ("biology" in msg and "advice" in msg):
+        return ("Biology tips 🧬: Master the core concepts (cell, genetics, ecology), "
+                "practice diagram drawing, review past Olympiad problems, and make flashcards for terms.")
+    if "history" in msg and "advice" in msg:
+        return ("History tips 📜: Create timelines, practice writing structured essays, "
+                "use primary sources, and quiz yourself on key dates and events.")
+    if "geography" in msg and "advice" in msg:
+        return ("Geography tips 🌍: Learn to read maps, memorize key physical features, "
+                "understand case studies, and practice spatial reasoning questions.")
+    if ("language" in msg or "english" in msg or "russian" in msg) and "advice" in msg:
+        return ("Language learning tips 🗣️: Read varied texts, do listening practice, "
+                "learn grammar in context, and speak or write regularly to build fluency.")
+    # 6) Greetings (including common typos)
+    if any(greet in msg for greet in ["hey", "hi", "hello", "hrllo", "helo"]):
+        return ("Hey there! What are you studying right now? "
+                "Starting is half the battle — you’ve already won that part!")
+    # 7) Emotional support
     if any(word in msg for word in ["tired", "exhausted"]):
-        return ("It's completely okay to feel tired 😴. Rest is not a weakness — it's a tool. "
-                "Take a small break, do some deep breathing, and return refreshed.")
+        return ("Feeling tired? 😴 Take a short break—stretch, hydrate, breathe—and come back refreshed.")
     if any(word in msg for word in ["sad", "down", "depressed", "crying"]):
-        return ("I'm sorry you're feeling that way 💙. Please remember that your emotions are valid, "
-                "and you're not alone. Talk to someone if you can — even me. One small step at a time.")
+        return ("I’m sorry you’re feeling that way 💙. It’s okay to feel sad; you’ve got support here.")
     if any(word in msg for word in ["anxious", "worried", "panic", "nervous"]):
-        return ("Anxiety can be tough, especially when you're aiming high. Try to pause and breathe. "
-                "You don't need to do everything at once. Focus on just one next step — you've got this 💪.")
+        return ("Anxiety is tough. Try a breathing exercise or a 5-minute walk. One step at a time 🧘‍♀️.")
+    # 8) Failure & doubt
     if any(word in msg for word in ["failed", "mistake", "i can't", "gave up"]):
-        return ("Failure is just feedback — it's not final. Think of it as part of the learning curve. "
-                "Every great person has failed more times than they’ve succeeded. Keep going 🚀.")
+        return ("Every mistake teaches you something. 📚 Failure is feedback, not final. Keep at it!")
+    # 9) Celebration & gratitude
     if any(word in msg for word in ["i did it", "solved it", "success"]):
-        return ("Yesss! 🎉 I'm proud of you. You faced the challenge and came out stronger. "
-                "Celebrate this moment — you earned it!")
+        return ("🎉 Congratulations! Your hard work paid off—celebrate this win, you earned it!")
     if any(word in msg for word in ["good job", "well done"]):
-        return ("Thank you! But the real credit goes to you. You’re doing the hard work. "
-                "I'm just here to remind you how far you've come 💫.")
+        return ("Thank you, but the real credit is yours—you’re putting in the effort every day! 💪")
     if any(word in msg for word in ["thank you", "thanks"]):
-        return ("You're so welcome 💖. I'm proud of the effort you're putting in. "
-                "Never underestimate how far kindness and discipline will take you.")
+        return ("You’re welcome! 😊 Keep shining, and don’t hesitate to drop by again.")
+    # 10) Help & check-ins
     if "help" in msg:
-        return ("Of course, I’m here to help 🤝. Tell me what you’re struggling with, or how you’re feeling.")
+        return ("Sure—I’m here for help or just to listen. What’s on your mind today?")
+    # 11) Farewells
     if any(bye in msg for bye in ["goodbye", "bye", "see ya", "see you"]):
-        return ("See you soon 👋. Keep doing your best, take care, and come back when you need a boost!")
+        return ("See you later! 👋 Keep up the great work, and come back anytime you need a boost.")
+    # 12) General Olympiad advice
     if "advice" in msg or ("prepare" in msg and "olympiad" in msg):
-        return ("Here’s Olympiad advice 💡: Study smart — not just hard. Focus on concepts, not just problems. "
-                "Review deeply, prioritize quality over quantity, and don’t compare your pace with others. "
-                "Quality of your work = Focus × Time. You've got this!")
+        return ("Olympiad prep 💡: Study smart—focus on concepts, practice past problems, "
+                "review your mistakes, and balance rest with work. Quality > quantity!")
+    # 13) Productivity & planning
     if any(word in msg for word in ["consistent", "discipline", "productive"]):
-        return ("Discipline beats motivation. Set small goals each day, reflect weekly, "
-                "and forgive yourself for bad days. Systems are stronger than moods. Just keep showing up.")
+        return ("Discipline > motivation. Set tiny daily goals, track progress, and forgive slip-ups.")
     if any(word in msg for word in ["break", "rest", "sleep"]):
-        return ("Yes — take that break! 🧘‍♀️ Resting recharges your mind and builds stamina. "
-                "Even machines need time to cool down. You’re doing the smart thing.")
+        return ("Rest is part of the plan. 💤 A well-rested mind retains more and learns faster.")
     if any(word in msg for word in ["smart", "study plan", "study smarter"]):
-        return ("Studying smart means knowing what *not* to focus on. Prioritize what matters, remove distractions, "
-                "and take time to reflect. It’s not about hours — it’s about intention.")
-    # Default fallback
+        return ("Smart study means prioritizing high-value topics, active recall, and spaced repetition.")
+    # 14) Fallback motivational
     replies = [
-        "Keep going 💪. You’re doing better than you think. Every small effort matters.",
-        "Progress > Perfection. Take things one step at a time and be kind to yourself.",
-        "Believe in your ability to grow. You’ve already made progress just by showing up.",
-        "You're capable of more than you know 🌟. Keep moving — even if it’s slow.",
-        "It’s okay to struggle. That means you’re growing. Be patient with the process."
+        "Keep going 💪. Every small effort adds up to big results.",
+        "Progress > perfection. You’re doing amazing!",
+        "Believe in your growth. Your journey is unfolding one step at a time.",
+        "You’ve got this 🌟. Just one more problem, one more paragraph—keep moving forward.",
+        "Struggle means you’re learning. Be patient with yourself."
     ]
     return random.choice(replies)
 
-# Input area
+
+# Chat input & display
 user_input = st.text_input("Write your message:")
+if st.button("Send") and user_input.strip():
+    st.session_state.messages.insert(0, {"bot": generate_reply(user_input)})
+    st.session_state.messages.insert(0, {"user": user_input})
 
-if st.button("Send"):
-    if user_input.strip():
-        # Prepend both user and bot so newest appear at top
-        st.session_state.messages.insert(0, {"bot": generate_reply(user_input)})
-        st.session_state.messages.insert(0, {"user": user_input})
-
-# Render chat bubbles
 st.markdown('<div class="chat-container">', unsafe_allow_html=True)
 for msg in st.session_state.messages:
     if "user" in msg:
-        # user bubble
         st.markdown(f'<div class="user">{msg["user"]}</div>', unsafe_allow_html=True)
     else:
-        # bot bubble
         st.markdown(f'<div class="bot">{msg["bot"]}</div>', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)

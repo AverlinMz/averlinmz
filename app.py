@@ -14,11 +14,12 @@ def generate_reply(user_msg):
         return ("Hey! I'm here for you. What are you studying today? "
                 "Remember, taking the first step is the hardest — but you got this!")
     
-    elif "introduce" in msg or "who are you" in msg or "your name" in msg:
-        return ("Hello. My name is AverlinMz, your study chatbot. "
-                "My creator is Aylin Muzaffarli, born in 2011 in Azerbaijan. "
-                "She's passionate about music, programming, robotics, AI, physics, top universities, and more. "
-                "If you have questions, you can write to: muzaffaraylin@gmail.com. Good luck!")
+    elif any(x in msg for x in ["introduce", "who are you", "your name", "about you", "creator", "who made you"]):
+    return ("Hello. My name is AverlinMz, your study chatbot. "
+            "My creator is Aylin Muzaffarli, born in 2011 in Azerbaijan. "
+            "She's passionate about music, programming, robotics, AI, physics, top universities, and more. "
+            "If you have questions, you can write to: muzaffaraylin@gmail.com. Good luck!")
+
 
     elif "tired" in msg or "exhausted" in msg:
         return ("It's okay to feel tired. Rest is part of the process. "

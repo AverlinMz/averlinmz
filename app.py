@@ -31,188 +31,100 @@ header, footer { display: none !important; }
 .chat-window { flex-grow: 1; overflow-y: auto; max-height: 60vh; padding: 15px; display: flex; flex-direction: column; gap: 15px; }
 .user, .bot { align-self: center; width: 100%; word-wrap: break-word; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-family: 'Poppins', sans-serif; }
 .user { background-color: #D1F2EB; color: #0B3D2E; padding: 12px 16px; border-radius: 18px 18px 4px 18px; }
-.bot  { background-color: #EFEFEF; color: #333; padding: 12px 16px; border-radius: 18px 18px 18px 4px; }
+.bot  { background-color: #EFEFEF; color: #333; padding: 12px 16px; border-radius: 18px 18px 18px 4px; animation: typing 1s ease-in-out; }
 .chat-window::-webkit-scrollbar { width: 8px; }
 .chat-window::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
 .chat-window::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
 .chat-window::-webkit-scrollbar-thumb:hover { background: #a1a1a1; }
+@keyframes typing {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
 </style>
 """, unsafe_allow_html=True)
 
 # Title
 st.markdown('<div class="title-container"><h1>AverlinMz – Study Chatbot</h1></div>', unsafe_allow_html=True)
 
-# Full response data with new creator/contact answers
+# RESPONSE DATA
 RESPONSE_DATA = {
     "greetings": [
         "Hello there! 👋 How’s your day going? Ready to dive into learning today?",
         "Hey hey! 🌟 Hope you’re feeling inspired today. What’s on your mind?",
-        "Hi friend! 😊 I’m here for you — whether you want to study, vent, or just chat.",
-        "Great to see you! 💬 Let’s talk and learn something new today!"
+        "Hi friend! 😊 I’m here for you — whether you want to study, vent, or just chat."
     ],
     "how_are_you": [
-        "I'm doing well, thanks for asking! How about you?",
-        "Great! I'm here and ready to help. How are you doing?",
-        "I'm fine, thank you! What about you?"
+        "I'm doing well, thanks for asking! 💬 How are you feeling today?",
+        "Feeling smart and helpful — as always! 😊 How can I assist you today?"
     ],
     "user_feeling_good": [
-        "I'm glad to hear you're doing well! Keep up the positive vibes! 😊",
-        "That's great! Keep that energy going! 💪",
-        "Awesome! Keep shining and learning! 🌟"
+        "That’s amazing to hear! 🎉 Keep riding that good energy!",
+        "Awesome! Let’s keep the momentum going! 💪"
     ],
     "user_feeling_bad": [
-        "😔 Feeling overwhelmed? It's totally okay. Rest, breathe, and remember you're not alone. I'm here to support you. You’re doing better than you think. 🌈",
-        "Burnout hits hard, but breaks restore clarity. Step back, hydrate, stretch. You deserve care too. 💙",
-        "It’s normal to feel stuck sometimes. Reflect on your progress and try small steps forward. You’ve got this! 💪"
-    ],
-    "love": [
-        "I appreciate that—it makes my circuits feel warm! 🤖💖",
-        "That’s sweet—my circuits are glowing! 😊",
-        "Thank you! Your support fuels my code! 🚀"
-    ],
-    "introduction": [
-        "I’m AverlinMz, your supportive study companion built with 💡 by Aylin Muzaffarli. I help with study strategies, emotional support, and academic motivation!",
-        "I'm AverlinMz, your personal study chatbot, created to help you stay motivated, learn effectively, and keep your spirits high!"
-    ],
-    "creator_info": [
-        "My creator is Aylin Muzaffarli – a passionate and talented student from Azerbaijan. She built me to help others with study support, inspiration, and encouragement. 💖",
-        "Aylin Muzaffarli is my brilliant creator! She's a student from Azerbaijan who loves programming, robotics, physics, and AI. She made me to support learners like you."
-    ],
-    "contact_creator": [
-        "You can contact my creator, Aylin Muzaffarli, at: muzaffaraylin@example.com (replace 'example.com' with the real domain if needed).",
-        "If you'd like to reach Aylin Muzaffarli, my creator, her email is: muzaffaraylin@example.com. Feel free to send her a message!",
-        "To contact Aylin Muzaffarli, the creator of this chatbot, use the email: muzaffaraylin@example.com."
-    ],
-    "ack_creator": [
-        "Hey Aylin! 💫 I recognize you — the brilliant creator behind all this. So glad you're here! Let’s keep making this chatbot even better together.",
-        "You're the mastermind, Aylin! Proud of what you've built. Let's keep growing!"
-    ],
-    "capabilities": [
-        "I’m here to guide, motivate, and support you with study tips, emotional encouragement, subject-specific advice, and more. Think of me as your academic partner, not just a chatbot!",
-        "I provide study strategies, motivation, emotional support, and detailed advice on subjects like Math, Physics, Chemistry, Biology, Computer Science, languages, and more.",
-        "I can also help with exam preparation advice, time management techniques, self-assessment quizzes, and fun learning challenges."
-    ],
-    "farewell": [
-        "Goodbye for now 👋! Keep being amazing and come back whenever you need help, motivation, or just a kind word. 💚",
-        "See you later! 🌟 Stay curious, stay kind, and don’t forget to take breaks.",
-        "Take care! Remember, progress takes time — be patient with yourself."
-    ],
-    "motivational_quote": [
-        "“The future depends on what you do today.” – Mahatma Gandhi 🌱 Keep going, your efforts matter!",
-        "“Success is the sum of small efforts repeated day in and day out.” – Robert Collier 🌟 Keep pushing forward!",
-        "“Don’t watch the clock; do what it does. Keep going.” – Sam Levenson ⏰ Stay focused!"
-    ],
-    "emotional_support": [
-        "😔 Feeling overwhelmed? It's totally okay. Rest, breathe, and remember you're not alone. I'm here to support you. You’re doing better than you think. 🌈",
-        "Burnout hits hard, but breaks restore clarity. Step back, hydrate, stretch. You deserve care too. 💙",
-        "It’s normal to feel stuck sometimes. Reflect on your progress and try small steps forward. You’ve got this! 💪"
-    ],
-    "study_tips": [
-        "📚 Study Smarter:\n1. Use active recall – quiz yourself often.\n2. Apply spaced repetition – review material over time.\n3. Eliminate distractions – focus on one task at a time.\n4. Teach others – explaining concepts helps retention.\n5. Use visuals – mind maps and charts improve memory.\n6. Rest intentionally – breaks prevent burnout.\nYou've got this! 💪✨",
-        "SMART Study Method:\n• Specific: Set clear goals.\n• Measurable: Track your progress.\n• Achievable: Be realistic.\n• Relevant: Focus on important topics.\n• Time-bound: Use deadlines to stay on track.\nTry using this method to boost your efficiency!"
-    ],
-    "study_plan": [
-        "🗓️ Customizable Study Plans:\n- Set realistic goals for each day or week.\n- Include breaks and variety to stay motivated.\n- Review and adjust your plan as you learn more about your pace."
-    ],
-    "stress_management": [
-        "🧘 Stress Management Tips:\n• Practice deep breathing exercises daily.\n• Take short mindfulness breaks every hour.\n• Incorporate light exercise or stretching.\n• Maintain a balanced diet and prioritize sleep."
-    ],
-    "self_assessment": [
-        "✅ Self-Assessment Tips:\n- Quiz yourself with flashcards or practice questions.\n- Reflect on mistakes and identify knowledge gaps.\n- Celebrate small victories to stay motivated."
-    ],
-    "progress_praise": [
-        "🎉 Great job on your progress! Every step forward counts. Keep up the amazing work!",
-        "🌟 I’m proud of your effort. Remember, consistency beats perfection."
-    ],
-    "resources": [
-        "📚 Helpful Resources:\n- Khan Academy for foundational lessons.\n- Quizlet for flashcards.\n- Coursera and edX for free university courses.\n- Brilliant.org for interactive STEM challenges."
-    ],
-    "time_management": [
-        "⏰ Time Management Tips:\n- Use the Pomodoro technique (25 min focus + 5 min break).\n- Prioritize tasks using the Eisenhower matrix.\n- Batch similar tasks together to reduce context switching."
-    ],
-    "learning_styles": [
-        "🎨 Learning Style Tips:\n- Visual: Use diagrams and color-coded notes.\n- Auditory: Record and listen to explanations.\n- Kinesthetic: Practice hands-on activities or experiments."
+        "Sorry to hear that. I’m always here if you want to talk or need a study boost. 💙",
+        "Tough days happen — but you’ve got this. One step at a time. 🐾"
     ],
     "exam_prep": [
-        "📖 Exam Preparation Guide:\n1. Begin at least 4 weeks before the exam.\n2. Create a revision timetable covering all topics.\n3. Use active recall – practice past paper questions.\n4. Apply spaced repetition on key formulas and concepts.\n5. Simulate exam conditions: timed quizzes, no notes.\n6. Review errors immediately and clarify doubts.\n7. Maintain healthy sleep (7–9 hours) and nutrition.\n8. Schedule light exercise and relaxation to manage stress."
+        "Start early, make a plan, and review consistently. 📚 You’re capable of great things!",
+        "Break topics into chunks and take breaks in between. You’ll learn smarter! 💡"
     ],
     "passed_exam": [
-        "🎉 Congratulations on passing your exam! All your hard work paid off!",
-        "Awesome! Passing an exam is a big achievement — well done!",
-        "You did it! Celebrate your success and keep pushing forward!"
+        "🎉 CONGRATULATIONS! That’s amazing news! I knew you could do it.",
+        "Woohoo! So proud of you! 🥳 What’s next on your journey?"
+    ],
+    "love": [
+        "Aww 💖 That's sweet! I'm just code, but I support you 100%!",
+        "Sending you virtual hugs and happy vibes 💕"
+    ],
+    "capabilities": [
+        "I can give study tips, answer basic academic questions, track your mood, and motivate you. 🤓",
+        "I'm designed to help students stay focused and positive. Ask me anything about learning! 💬"
+    ],
+    "introduction": [
+        "Hello! I'm AverlinMz, your study chatbot 🌱. My creator is Aylin Muzaffarli (b.2011, Azerbaijan). She loves music, programming, robotics, AI, physics, and more. Reach her at averlinmz.github.io!"
+    ],
+    "creator_info": [
+        "I was created by Aylin Muzaffarli — a passionate student from Azerbaijan who codes, studies physics and AI, and inspires others! 💡",
+        "My developer is Aylin Muzaffarli, born in 2011. She built me to support learners like you!"
+    ],
+    "contact_creator": [
+        "You can reach my creator via GitHub: https://github.com/AverlinMz or her site: https://averlinmz.github.io ✨",
+        "Visit https://averlinmz.github.io or https://github.com/AverlinMz to get in touch! 💬"
+    ],
+    "ack_creator": [
+        "Yes, Aylin is super talented! 😄",
+        "Absolutely! All credit goes to Aylin Muzaffarli! 🌟"
     ],
     "subjects": {
-        "math": (
-            "📐 Math Advice & Inspiration:\n\n1. Master fundamental concepts before formulas.\n2. Solve varied problems: algebra, geometry, calculus.\n3. Analyze mistakes: identify pattern, correct approach.\n4. Study proofs to build logical rigor.\n5. Teach solutions aloud or write detailed steps."
-        ),
-        "physics": (
-            "🧲 Physics Advice & Inspiration:\n\n1. Visualize problems: draw force diagrams.\n2. Connect equations to real-world scenarios.\n3. Derive key formulas yourself.\n4. Prioritize conceptual understanding before calculations.\n5. Practice numerical and conceptual questions equally."
-        ),
-        "chemistry": (
-            "⚗️ Chemistry Tips & Inspiration:\n\n1. Learn periodic trends and reaction mechanisms.\n2. Balance equations methodically.\n3. Practice organic reaction pathways step-by-step.\n4. Use molecular models for structure visualization.\n5. Relate theory to lab observations."
-        ),
-        "biology": (
-            "🧬 Biology Strategy & Inspiration:\n\n1. Create detailed labelled diagrams (cell, cycles).\n2. Use flashcards for terminology and processes.\n3. Explain concepts to peers or record yourself.\n4. Relate parts to overall systems.\n5. Study examples of real-life applications."
-        ),
-        "computer science": (
-            "💻 Computer Science Guidance & Inspiration:\n\n1. Practice data structures: arrays, lists, trees.\n2. Master algorithms: sorting, searching, graphs.\n3. Code daily: small challenges build fluency.\n4. Read and debug others’ code.\n5. Document your thought process and solutions."
-        )
+        "math": "Math is all about practice and patterns. Try solving 3 problems daily — it builds confidence! ➕➗",
+        "physics": "Physics helps explain the universe! Start with mechanics and motion. 🚀",
+        "chemistry": "Chemistry is the study of matter — learn how atoms bond, and reactions happen! 🔬",
+        "biology": "Biology helps you understand life — from cells to ecosystems. 🧬",
+        "english": "Reading and speaking daily builds your English fast. Try journaling too! 📖",
+        "robotics": "Robotics is where hardware meets code. Start with microcontrollers like Arduino. 🤖",
+        "ai": "AI is transforming the world. Python + math + logic = good start! 🧠"
     },
-    "reflection_questions": [
-        "🤔 Reflective Questions:\n- What challenged you most today and why?\n- How can you apply this knowledge in real scenarios?\n- What one change could optimize your study routine?"
-    ],
-    "fun_facts": [
-        "🎲 Fun Fact: The human brain processes information at around 120 m/s!",
-        "Challenge: Explain today’s topic in 3 sentences or less."
-    ],
     "fallback": [
-        "Hmm 🤔 I didn’t catch that. Could you rephrase it a bit? I’m here to help! 💬",
-        "That’s a tricky one! I'm your learning ally, not a human expert — but I’ll try my best if you reword it a little."
+        "Hmm, I’m not sure how to answer that — try rephrasing or asking something about study or motivation! 🤔",
+        "I didn’t quite get that, but I’m here to help! Maybe ask about a subject or how you feel. 😊"
     ]
 }
 
-# Keywords updated with your new questions and variations
 KEYWORDS = {
-    "greetings": ["hello","hi","hey","good morning","good evening"],
-    "how_are_you": ["how are you","how're you","how r u","how you doing","how do you do"],
-    "user_feeling_good": ["im doing well","i am doing well","im good","i am good","im fine","i am fine","doing great","feeling good","feeling great","all good","im okay","i am okay"],
-    "user_feeling_bad": ["im tired","i am tired","im sad","i am sad","burnout","overwhelmed","anxious","stress","not good","bad day","exhausted","frustrated","upset","worried","depressed","unhappy"],
-    "love": ["i love you","love you","i adore you","you are awesome","you rock"],
-    "introduction": [
-        "who are you","introduce","your name","introduce yourself",
-        "tell me about yourself", "tell me about you"
-    ],
-    "creator_info": [
-        "tell me about your creator","who is your creator","who created you",
-        "tell me more about your creator"
-    ],
-    "contact_creator": [
-        "how can i contact to your creator",
-        "how can i contact your creator",
-        "contact creator",
-        "contact your creator",
-        "creator contact",
-        "creator email",
-        "email of creator"
-    ],
-    "ack_creator": ["im your creator","i am your creator","i am aylin","im ur creator"],
-    "capabilities": ["what can you do","how can you help","what do you do","what else can you offer","what else you can offer","what else do you offer"],
-    "farewell": ["goodbye","bye","see you","see ya"],
-    "motivational_quote": ["quote","motivation","inspire","motivate me"],
-    "emotional_support": ["tired","sad","burnout","overwhelmed","anxious","stress"],
-    "study_tips": ["study smarter","how to study","study plan","study advice","tips for studying"],
-    "study_plan": ["study plan","custom study plan","schedule study","study schedule"],
-    "stress_management": ["stress management","manage stress","relax","stress relief","calm down"],
-    "self_assessment": ["self assessment","self-evaluate","test myself","quiz myself"],
-    "progress_praise": ["i did it","i finished","progress","achievement","i succeeded"],
-    "resources": ["resources","recommendations","study resources","helpful websites"],
-    "time_management": ["time management","pomodoro","manage time","schedule"],
-    "learning_styles": ["learning style","visual learner","auditory learner","kinesthetic learner"],
-    "exam_prep": ["exam prep","exam preparation","prep advice","give me exam prep advice","preparation","prep","prepation","prep tips","prep for exam","exam prep tips"],
-    "passed_exam": ["i passed my exam","i passed the exam","i passed test","i passed my test","passed exam","passed test","i did pass","i cleared my exam"],
-    "subjects": ["math","physics","chemistry","biology","computer science"],
-    "reflection_questions": ["reflect","reflection","think about"],
-    "fun_facts": ["fun fact","challenge","quiz"]
+    "greetings": ["hello", "hi", "hey", "greetings", "salam"],
+    "how_are_you": ["how are you", "how's it going", "how do you feel"],
+    "user_feeling_good": ["i'm fine", "i'm good", "great", "happy", "excellent"],
+    "user_feeling_bad": ["i'm sad", "not good", "tired", "depressed", "bad"],
+    "love": ["i love you", "you are cute", "like you"],
+    "exam_prep": ["exam tips", "how to prepare", "study for test", "exam help"],
+    "passed_exam": ["i passed", "got good mark", "i won"],
+    "capabilities": ["what can you do", "your functions", "features"],
+    "introduction": ["introduce", "who are you", "your name", "about you", "creator", "who made you"],
+    "creator_info": ["who is aylin", "who made you", "your developer"],
+    "contact_creator": ["how to contact", "reach aylin", "contact you", "talk to aylin"],
+    "ack_creator": ["aylin is cool", "thank aylin", "credit to aylin"],
+    "subjects": ["math", "physics", "chemistry", "biology", "english", "robotics", "ai"]
 }
 
 # Text cleaner
@@ -224,45 +136,42 @@ def get_bot_reply(user_input):
     msg = clean_text(user_input)
     cleaned = {cat: [clean_text(kw) for kw in kws] for cat, kws in KEYWORDS.items()}
 
-    # Priority intents
     for cat in [
-        'user_feeling_good','user_feeling_bad','love',
-        'how_are_you','greetings','exam_prep','capabilities','passed_exam',
-        'introduction','creator_info','contact_creator'
-    ]:
+        'user_feeling_good','user_feeling_bad','love','how_are_you','greetings','exam_prep','capabilities','passed_exam','introduction','creator_info','contact_creator','ack_creator']:
         if any(kw in msg for kw in cleaned.get(cat, [])):
             return random.choice(RESPONSE_DATA[cat])
-    # Subjects detailed
+
     for subj in cleaned.get('subjects', []):
         if subj in msg and subj in RESPONSE_DATA['subjects']:
             return RESPONSE_DATA['subjects'][subj]
-    # Other categories
+
     for cat, kws in cleaned.items():
-        if cat in ['user_feeling_good','user_feeling_bad','love','how_are_you','greetings','exam_prep','capabilities','subjects','passed_exam','introduction','creator_info','contact_creator']:
+        if cat in ['user_feeling_good','user_feeling_bad','love','how_are_you','greetings','exam_prep','capabilities','subjects','passed_exam','introduction','creator_info','contact_creator','ack_creator']:
             continue
         if cat in RESPONSE_DATA and any(kw in msg for kw in kws):
             return random.choice(RESPONSE_DATA[cat])
-    # Fallback
+
     return random.choice(RESPONSE_DATA['fallback'])
 
 # Chat form & display
 with st.form('chat_form', clear_on_submit=True):
     user_input = st.text_input('Write your message…', key='input_field')
     if st.form_submit_button('Send') and user_input.strip():
-        # Add user message first
         st.session_state.messages.append({'role': 'user', 'content': user_input})
-        # Then add bot reply
         st.session_state.messages.append({'role': 'bot', 'content': get_bot_reply(user_input)})
 
-# Render chat messages with newest at top, user above bot for each pair
+# Render chat messages
 st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
-
 msgs = st.session_state.messages
-# Iterate backwards over message pairs, newest first
-for i in range(len(msgs) - 2, -1, -2):  
+for i in range(len(msgs) - 2, -1, -2):
     user_msg = msgs[i]['content']
     bot_msg = msgs[i+1]['content'] if i+1 < len(msgs) else ''
     st.markdown(f'<div class="user">{escape(user_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
     st.markdown(f'<div class="bot">{escape(bot_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
 
 st.markdown('</div></div>', unsafe_allow_html=True)
+
+# Sidebar tips
+with st.sidebar:
+    st.markdown("### 💡 Tips")
+    st.info("You can ask things like:\n- 'Give me study tips'\n- 'Tell me about physics'\n- 'How do I manage time?'\n- 'Motivate me please!'\n- 'Who created you?'\n")

@@ -50,7 +50,7 @@ header, footer { display: none !important; }
 # Title
 st.markdown('<div class="title-container"><h1>AverlinMz – Study Chatbot</h1></div>', unsafe_allow_html=True)
 
-# RESPONSE DATA with detailed subject tips and emojis
+# RESPONSE DATA with exam prep tips & updated contact info
 RESPONSE_DATA = {
     "greetings": [
         "Hello there! 👋 How’s your day going? Ready to dive into learning today? 😊",
@@ -70,11 +70,11 @@ RESPONSE_DATA = {
         "Tough days happen — but you’ve got this. One step at a time. 🐾✨"
     ],
     "exam_prep": [
-        "1️⃣ Start early, make a clear plan, and review regularly. 📅",
-        "2️⃣ Break your study into small chunks with short breaks. 🧩",
-        "3️⃣ Practice old exam questions to get familiar. 📝",
-        "4️⃣ Stay hydrated and get enough sleep. 🛌💧",
-        "You’re capable of great things! Keep going! 📚💡"
+        "1️⃣ Start your preparation early and make a study plan. 📅",
+        "2️⃣ Break topics into manageable chunks and take regular breaks. 🧩",
+        "3️⃣ Practice past exam papers to get familiar with the format. 📝",
+        "4️⃣ Get enough sleep and stay hydrated to keep your brain sharp. 🛌💧",
+        "You’re capable of great things! Keep pushing! 📚💡"
     ],
     "passed_exam": [
         "🎉 CONGRATULATIONS! That’s amazing news! I knew you could do it. 🎊",
@@ -89,15 +89,15 @@ RESPONSE_DATA = {
         "I'm designed to help students stay focused and positive. Ask me anything about learning! 💬✨"
     ],
     "introduction": [
-        "I'm AverlinMz, your study chatbot 🌱. My creator is Aylin Muzaffarli (b.2011, Azerbaijan). She loves music, programming, robotics, AI, physics, and more. Reach her at averlinmz.github.io! 🌟"
+        "I'm AverlinMz, your study chatbot 🌱. My creator is Aylin Muzaffarli (b.2011, Azerbaijan). She loves music, programming, robotics, AI, physics, and more. 🌟"
     ],
     "creator_info": [
         "I was created by Aylin Muzaffarli — a passionate student from Azerbaijan who codes, studies physics and AI, and inspires others! 💡",
         "My developer is Aylin Muzaffarli, born in 2011. She built me to support learners like you! 🚀"
     ],
     "contact_creator": [
-        "You can reach my creator via GitHub: https://github.com/AverlinMz or her site: https://averlinmz.github.io ✨",
-        "Visit https://averlinmz.github.io or https://github.com/AverlinMz to get in touch! 💬"
+        "You can reach my creator via GitHub: https://github.com/AverlinMz ✨",
+        "To contact Aylin, visit her GitHub profile at https://github.com/AverlinMz 💬"
     ],
     "ack_creator": [
         "Yes, Aylin is super talented! 😄🎉",
@@ -218,4 +218,3 @@ st.markdown('</div></div>', unsafe_allow_html=True)
 with st.sidebar:
     st.markdown("### 💡 Tips")
     st.info("You can ask things like:\n- 'Give me study tips'\n- 'Tell me about physics'\n- 'How do I manage time?'\n- 'Motivate me please!'\n- 'Who created you?'\n- 'How can I contact Aylin?'\n- 'Give me advice for exam prep'\n")
-

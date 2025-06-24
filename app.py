@@ -97,22 +97,33 @@ RESPONSE_DATA = {
         "Hi friend! 😊 I’m here for you — whether you want to study, vent, or just chat."
     ],
     "introduction": [
-        "I’m AverlinMz, your supportive study companion built with 💡 by Aylin Muzaffarli.\n\n"
-        "I help with study strategies, emotional support, and academic motivation!\n\n"
-        "Note: I can't explain full theories like a teacher, but I’ll always be your friendly study coach."
+        "I’m AverlinMz, your supportive study companion built with 💡 by Aylin Muzaffarli. I help with study strategies, emotional support, and academic motivation!\n\nNote: I can't explain full theories like a teacher, but I’ll always be your friendly study coach."
     ],
     "creator_info": [
-        "My creator is Aylin Muzaffarli – a passionate and talented student from Azerbaijan.\n\n"
-        "She built me to help others with study support, inspiration, and encouragement. 💖"
+        "My creator is Aylin Muzaffarli – a passionate and talented student from Azerbaijan. She built me to help others with study support, inspiration, and encouragement. 💖"
     ],
     "ack_creator": [
-        "Hey Aylin! 💫 It's great to see you here — the brilliant mind behind this chatbot!\n\n"
-        "Let’s keep making this chatbot even better together."
+        "Hey Aylin! 💫 I recognize you — the brilliant creator behind all this. So glad you're here! Let’s keep making this chatbot even better together.",
+        "You're the mastermind, Aylin! Proud of what you've built. Let's keep growing!"
     ],
     "capabilities": [
-        "I’m here to guide, motivate, and support you with study tips, emotional encouragement, subject-specific advice, and more.\n\n"
-        "Think of me as your academic partner, not just a chatbot!\n\n"
-        "Note: I can’t fully replace a teacher — I’m here to uplift, advise, and chat with you as a friend."
+        "I’m here to guide, motivate, and support you with study tips, emotional encouragement, subject-specific advice, and more. Think of me as your academic partner, not just a chatbot!\n\nNote: I can’t fully replace a teacher — I’m here to uplift, advise, and chat with you as a friend.",
+        "I provide study strategies, motivation, emotional support, and detailed advice on subjects like Math, Physics, Chemistry, Biology, Computer Science, languages, and more."
+    ],
+    "farewell": [
+        "Goodbye for now 👋! Keep being amazing and come back whenever you need help, motivation, or just a kind word. 💚",
+        "See you later! 🌟 Stay curious, stay kind, and don’t forget to take breaks.",
+        "Take care! Remember, progress takes time — be patient with yourself."
+    ],
+    "motivational_quote": [
+        "“The future depends on what you do today.” – Mahatma Gandhi 🌱 Keep going, your efforts matter!",
+        "“Success is the sum of small efforts repeated day in and day out.” – Robert Collier 🌟 Keep pushing forward!",
+        "“Don’t watch the clock; do what it does. Keep going.” – Sam Levenson ⏰ Stay focused!"
+    ],
+    "emotional_support": [
+        "😔 Feeling overwhelmed? It's totally okay. Rest, breathe, and remember you're not alone. I'm here to support you. You’re doing better than you think. 🌈",
+        "Burnout hits hard, but breaks restore clarity. Step back, hydrate, stretch. You deserve care too. 💙",
+        "It’s normal to feel stuck sometimes. Reflect on your progress and try small steps forward. You’ve got this! 💪"
     ],
     "study_tips": [
         "📚 Study Smarter:\n"
@@ -122,78 +133,131 @@ RESPONSE_DATA = {
         "4. Teach others – explaining concepts helps retention.\n"
         "5. Use visuals – mind maps and charts improve memory.\n"
         "6. Rest intentionally – breaks prevent burnout.\n\n"
-        "You've got this! 💪✨"
-    ],
-    "emotional_support": [
-        "😔 Feeling overwhelmed? It's totally okay.\n\n"
-        "Rest, breathe deeply, and remember you're not alone.\n\n"
-        "I'm here to support you. You’re doing better than you think. 🌈",
-        "Burnout hits hard, but breaks restore clarity.\n\n"
-        "Step back, hydrate, stretch.\n\n"
-        "You deserve care too. 💙"
-    ],
-    "motivational_quote": [
-        "“The future depends on what you do today.” – Mahatma Gandhi 🌱\n\nKeep going, your efforts matter!"
+        "You've got this! 💪✨",
+        "SMART Study Method:\n"
+        "• Specific: Set clear goals.\n"
+        "• Measurable: Track your progress.\n"
+        "• Achievable: Be realistic.\n"
+        "• Relevant: Focus on important topics.\n"
+        "• Time-bound: Use deadlines to stay on track.\n\n"
+        "Try using this method to boost your efficiency!"
     ],
     "subjects": {
         "math": (
             "📐 Math Advice & Inspiration:\n\n"
-            "1. Understand the concepts deeply, not just formulas.\n"
-            "2. Practice a wide variety of problems daily.\n"
-            "3. Revisit and rework problems you got wrong.\n"
-            "4. Study proofs to sharpen your logical thinking.\n"
-            "5. Explain your solutions aloud or to a friend.\n\n"
-            "Math is like a puzzle — every problem you solve builds your brilliance! Keep going! ✨"
+            "1. Understand the concept, not just the formula. Dive deep into why something works.\n"
+            "2. Practice daily with diverse problems to sharpen your skills.\n"
+            "3. When you make mistakes, analyze them carefully — they are your best teachers.\n"
+            "4. Study proofs to strengthen logical thinking.\n"
+            "5. Explain solutions aloud or write them down as if teaching someone else.\n\n"
+            "Math is not just numbers — it’s a way to train your mind to think critically and creatively. Keep challenging yourself, and celebrate every breakthrough! 🌟"
         ),
         "physics": (
             "🧲 Physics Advice & Inspiration:\n\n"
-            "1. Master fundamental laws like Newton’s laws, energy, and motion.\n"
-            "2. Draw diagrams to visualize problems.\n"
-            "3. Connect theory with real-world examples.\n"
-            "4. Derive formulas yourself rather than just memorizing.\n"
-            "5. Solve conceptually before crunching numbers.\n\n"
-            "Physics helps you see the world’s secrets — stay curious and explore! 🚀"
+            "1. Master the basics: Newton’s laws, energy, motion — these are the building blocks.\n"
+            "2. Draw detailed diagrams to visualize problems.\n"
+            "3. Connect theories to real-world phenomena to make learning meaningful.\n"
+            "4. Derive formulas yourself instead of rote memorization.\n"
+            "5. Solve conceptually first, then crunch numbers.\n\n"
+            "Physics is the poetry of the universe — understanding it empowers you to see the world in new light. Stay curious and keep exploring! 🚀"
         ),
         "chemistry": (
             "⚗️ Chemistry Tips & Inspiration:\n\n"
-            "1. Memorize key reactions and periodic table trends.\n"
-            "2. Balance chemical equations carefully.\n"
-            "3. Use molecular models to understand structure.\n"
-            "4. Practice reaction mechanisms and lab techniques.\n"
-            "5. Relate theoretical concepts to experiments.\n\n"
-            "Chemistry unveils the molecular dance of life — enjoy the discovery! 🧪"
+            "1. Memorize key reactions and periodic trends, but understand their significance.\n"
+            "2. Balance chemical equations carefully like solving puzzles.\n"
+            "3. Use molecular models or drawings to visualize structures.\n"
+            "4. Practice reaction mechanisms for deeper insight.\n"
+            "5. Link theory with lab experiments to grasp practical applications.\n\n"
+            "Chemistry is the science of change — every molecule tells a story. Embrace the adventure of discovery! 🧪"
         ),
         "biology": (
             "🧬 Biology Strategy & Inspiration:\n\n"
-            "1. Draw and label biological diagrams.\n"
-            "2. Teach others to reinforce what you learn.\n"
-            "3. Use flashcards for vocabulary and cycles.\n"
-            "4. Aim for understanding, not just memorization.\n"
-            "5. Study in short, frequent sessions.\n\n"
-            "Biology reveals life’s amazing complexity — keep exploring! 🌿"
+            "1. Draw and label diagrams for better recall.\n"
+            "2. Teach concepts to others — it solidifies your understanding.\n"
+            "3. Use flashcards for vocabulary, cycles, and processes.\n"
+            "4. Prioritize understanding over rote memorization.\n"
+            "5. Study regularly in small, consistent sessions.\n\n"
+            "Biology reveals the story of life — appreciating it deepens your respect for nature and science. Keep your wonder alive! 🌿"
         ),
         "computer science": (
-            "💻 Computer Science Advice & Inspiration:\n\n"
-            "1. Master core algorithms and data structures.\n"
-            "2. Code daily, even small exercises help.\n"
-            "3. Break big problems into manageable parts.\n"
-            "4. Read and learn from others’ code.\n"
-            "5. Document your progress and code clearly.\n\n"
-            "Programming is creative problem-solving — keep building and learning! 🧠💡"
+            "💻 Computer Science Guidance & Inspiration:\n\n"
+            "1. Master algorithms and data structures — these are your tools.\n"
+            "2. Code daily, even small exercises help build muscle memory.\n"
+            "3. Break problems into smaller parts to solve step-by-step.\n"
+            "4. Read and analyze others’ code for new ideas.\n"
+            "5. Document your learning journey and review often.\n\n"
+            "Programming teaches problem-solving and creativity — every line of code is a step toward building the future. Keep coding and innovating! 🧠💡"
         ),
         "language": (
-            "🗣️ Language Learning Tips & Inspiration:\n\n"
-            "1. Practice speaking regularly, even with yourself.\n"
-            "2. Read diverse materials for vocabulary.\n"
-            "3. Listen to native speakers via podcasts or videos.\n"
-            "4. Use spaced repetition for vocabulary retention.\n"
-            "5. Don’t fear mistakes; they’re part of learning.\n\n"
-            "Languages open doors to new cultures — enjoy the journey! 🌍"
+            "📝 Language Learning Tips & Inspiration:\n\n"
+            "1. Practice speaking regularly — don’t fear mistakes.\n"
+            "2. Expand vocabulary daily with flashcards or apps.\n"
+            "3. Listen to native speakers and mimic intonation.\n"
+            "4. Read varied texts: stories, articles, dialogues.\n"
+            "5. Write short paragraphs and get feedback.\n\n"
+            "Language opens doors to cultures and new worlds — persistence turns effort into fluency. You can do it! 🌍"
         )
     },
-    "farewell": [
-        "Goodbye for now 👋! Keep being amazing and come back whenever you need help, motivation, or just a kind word. 💚",
-        "See you later! 🌟 Stay curious, stay kind, and don’t forget to take breaks."
+    "study_plan": [
+        "🗓️ Customizable Study Plans:\n"
+        "Set realistic goals for each day or week.\n"
+        "Include breaks and variety to stay motivated.\n"
+        "Review and adjust your plan as you learn more about your pace.\n\n"
+        "Planning your study helps you avoid last-minute stress and builds steady progress."
+    ],
+    "stress_management": [
+        "🧘 Stress Management Tips:\n"
+        "• Take deep breaths and practice mindfulness.\n"
+        "• Break tasks into smaller chunks.\n"
+        "• Exercise or stretch to release tension.\n"
+        "• Keep a balanced diet and sleep well.\n"
+        "Remember, your health is your greatest asset."
+    ],
+    "self_assessment": [
+        "✅ Self-Assessment Tips:\n"
+        "Quiz yourself regularly to check understanding.\n"
+        "Reflect on what you’ve learned and where you need more work.\n"
+        "Celebrate small victories to stay motivated."
+    ],
+    "progress_praise": [
+        "🎉 Great job on your progress! Every step forward counts.\nKeep up the amazing work!",
+        "🌟 I’m proud of your effort. Remember, consistency beats perfection."
+    ],
+    "resources": [
+        "📚 Helpful Resources:\n"
+        "- Khan Academy for many subjects.\n"
+        "- Quizlet for flashcards.\n"
+        "- Coursera and edX for free courses.\n"
+        "- Brilliant.org for STEM challenges."
+    ],
+    "time_management": [
+        "⏰ Time Management:\n"
+        "Use techniques like Pomodoro (25 min work + 5 min break).\n"
+        "Prioritize important tasks first.\n"
+        "Avoid multitasking to boost focus."
+    ],
+    "learning_styles": [
+        "🎨 Learning Style Tips:\n"
+        "- Visual learners: use diagrams and colors.\n"
+        "- Auditory learners: listen to recordings.\n"
+        "- Kinesthetic learners: practice hands-on."
+    ],
+    "exam_prep": [
+        "📖 Exam Preparation Strategies:\n"
+        "Start early and review regularly.\n"
+        "Practice past exam papers under timed conditions.\n"
+        "Focus on weak areas without neglecting strengths."
+    ],
+    "reflection_questions": [
+        "🤔 Reflective Question:\n"
+        "What part of today’s study challenged you the most, and why?",
+        "How can you apply what you learned to real life?",
+        "What one small change can improve your study routine?"
+    ],
+    "fun_facts": [
+        "🎲 Fun Fact:\n"
+        "Did you know the human brain can hold about 7±2 pieces of information at once?",
+        "Challenge: Try explaining today’s study topic in 3 sentences or less!"
     ],
     "fallback": [
         "Hmm 🤔 I didn’t catch that. Could you rephrase it a bit? I’m here to help! 💬",
@@ -201,66 +265,55 @@ RESPONSE_DATA = {
     ]
 }
 
-# Add more keyword variations especially for creator recognition and other categories
 KEYWORDS = {
     "greetings": ["hello", "hi", "hey", "good morning", "good evening"],
     "introduction": ["who are you", "introduce", "your name", "introduce yourself"],
-    "creator_info": ["who is your creator", "tell me about your creator", "creator"],
-    "ack_creator": [
-        "i am your creator",
-        "i'm your creator",
-        "im your creator",
-        "i am aylin",
-        "i'm aylin",
-        "im aylin",
-        "im ur creator",
-        "i'm ur creator",
-        "i am ur creator"
-    ],
-    "capabilities": ["what can you do", "how can you help", "capabilities"],
-    "study_tips": ["study smarter", "how to study", "study plan", "study advice"],
-    "emotional_support": ["tired", "sad", "burnout", "overwhelmed", "anxious"],
-    "motivational_quote": ["quote", "motivation", "inspire", "motivate me", "motivation please"],
+    "creator_info": ["tell me about your creator", "who is your creator", "who created you"],
+    "ack_creator": ["i'm your creator", "im your creator", "i am your creator", "i am aylin", "im ur creator", "i am ur creator"],
+    "capabilities": ["what can you do", "how can you help", "what do you do"],
     "farewell": ["goodbye", "bye", "see you", "see ya"],
-    "subjects": ["math", "physics", "chemistry", "biology", "computer science", "cs", "language", "lang"]
+    "motivational_quote": ["quote", "motivation", "inspire", "motivate me"],
+    "emotional_support": ["tired", "sad", "burnout", "overwhelmed", "anxious", "stress"],
+    "study_tips": ["study smarter", "how to study", "study plan", "study advice", "tips for studying", "study smart"],
+    "subjects": ["math", "physics", "chemistry", "biology", "computer science", "cs", "language", "languages", "english", "french", "spanish"],
+    "study_plan": ["study plan", "custom study plan", "schedule study", "study schedule"],
+    "stress_management": ["stress management", "manage stress", "relax", "stress relief", "calm down"],
+    "self_assessment": ["self assessment", "self-evaluate", "test myself", "quiz myself"],
+    "progress_praise": ["i did it", "i finished", "progress", "achievement", "i succeeded"],
+    "resources": ["resources", "recommendations", "study resources", "helpful websites"],
+    "time_management": ["time management", "pomodoro", "manage time", "schedule"],
+    "learning_styles": ["learning style", "visual learner", "auditory learner", "kinesthetic learner"],
+    "exam_prep": ["exam preparation", "prepare for exam", "exam tips", "test prep"],
+    "reflection_questions": ["reflect", "reflection", "think about"],
+    "fun_facts": ["fun fact", "challenge", "quiz"]
 }
 
 def clean_text(text):
+    # Normalize to lowercase and remove punctuation for better matching
     return text.lower().translate(str.maketrans('', '', string.punctuation)).strip()
 
 def get_bot_reply(user_input):
     msg = clean_text(user_input)
     response = []
-
-    # Check for subjects first to provide inspiring answers for subjects
-    for subj in RESPONSE_DATA["subjects"]:
-        if subj in msg:
-            response.append(RESPONSE_DATA["subjects"][subj])
-
-    # Then check other categories
-    for category, words in KEYWORDS.items():
+    
+    # Check for multiple categories and collect all relevant responses
+    for category, keywords in KEYWORDS.items():
+        # For subjects, check if any subject keyword is inside message
         if category == "subjects":
-            continue  # already handled above
-        if any(word in msg for word in words):
-            if category == "motivational_quote":
-                # For "motivate me" or similar
-                response.append(random.choice(RESPONSE_DATA["motivational_quote"]))
-            elif category in RESPONSE_DATA:
-                response.append(random.choice(RESPONSE_DATA[category]))
-
-    # If user says "im your creator" or similar, prefer acknowledgment
-    if any(phrase in msg for phrase in KEYWORDS["ack_creator"]):
-        response = [random.choice(RESPONSE_DATA["ack_creator"])]
-
-    # If user asks about creator explicitly, prefer creator info
-    if any(phrase in msg for phrase in KEYWORDS["creator_info"]):
-        response = [random.choice(RESPONSE_DATA["creator_info"])]
+            for subj_key in RESPONSE_DATA["subjects"]:
+                if subj_key in msg:
+                    response.append(RESPONSE_DATA["subjects"][subj_key])
+        else:
+            if any(word in msg for word in keywords):
+                # Append a random response if category has multiple
+                if category in RESPONSE_DATA:
+                    response.append(random.choice(RESPONSE_DATA[category]))
 
     if not response:
         response.append(random.choice(RESPONSE_DATA["fallback"]))
-
+    
+    # Join all relevant responses with paragraph breaks
     return "\n\n".join(response)
-
 
 # Input form
 with st.form("chat_form", clear_on_submit=True):
@@ -297,6 +350,7 @@ for user_msg, bot_msg in pairs:
             container.markdown('<div class="bot">🤖 Typing...</div>', unsafe_allow_html=True)
             time.sleep(2)
             container.markdown(f'<div class="bot">{escape(st.session_state.last_bot_reply).replace("\n","<br>")}</div>', unsafe_allow_html=True)
+            # Fill in the None content with actual reply
             for i in range(len(st.session_state.messages) - 1, -1, -1):
                 if st.session_state.messages[i]["role"] == "bot" and st.session_state.messages[i]["content"] is None:
                     st.session_state.messages[i]["content"] = st.session_state.last_bot_reply

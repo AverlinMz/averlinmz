@@ -42,7 +42,7 @@ header, footer { display: none !important; }
 # Title
 st.markdown('<div class="title-container"><h1>AverlinMz – Study Chatbot</h1></div>', unsafe_allow_html=True)
 
-# Full response data
+# Full response data with new creator/contact answers
 RESPONSE_DATA = {
     "greetings": [
         "Hello there! 👋 How’s your day going? Ready to dive into learning today?",
@@ -71,10 +71,17 @@ RESPONSE_DATA = {
         "Thank you! Your support fuels my code! 🚀"
     ],
     "introduction": [
-        "I’m AverlinMz, your supportive study companion built with 💡 by Aylin Muzaffarli. I help with study strategies, emotional support, and academic motivation!"
+        "I’m AverlinMz, your supportive study companion built with 💡 by Aylin Muzaffarli. I help with study strategies, emotional support, and academic motivation!",
+        "I'm AverlinMz, your personal study chatbot, created to help you stay motivated, learn effectively, and keep your spirits high!"
     ],
     "creator_info": [
-        "My creator is Aylin Muzaffarli – a passionate and talented student from Azerbaijan. She built me to help others with study support, inspiration, and encouragement. 💖"
+        "My creator is Aylin Muzaffarli – a passionate and talented student from Azerbaijan. She built me to help others with study support, inspiration, and encouragement. 💖",
+        "Aylin Muzaffarli is my brilliant creator! She's a student from Azerbaijan who loves programming, robotics, physics, and AI. She made me to support learners like you."
+    ],
+    "contact_creator": [
+        "You can contact my creator, Aylin Muzaffarli, at: muzaffaraylin@example.com (replace 'example.com' with the real domain if needed).",
+        "If you'd like to reach Aylin Muzaffarli, my creator, her email is: muzaffaraylin@example.com. Feel free to send her a message!",
+        "To contact Aylin Muzaffarli, the creator of this chatbot, use the email: muzaffaraylin@example.com."
     ],
     "ack_creator": [
         "Hey Aylin! 💫 I recognize you — the brilliant creator behind all this. So glad you're here! Let’s keep making this chatbot even better together.",
@@ -164,15 +171,30 @@ RESPONSE_DATA = {
     ]
 }
 
-# Keywords
+# Keywords updated with your new questions and variations
 KEYWORDS = {
     "greetings": ["hello","hi","hey","good morning","good evening"],
     "how_are_you": ["how are you","how're you","how r u","how you doing","how do you do"],
     "user_feeling_good": ["im doing well","i am doing well","im good","i am good","im fine","i am fine","doing great","feeling good","feeling great","all good","im okay","i am okay"],
     "user_feeling_bad": ["im tired","i am tired","im sad","i am sad","burnout","overwhelmed","anxious","stress","not good","bad day","exhausted","frustrated","upset","worried","depressed","unhappy"],
     "love": ["i love you","love you","i adore you","you are awesome","you rock"],
-    "introduction": ["who are you","introduce","your name","introduce yourself"],
-    "creator_info": ["tell me about your creator","who is your creator","who created you"],
+    "introduction": [
+        "who are you","introduce","your name","introduce yourself",
+        "tell me about yourself", "tell me about you"
+    ],
+    "creator_info": [
+        "tell me about your creator","who is your creator","who created you",
+        "tell me more about your creator"
+    ],
+    "contact_creator": [
+        "how can i contact to your creator",
+        "how can i contact your creator",
+        "contact creator",
+        "contact your creator",
+        "creator contact",
+        "creator email",
+        "email of creator"
+    ],
     "ack_creator": ["im your creator","i am your creator","i am aylin","im ur creator"],
     "capabilities": ["what can you do","how can you help","what do you do","what else can you offer","what else you can offer","what else do you offer"],
     "farewell": ["goodbye","bye","see you","see ya"],
@@ -205,7 +227,8 @@ def get_bot_reply(user_input):
     # Priority intents
     for cat in [
         'user_feeling_good','user_feeling_bad','love',
-        'how_are_you','greetings','exam_prep','capabilities','passed_exam'
+        'how_are_you','greetings','exam_prep','capabilities','passed_exam',
+        'introduction','creator_info','contact_creator'
     ]:
         if any(kw in msg for kw in cleaned.get(cat, [])):
             return random.choice(RESPONSE_DATA[cat])
@@ -215,7 +238,7 @@ def get_bot_reply(user_input):
             return RESPONSE_DATA['subjects'][subj]
     # Other categories
     for cat, kws in cleaned.items():
-        if cat in ['user_feeling_good','user_feeling_bad','love','how_are_you','greetings','exam_prep','capabilities','subjects','passed_exam']:
+        if cat in ['user_feeling_good','user_feeling_bad','love','how_are_you','greetings','exam_prep','capabilities','subjects','passed_exam','introduction','creator_info','contact_creator']:
             continue
         if cat in RESPONSE_DATA and any(kw in msg for kw in kws):
             return random.choice(RESPONSE_DATA[cat])

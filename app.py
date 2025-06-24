@@ -68,21 +68,16 @@ RESPONSE_DATA = {
         "Great! I'm here and ready to help. How are you doing?",
         "I'm fine, thank you! What about you?"
     ],
-  "user_feeling_good":[
-    "im doing well", "i am doing well", "i'm doing well",
-    "im good", "i am good", "i'm good",
-    "im fine", "i am fine", "i'm fine",
-    "doing great", "feeling good", "feeling great", "all good",
-    "im okay", "i am okay", "i'm okay"
-],
-"user_feeling_bad":[
-    "tired", "sad", "burnout", "overwhelmed", "anxious", "stress",
-    "not good", "not so good", "bad day",
-    "exhausted", "frustrated", "upset", "worried", "depressed", "unhappy",
-    "i'm tired", "i'm sad", "i'm stressed", "i'm anxious", "i'm upset", "i'm worried",
-    "i'm exhausted", "i'm frustrated", "i'm depressed", "i'm unhappy"
-],
-
+    "user_feeling_good":[
+        "I'm glad to hear you're doing well! Keep up the positive vibes! 😊",
+        "That's great! Keep that energy going! 💪",
+        "Awesome! Keep shining and learning! 🌟"
+    ],
+    "user_feeling_bad":[
+        "😔 Feeling overwhelmed? It's totally okay. Rest, breathe, and remember you're not alone. I'm here to support you. You’re doing better than you think. 🌈",
+        "Burnout hits hard, but breaks restore clarity. Step back, hydrate, stretch. You deserve care too. 💙",
+        "It’s normal to feel stuck sometimes. Reflect on your progress and try small steps forward. You’ve got this! 💪"
+    ],
     "introduction":[
         "I’m AverlinMz, your supportive study companion built with 💡 by Aylin Muzaffarli. I help with study strategies, emotional support, and academic motivation!\n\nNote: I can't explain full theories like a teacher, but I’ll always be your friendly study coach."
     ],
@@ -256,13 +251,18 @@ KEYWORDS = {
     "greetings":["hello","hi","hey","good morning","good evening"],
     "how_are_you":["how are you","how're you","how r u","how you doing","how do you do"],
     "user_feeling_good":[
-        "i'm doing well", "i am doing well", "i'm good", "i am good", "i'm fine", "i am fine",
-        "doing great", "feeling good", "feeling great", "all good", "i'm okay", "i am okay",
-        "happy", "great", "awesome"
+        "i'm doing well", "i am doing well", "im doing well", "i'm good", "i am good", "im good",
+        "i'm fine", "i am fine", "im fine", "doing great", "feeling good", "feeling great", "all good",
+        "i'm okay", "i am okay", "im okay", "happy", "great", "awesome"
     ],
     "user_feeling_bad":[
         "tired", "sad", "burnout", "overwhelmed", "anxious", "stress", "not good", "bad day",
-        "exhausted", "frustrated", "upset", "worried", "depressed", "unhappy", "down", "nervous"
+        "exhausted", "frustrated", "upset", "worried", "depressed", "unhappy", "down", "nervous",
+        "i'm tired", "i am tired", "im tired", "i'm sad", "i am sad", "im sad",
+        "i'm stressed", "i am stressed", "im stressed", "i'm anxious", "i am anxious", "im anxious",
+        "i'm upset", "i am upset", "im upset", "i'm worried", "i am worried", "im worried",
+        "i'm exhausted", "i am exhausted", "im exhausted", "i'm frustrated", "i am frustrated", "im frustrated",
+        "i'm depressed", "i am depressed", "im depressed", "i'm unhappy", "i am unhappy", "im unhappy"
     ],
     "introduction":["who are you","introduce","your name","introduce yourself"],
     "creator_info":["tell me about your creator","who is your creator","who created you"],
@@ -290,50 +290,62 @@ def clean_text(text):
 
 def get_bot_reply(user_input):
     msg = clean_text(user_input)
+    
+    # Clean keywords for reliable matching
+    cleaned_keywords = {cat: [clean_text(kw) for kw in kws] for cat, kws in KEYWORDS.items()}
 
     # Priority: positive feelings
-    if any(kw in msg for kw in KEYWORDS["user_feeling_good"]):
+    if any(kw in msg for kw in cleaned_keywords["user_feeling_good"]):
         return random.choice(RESPONSE_DATA["user_feeling_good"])
 
     # Then negative feelings
-    if any(kw in msg for kw in KEYWORDS["user_feeling_bad"]):
+    if any(kw in msg for kw in cleaned_keywords["user_feeling_bad"]):
         return random.choice(RESPONSE_DATA["user_feeling_bad"])
 
     # How are you
-    if any(kw in msg for kw in KEYWORDS["how_are_you"]):
+    if any(kw in msg for kw in cleaned_keywords["how_are_you"]):
         return random.choice(RESPONSE_DATA["how_are_you"])
 
     # Greetings
-    if any(kw in msg for kw in KEYWORDS["greetings"]):
+    if any(kw in msg for kw in cleaned_keywords["greetings"]):
         return random.choice(RESPONSE_DATA["greetings"])
 
-    # Subjects (detailed)
-    if any(subj in msg for subj in KEYWORDS["subjects"]):
+    # Subjects: check keywords then respond with subject advice
+    if any(subj in msg for subj in cleaned_keywords["subjects"]):
         for subj_key in RESPONSE_DATA["subjects"]:
             if subj_key in msg:
                 return RESPONSE_DATA["subjects"][subj_key]
 
-    # Other categories
-    for category, keywords in KEYWORDS.items():
+    # Other categories (excluding ones above)
+    for category in KEYWORDS.keys():
         if category in ["user_feeling_good", "user_feeling_bad", "how_are_you", "greetings", "subjects"]:
             continue
-        if any(kw in msg for kw in keywords) and category in RESPONSE_DATA:
-            return random.choice(RESPONSE_DATA[category])
+        if category in RESPONSE_DATA:
+            if any(kw in msg for kw in cleaned_keywords[category]):
+                return random.choice(RESPONSE_DATA[category])
 
     # Fallback
     return random.choice(RESPONSE_DATA["fallback"])
 
-# Chat input form
-with st.form("chat_form", clear_on_submit=True):
-    user_input = st.text_input("Write your message…", key="input_field", label_visibility="collapsed")
-    if st.form_submit_button("Send") and user_input.strip():
-        st.session_state.messages.append({"role":"user","content":user_input})
-        bot_reply = get_bot_reply(user_input)
-        st.session_state.messages.append({"role":"bot","content":bot_reply})
+# Streamlit UI
+st.markdown('<div class="chat-container">', unsafe_allow_html=True)
+st.markdown('<div class="chat-window">', unsafe_allow_html=True)
 
-# Render chat history
-st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
-for user_msg, bot_msg in reversed(list(zip(st.session_state.messages[::2], st.session_state.messages[1::2]))):
-    st.markdown(f'<div class="user">{escape(user_msg["content"]).replace("\\n","<br>")}</div>', unsafe_allow_html=True)
-    st.markdown(f'<div class="bot">{escape(bot_msg["content"]).replace("\\n","<br>")}</div>', unsafe_allow_html=True)
+for msg in reversed(st.session_state.messages):
+    if msg["role"] == "user":
+        st.markdown(f'<div class="user">{escape(msg["content"])}</div>', unsafe_allow_html=True)
+    else:
+        st.markdown(f'<div class="bot">{escape(msg["content"]).replace("\\n", "<br>")}</div>', unsafe_allow_html=True)
+
 st.markdown('</div></div>', unsafe_allow_html=True)
+
+user_input = st.text_input("Write your message here and press Enter or Send:", "")
+
+if user_input:
+    st.session_state.messages.append({"role": "user", "content": user_input})
+    bot_response = get_bot_reply(user_input)
+    st.session_state.messages.append({"role": "bot", "content": bot_response})
+    # Clear input (not possible directly, but user can just overwrite)
+
+    # Rerun to update UI
+    st.experimental_rerun()

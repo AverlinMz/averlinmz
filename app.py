@@ -2,6 +2,7 @@ import streamlit as st
 import difflib
 import random
 import time
+import string
 from html import escape
 
 # Initialize session state variables
@@ -90,83 +91,47 @@ new MutationObserver(scrollToBottom).observe(
 # Title
 st.markdown('<div class="title-container"><h1>AverlinMz – Study Chatbot</h1></div>', unsafe_allow_html=True)
 
-# Define responses
-RESPONSES = {
-    "study_smart": {
-        "keywords": ["study smart", "study smarter", "study tips", "study plan"],
-        "reply": """Hey friend! 🌟 Here are some powerful tips to study smarter, not harder:
-
-1. **Active recall** – quiz yourself instead of just rereading.
-2. **Spaced repetition** – review material over increasing intervals.
-3. **Pomodoro technique** – work 25 mins, break 5, repeat! 🍅
-4. **Teach what you learn** – if you can explain it, you’ve mastered it.
-5. **Plan weekly goals** – focus on outcomes, not just time spent.
-
-And don’t forget: rest is part of the process 💤. Your brain loves clarity, not clutter. You’ve got this! 🚀"""
-    },
-    "tired": {
-        "keywords": ["tired", "burned out", "exhausted", "no energy"],
-        "reply": """Oh no 😞 You sound really drained. That’s totally okay – you’re human! 🧡
-
-Here’s what you can try:
-- ✋ Step away from the screen. Even 10 minutes helps.
-- 💧 Hydrate and grab a healthy snack.
-- 🌬️ Breathe in deeply 5 times. Slowly. Really slowly.
-- 💤 Nap or stretch your legs – your body needs care.
-
-You’re doing more than enough. Let go of pressure. Come back stronger 💪 I believe in you!"""
-    },
-    "greeting": {
-        "keywords": ["hello", "hi", "hey", "heyy"],
-        "reply": """Hey there! 👋 Welcome back!
-
-I'm AverlinMz, your loyal study buddy 📚✨ Ready to dive into a new topic, crush a challenge, or just chat for motivation?
-
-Whatever you're facing today, you're not alone. Let’s go! 💪🌟"""
-    },
-    "capabilities": {
-        "keywords": ["what can you do", "abilities", "features", "skills"],
-        "reply": """Great question! 🤖 Here’s what I can do:
-
-✅ Cheer you on when you're tired
-✅ Give personalized study tips
-✅ Answer questions on school subjects
-✅ Remind you to rest and stay kind to yourself
-✅ Chat when you need a break or a friend 💛
-
-I’m still learning — and growing with you! 🌱"""
-    },
-    "default": {
-        "keywords": [],
-        "reply": "Hmm 🤔 I’m still learning. Could you rephrase that a bit? You're doing awesome anyway! 🌈"
-    }
+# Sample expanded responses for themes
+RESPONSE_DATA = {
+    "greetings": [
+        "Hello there! 👋 How’s your day going? Ready to dive into learning today?",
+        "Hey hey! 🌟 Hope you’re feeling inspired today. What’s on your mind?",
+        "Hi friend! 😊 I’m here for you — whether you want to study, vent, or just chat."
+    ],
+    "introduce": [
+        "Hi there! 🤖 I'm AverlinMz, your study buddy and supportive chatbot. I was lovingly created by Aylin Muzaffarli — a young enthusiast from Azerbaijan 🇦🇿 who loves programming, AI, and science! Ask me anything related to studies, motivation, or even just life. 💬✨"
+    ],
+    "study_tips": [
+        "Here are some smart study strategies:<br>1. Use active recall — test yourself often.<br>2. Practice spaced repetition — revisit content over time.<br>3. Avoid multitasking — focus deeply for short bursts.<br>4. Teach the material — it reveals your blind spots.<br>You’ve got this! 🌟🚀",
+        "Study smarter, not harder! Plan with intention, set small goals, reward progress, and take breaks. Consistency wins! 📊🙌"
+    ],
+    "emotional_support": [
+        "Feeling overwhelmed? 😔 It’s okay. Take a deep breath. Rest is part of the process. I’m here with you. 🌈",
+        "Mistakes happen — they’re how we grow. Progress isn’t linear, and every step counts. Keep going. You matter. ✨"
+    ],
+    "fallback": [
+        "Hmm 🤔 I’m still learning. Could you rephrase that? I’m here for support and study help! 🚀",
+        "That’s a tricky one. I’m more of a study buddy than a full teacher, but I’ll do my best! Try asking it a different way?"
+    ]
 }
 
-FALLBACK_REPLIES = [
-    "You're making real progress – don’t stop now! 💥",
-    "Every step matters, even the tiny ones 🐾 Keep going!",
-    "You are capable of amazing things. Believe it 💫"
-]
+def clean_text(text):
+    return text.lower().translate(str.maketrans('', '', string.punctuation)).strip()
 
-# Helper functions
-def contains_keyword(msg, keywords, cutoff=0.75):
-    msg = msg.lower()
-    for kw in keywords:
-        if kw in msg:
-            return True
-        for w in msg.split():
-            if difflib.SequenceMatcher(None, w, kw).ratio() >= cutoff:
-                return True
-    return False
+def get_bot_reply(user_input):
+    msg = clean_text(user_input)
+    if any(word in msg for word in ["hello", "hi", "hey"]):
+        return random.choice(RESPONSE_DATA["greetings"])
+    elif any(word in msg for word in ["who are you", "introduce", "your name", "creator"]):
+        return random.choice(RESPONSE_DATA["introduce"])
+    elif any(word in msg for word in ["study", "tips", "advice", "plan"]):
+        return random.choice(RESPONSE_DATA["study_tips"])
+    elif any(word in msg for word in ["tired", "sad", "burnout", "overwhelmed"]):
+        return random.choice(RESPONSE_DATA["emotional_support"])
+    else:
+        return random.choice(RESPONSE_DATA["fallback"])
 
-def generate_reply(user_msg):
-    lm = user_msg.lower()
-    for data in RESPONSES.values():
-        if contains_keyword(lm, data["keywords"]):
-            return data["reply"]
-    return random.choice(FALLBACK_REPLIES)
-
-# Chat input form
+# Input form
 with st.form("chat_form", clear_on_submit=True):
     user_input = st.text_input(
         "message_input",
@@ -177,7 +142,7 @@ with st.form("chat_form", clear_on_submit=True):
     submit = st.form_submit_button("Send")
     if submit and user_input.strip():
         st.session_state.messages.append({"role": "user", "content": user_input})
-        reply = generate_reply(user_input)
+        reply = get_bot_reply(user_input)
         st.session_state.last_bot_reply = reply
         st.session_state.messages.append({"role": "bot", "content": None})
         st.session_state.typing = True
@@ -185,32 +150,31 @@ with st.form("chat_form", clear_on_submit=True):
 # Render chat window
 st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
 
-# Display all messages, newest first
-messages = st.session_state.messages[:]
-messages.reverse()
+# Display all messages
+pairs = []
+msgs = st.session_state.messages
+for i in range(0, len(msgs), 2):
+    if i + 1 < len(msgs):
+        pairs.append((msgs[i], msgs[i+1]))
 
-for i in range(0, len(messages), 2):
-    if i + 1 < len(messages):
-        user_msg = messages[i + 1]
-        bot_msg = messages[i]
+pairs.reverse()
 
-        st.markdown(f'<div class="user">{escape(user_msg["content"]).replace("\n","<br>")}</div>', unsafe_allow_html=True)
-
-        if bot_msg["content"] is None:
-            container = st.empty()
-            if st.session_state.typing:
-                container.markdown('<div class="bot">🤖 Typing...</div>', unsafe_allow_html=True)
-                time.sleep(2)
-                container.markdown(f'<div class="bot">{escape(st.session_state.last_bot_reply).replace("\n","<br>")}</div>', unsafe_allow_html=True)
-                # Update placeholder
-                for j in range(len(st.session_state.messages) - 1, -1, -1):
-                    if st.session_state.messages[j]["role"] == "bot" and st.session_state.messages[j]["content"] is None:
-                        st.session_state.messages[j]["content"] = st.session_state.last_bot_reply
-                        break
-                st.session_state.typing = False
-            else:
-                container.markdown(f'<div class="bot">{escape(st.session_state.last_bot_reply).replace("\n","<br>")}</div>', unsafe_allow_html=True)
+for user_msg, bot_msg in pairs:
+    st.markdown(f'<div class="user">{escape(user_msg["content"]).replace("\n","<br>")}</div>', unsafe_allow_html=True)
+    if bot_msg["content"] is None:
+        container = st.empty()
+        if st.session_state.typing:
+            container.markdown('<div class="bot">🤖 Typing...</div>', unsafe_allow_html=True)
+            time.sleep(2)
+            container.markdown(f'<div class="bot">{escape(st.session_state.last_bot_reply).replace("\n","<br>")}</div>', unsafe_allow_html=True)
+            for i in range(len(st.session_state.messages) - 1, -1, -1):
+                if st.session_state.messages[i]["role"] == "bot" and st.session_state.messages[i]["content"] is None:
+                    st.session_state.messages[i]["content"] = st.session_state.last_bot_reply
+                    break
+            st.session_state.typing = False
         else:
-            st.markdown(f'<div class="bot">{escape(bot_msg["content"]).replace("\n","<br>")}</div>', unsafe_allow_html=True)
+            container.markdown(f'<div class="bot">{escape(st.session_state.last_bot_reply).replace("\n","<br>")}</div>', unsafe_allow_html=True)
+    else:
+        st.markdown(f'<div class="bot">{escape(bot_msg["content"]).replace("\n","<br>")}</div>', unsafe_allow_html=True)
 
 st.markdown('</div></div>', unsafe_allow_html=True)

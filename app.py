@@ -68,16 +68,21 @@ RESPONSE_DATA = {
         "Great! I'm here and ready to help. How are you doing?",
         "I'm fine, thank you! What about you?"
     ],
-    "user_feeling_good":[
-        "Glad to hear that! Keep it up! 😊",
-        "Awesome! What do you want to talk about today?",
-        "Great! I'm here whenever you need me."
-    ],
-    "user_feeling_bad":[
-        "I'm sorry to hear that. Remember, it's okay to feel this way sometimes. I'm here to support you. 💙",
-        "Take your time, rest if you need to. You're stronger than you think. 🌈",
-        "If you want to talk about it or need motivation, I'm here to listen."
-    ],
+  "user_feeling_good":[
+    "im doing well", "i am doing well", "i'm doing well",
+    "im good", "i am good", "i'm good",
+    "im fine", "i am fine", "i'm fine",
+    "doing great", "feeling good", "feeling great", "all good",
+    "im okay", "i am okay", "i'm okay"
+],
+"user_feeling_bad":[
+    "tired", "sad", "burnout", "overwhelmed", "anxious", "stress",
+    "not good", "not so good", "bad day",
+    "exhausted", "frustrated", "upset", "worried", "depressed", "unhappy",
+    "i'm tired", "i'm sad", "i'm stressed", "i'm anxious", "i'm upset", "i'm worried",
+    "i'm exhausted", "i'm frustrated", "i'm depressed", "i'm unhappy"
+],
+
     "introduction":[
         "I’m AverlinMz, your supportive study companion built with 💡 by Aylin Muzaffarli. I help with study strategies, emotional support, and academic motivation!\n\nNote: I can't explain full theories like a teacher, but I’ll always be your friendly study coach."
     ],

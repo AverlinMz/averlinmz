@@ -65,12 +65,11 @@ header, footer { display: none !important; }
     gap: 15px;
 }
 
-/* Message bubbles - both centered and wider */
+/* Message bubbles full-width */
 .user,
 .bot {
     align-self: center;
-    max-width: 90%;      /* make them wider */
-    width: auto;
+    width: 100%;       /* fill the entire container width */
 }
 .user {
     background-color: #D1F2EB; color: #0B3D2E;
@@ -114,7 +113,7 @@ RESPONSES = {
         "keywords": ["introduce","who are you","your name","about you","creator","who made you"],
         "reply": "Hello! I'm AverlinMz, your study chatbot 🌱. My creator is Aylin Muzaffarli (b.2011, Azerbaijan). She loves music, programming, robotics, AI, physics, and more. Reach her at muzaffaraylin@gmail.com. Good luck!"
     },
-    # … (all your other responses here) …
+    # … include all your other response entries here …
     "study_smart": {
         "keywords": ["smart","study plan","study smarter"],
         "reply": "Study smart: active recall, spaced repetition, and high-impact topics."
@@ -144,7 +143,7 @@ def generate_reply(user_msg):
     for data in RESPONSES.values():
         if contains_keyword(lm, data["keywords"]):
             return data["reply"]
-    # … (any multi-key logic) …
+    # … any multi-key logic …
     return random.choice(FALLBACK_REPLIES)
 
 # Render UI

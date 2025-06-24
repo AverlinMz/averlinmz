@@ -116,6 +116,26 @@ Here’s what you can try:
 
 You’re doing more than enough. Let go of pressure. Come back stronger 💪 I believe in you!"""
     },
+    "greeting": {
+        "keywords": ["hello", "hi", "hey", "heyy"],
+        "reply": """Hey there! 👋 Welcome back!
+
+I'm AverlinMz, your loyal study buddy 📚✨ Ready to dive into a new topic, crush a challenge, or just chat for motivation?
+
+Whatever you're facing today, you're not alone. Let’s go! 💪🌟"""
+    },
+    "capabilities": {
+        "keywords": ["what can you do", "abilities", "features", "skills"],
+        "reply": """Great question! 🤖 Here’s what I can do:
+
+✅ Cheer you on when you're tired
+✅ Give personalized study tips
+✅ Answer questions on school subjects
+✅ Remind you to rest and stay kind to yourself
+✅ Chat when you need a break or a friend 💛
+
+I’m still learning — and growing with you! 🌱"""
+    },
     "default": {
         "keywords": [],
         "reply": "Hmm 🤔 I’m still learning. Could you rephrase that a bit? You're doing awesome anyway! 🌈"

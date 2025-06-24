@@ -92,118 +92,137 @@ st.markdown('<div class="title-container"><h1>AverlinMz – Study Chatbot</h1></
 
 RESPONSE_DATA = {
     "greetings": [
-        "Hello there! 👋 How’s your day going? Ready to dive into learning today?\n\nFeel free to ask me anything about your studies or just say hi!",
-        "Hey hey! 🌟 Hope you’re feeling inspired today. What’s on your mind?\n\nI'm here to help with study tips, motivation, or just a chat!",
-        "Hi friend! 😊 I’m here for you — whether you want to study, vent, or just chat.\n\nLet’s make your learning journey awesome together!"
+        "Hello there! 👋 How’s your day going? Ready to dive into learning today?",
+        "Hey hey! 🌟 Hope you’re feeling inspired today. What’s on your mind?",
+        "Hi friend! 😊 I’m here for you — whether you want to study, vent, or just chat."
     ],
     "introduction": [
-        "I’m AverlinMz, your supportive study companion built with 💡 by Aylin Muzaffarli.\n\nI help with study strategies, emotional support, and academic motivation!\n\nNote: I can't explain full theories like a teacher, but I’ll always be your friendly study coach."
+        "I’m AverlinMz, your supportive study companion built with 💡 by Aylin Muzaffarli.\n\n"
+        "I help with study strategies, emotional support, and academic motivation!\n\n"
+        "Note: I can't explain full theories like a teacher, but I’ll always be your friendly study coach."
     ],
     "creator_info": [
-        "My creator is Aylin Muzaffarli — a passionate and talented student from Azerbaijan.\n\nShe built me to help others with study support, inspiration, and encouragement. 💖"
+        "My creator is Aylin Muzaffarli – a passionate and talented student from Azerbaijan.\n\n"
+        "She built me to help others with study support, inspiration, and encouragement. 💖"
     ],
     "ack_creator": [
-        "Hey Aylin! 💫 It's great to see you here — the brilliant mind behind this chatbot!\n\nLet’s keep making this chatbot even better together."
+        "Hey Aylin! 💫 It's great to see you here — the brilliant mind behind this chatbot!\n\n"
+        "Let’s keep making this chatbot even better together."
     ],
     "capabilities": [
-        "I’m here to guide, motivate, and support you with study tips, emotional encouragement, subject-specific advice, and more.\n\nThink of me as your academic partner, not just a chatbot!\n\nNote: I can’t fully replace a teacher — I’m here to uplift, advise, and chat with you as a friend."
-    ],
-    "farewell": [
-        "Goodbye for now 👋! Keep being amazing and come back whenever you need help, motivation, or just a kind word. 💚",
-        "See you later! 🌟 Stay curious, stay kind, and don’t forget to take breaks.",
-        "Bye! Remember, every small step counts. Keep pushing forward! 🚀"
+        "I’m here to guide, motivate, and support you with study tips, emotional encouragement, subject-specific advice, and more.\n\n"
+        "Think of me as your academic partner, not just a chatbot!\n\n"
+        "Note: I can’t fully replace a teacher — I’m here to uplift, advise, and chat with you as a friend."
     ],
     "study_tips": [
-        "📚 Study Smarter:\n\n1. Use active recall – quiz yourself often.\n2. Apply spaced repetition – review over time.\n3. Eliminate distractions – focus on one task at a time.\n4. Teach others – it's the best way to learn deeply.\n5. Use visuals like mind maps and charts.\n6. Rest intentionally to avoid burnout.\n\nYou've got this! 💪✨"
+        "📚 Study Smarter:\n"
+        "1. Use active recall – quiz yourself often.\n"
+        "2. Apply spaced repetition – review material over time.\n"
+        "3. Eliminate distractions – focus on one task at a time.\n"
+        "4. Teach others – explaining concepts helps retention.\n"
+        "5. Use visuals – mind maps and charts improve memory.\n"
+        "6. Rest intentionally – breaks prevent burnout.\n\n"
+        "You've got this! 💪✨"
     ],
     "emotional_support": [
-        "😔 Feeling overwhelmed? It's totally okay. Rest, breathe, and remember you're not alone.\n\nI'm here to support you. You’re doing better than you think. 🌈",
-        "Burnout hits hard, but breaks restore clarity.\n\nStep back, hydrate, stretch. You deserve care too. 💙",
-        "Anxiety and stress are natural, especially around exams.\n\nTry deep breathing and positive affirmations. You are capable! 🌟"
+        "😔 Feeling overwhelmed? It's totally okay.\n\n"
+        "Rest, breathe deeply, and remember you're not alone.\n\n"
+        "I'm here to support you. You’re doing better than you think. 🌈",
+        "Burnout hits hard, but breaks restore clarity.\n\n"
+        "Step back, hydrate, stretch.\n\n"
+        "You deserve care too. 💙"
     ],
     "motivational_quote": [
-        "“The future depends on what you do today.” – Mahatma Gandhi 🌱\n\nKeep going, your efforts matter!",
-        "“Success is not final, failure is not fatal: It is the courage to continue that counts.” – Winston Churchill 💪",
-        "“Don’t watch the clock; do what it does. Keep going.” – Sam Levenson ⏰"
+        "“The future depends on what you do today.” – Mahatma Gandhi 🌱\n\nKeep going, your efforts matter!"
     ],
     "subjects": {
-        "math": """📐 Math Advice & Inspiration:
-
-1. Understand the concept deeply, don’t just memorize formulas.
-2. Practice a variety of problems daily to build flexibility.
-3. Revisit and learn from mistakes to strengthen your skills.
-4. Study proofs to develop logical reasoning.
-5. Explain solutions aloud or teach a friend — it clarifies your thinking.
-
-Remember, math is not just numbers — it’s a language to describe the universe. Keep exploring and challenging yourself! ✨""",
-        "physics": """🧲 Physics Advice & Inspiration:
-
-1. Master the fundamental principles: Newton’s laws, energy, motion.
-2. Visualize problems using diagrams — it helps comprehension.
-3. Connect theory with real-world phenomena.
-4. Derive formulas yourself instead of memorizing blindly.
-5. Approach problems conceptually first, then numerically.
-
-Physics is the poetry of the universe in motion — stay curious and let your questions lead you! 🚀""",
-        "chemistry": """⚗️ Chemistry Tips & Inspiration:
-
-1. Memorize key reactions and periodic trends with flashcards.
-2. Balance equations carefully — it’s like solving puzzles.
-3. Use molecular models to visualize 3D structures.
-4. Practice reaction mechanisms and lab techniques.
-5. Link theory with experiments to deepen understanding.
-
-Chemistry reveals the building blocks of everything — enjoy uncovering the mysteries of matter! 🧪""",
-        "biology": """🧬 Biology Strategy & Inspiration:
-
-1. Draw and label diagrams to reinforce learning.
-2. Teach concepts to others — it solidifies knowledge.
-3. Use flashcards for vocabulary and cycles.
-4. Focus on understanding over rote memorization.
-5. Study in small, repeated sessions for long-term retention.
-
-Biology is the story of life itself — embrace the wonder of living systems! 🌿""",
-        "computer science": """💻 Computer Science Tips & Inspiration:
-
-1. Master algorithms and data structures through practice.
-2. Code daily, even small projects or exercises.
-3. Break complex problems into smaller, manageable parts.
-4. Read others’ code to learn new techniques.
-5. Document your code and learning process thoroughly.
-
-Programming is creativity in logic — build, debug, and innovate! 🧠💡""",
-        "language": """🗣️ Language Learning Tips & Inspiration:
-
-1. Practice daily listening, speaking, reading, and writing.
-2. Use flashcards and spaced repetition for vocabulary.
-3. Engage with native content — movies, music, books.
-4. Speak regularly, even if imperfect — fluency grows with use.
-5. Don’t fear mistakes; they’re stepping stones to mastery.
-
-Language opens new worlds — embrace the journey with passion! 🌍"""
+        "math": (
+            "📐 Math Advice & Inspiration:\n\n"
+            "1. Understand the concepts deeply, not just formulas.\n"
+            "2. Practice a wide variety of problems daily.\n"
+            "3. Revisit and rework problems you got wrong.\n"
+            "4. Study proofs to sharpen your logical thinking.\n"
+            "5. Explain your solutions aloud or to a friend.\n\n"
+            "Math is like a puzzle — every problem you solve builds your brilliance! Keep going! ✨"
+        ),
+        "physics": (
+            "🧲 Physics Advice & Inspiration:\n\n"
+            "1. Master fundamental laws like Newton’s laws, energy, and motion.\n"
+            "2. Draw diagrams to visualize problems.\n"
+            "3. Connect theory with real-world examples.\n"
+            "4. Derive formulas yourself rather than just memorizing.\n"
+            "5. Solve conceptually before crunching numbers.\n\n"
+            "Physics helps you see the world’s secrets — stay curious and explore! 🚀"
+        ),
+        "chemistry": (
+            "⚗️ Chemistry Tips & Inspiration:\n\n"
+            "1. Memorize key reactions and periodic table trends.\n"
+            "2. Balance chemical equations carefully.\n"
+            "3. Use molecular models to understand structure.\n"
+            "4. Practice reaction mechanisms and lab techniques.\n"
+            "5. Relate theoretical concepts to experiments.\n\n"
+            "Chemistry unveils the molecular dance of life — enjoy the discovery! 🧪"
+        ),
+        "biology": (
+            "🧬 Biology Strategy & Inspiration:\n\n"
+            "1. Draw and label biological diagrams.\n"
+            "2. Teach others to reinforce what you learn.\n"
+            "3. Use flashcards for vocabulary and cycles.\n"
+            "4. Aim for understanding, not just memorization.\n"
+            "5. Study in short, frequent sessions.\n\n"
+            "Biology reveals life’s amazing complexity — keep exploring! 🌿"
+        ),
+        "computer science": (
+            "💻 Computer Science Advice & Inspiration:\n\n"
+            "1. Master core algorithms and data structures.\n"
+            "2. Code daily, even small exercises help.\n"
+            "3. Break big problems into manageable parts.\n"
+            "4. Read and learn from others’ code.\n"
+            "5. Document your progress and code clearly.\n\n"
+            "Programming is creative problem-solving — keep building and learning! 🧠💡"
+        ),
+        "language": (
+            "🗣️ Language Learning Tips & Inspiration:\n\n"
+            "1. Practice speaking regularly, even with yourself.\n"
+            "2. Read diverse materials for vocabulary.\n"
+            "3. Listen to native speakers via podcasts or videos.\n"
+            "4. Use spaced repetition for vocabulary retention.\n"
+            "5. Don’t fear mistakes; they’re part of learning.\n\n"
+            "Languages open doors to new cultures — enjoy the journey! 🌍"
+        )
     },
-    "motivate_me": [
-        "You are capable of amazing things! 🌟 Remember, every challenge is an opportunity to grow.\n\nKeep pushing forward and believe in yourself. Your effort is building something great! 💪",
-        "Motivation is a muscle — the more you use it, the stronger it gets. Take a deep breath, focus, and let’s make today count!\n\nYou’ve got this! 🚀"
+    "farewell": [
+        "Goodbye for now 👋! Keep being amazing and come back whenever you need help, motivation, or just a kind word. 💚",
+        "See you later! 🌟 Stay curious, stay kind, and don’t forget to take breaks."
     ],
     "fallback": [
-        "Hmm 🤔 I didn’t catch that. Could you try rephrasing it? I’m here to help! 💬",
-        "That’s tricky! I’m still learning — but I’ll do my best if you can say it another way."
+        "Hmm 🤔 I didn’t catch that. Could you rephrase it a bit? I’m here to help! 💬",
+        "That’s a tricky one! I'm your learning ally, not a human expert — but I’ll try my best if you reword it a little."
     ]
 }
 
+# Add more keyword variations especially for creator recognition and other categories
 KEYWORDS = {
     "greetings": ["hello", "hi", "hey", "good morning", "good evening"],
     "introduction": ["who are you", "introduce", "your name", "introduce yourself"],
-    "creator_info": ["who is your creator", "tell me about your creator"],
-    "ack_creator": ["i am your creator", "i'm your creator", "i am aylin", "i'm aylin"],
-    "capabilities": ["what can you do", "how can you help"],
-    "farewell": ["goodbye", "bye", "see you", "see ya"],
+    "creator_info": ["who is your creator", "tell me about your creator", "creator"],
+    "ack_creator": [
+        "i am your creator",
+        "i'm your creator",
+        "im your creator",
+        "i am aylin",
+        "i'm aylin",
+        "im aylin",
+        "im ur creator",
+        "i'm ur creator",
+        "i am ur creator"
+    ],
+    "capabilities": ["what can you do", "how can you help", "capabilities"],
     "study_tips": ["study smarter", "how to study", "study plan", "study advice"],
     "emotional_support": ["tired", "sad", "burnout", "overwhelmed", "anxious"],
-    "motivational_quote": ["quote", "motivation", "inspire"],
-    "motivate_me": ["motivate me", "encourage me", "give me motivation"],
-    "subjects": ["math", "physics", "chemistry", "biology", "computer science", "cs", "language", "lang", "english", "language learning"]
+    "motivational_quote": ["quote", "motivation", "inspire", "motivate me", "motivation please"],
+    "farewell": ["goodbye", "bye", "see you", "see ya"],
+    "subjects": ["math", "physics", "chemistry", "biology", "computer science", "cs", "language", "lang"]
 }
 
 def clean_text(text):
@@ -211,31 +230,37 @@ def clean_text(text):
 
 def get_bot_reply(user_input):
     msg = clean_text(user_input)
-    responses = []
+    response = []
 
-    # Check for subject keywords first (to respond with advice + inspiration)
+    # Check for subjects first to provide inspiring answers for subjects
     for subj in RESPONSE_DATA["subjects"]:
         if subj in msg:
-            responses.append(RESPONSE_DATA["subjects"][subj])
-    
-    # Check other categories
-    for category, keywords in KEYWORDS.items():
+            response.append(RESPONSE_DATA["subjects"][subj])
+
+    # Then check other categories
+    for category, words in KEYWORDS.items():
         if category == "subjects":
-            continue  # Already handled above
-        if any(word in msg for word in keywords):
-            if category in RESPONSE_DATA:
-                # For motivate_me, pick randomly among all replies in that category
-                if category == "motivate_me":
-                    responses.append(random.choice(RESPONSE_DATA[category]))
-                else:
-                    # Pick a random reply from that category
-                    responses.append(random.choice(RESPONSE_DATA[category]))
+            continue  # already handled above
+        if any(word in msg for word in words):
+            if category == "motivational_quote":
+                # For "motivate me" or similar
+                response.append(random.choice(RESPONSE_DATA["motivational_quote"]))
+            elif category in RESPONSE_DATA:
+                response.append(random.choice(RESPONSE_DATA[category]))
 
-    if not responses:
-        responses.append(random.choice(RESPONSE_DATA["fallback"]))
+    # If user says "im your creator" or similar, prefer acknowledgment
+    if any(phrase in msg for phrase in KEYWORDS["ack_creator"]):
+        response = [random.choice(RESPONSE_DATA["ack_creator"])]
 
-    # Join multiple replies with two line breaks for paragraphs separation
-    return "\n\n".join(responses)
+    # If user asks about creator explicitly, prefer creator info
+    if any(phrase in msg for phrase in KEYWORDS["creator_info"]):
+        response = [random.choice(RESPONSE_DATA["creator_info"])]
+
+    if not response:
+        response.append(random.choice(RESPONSE_DATA["fallback"]))
+
+    return "\n\n".join(response)
+
 
 # Input form
 with st.form("chat_form", clear_on_submit=True):
@@ -272,7 +297,6 @@ for user_msg, bot_msg in pairs:
             container.markdown('<div class="bot">🤖 Typing...</div>', unsafe_allow_html=True)
             time.sleep(2)
             container.markdown(f'<div class="bot">{escape(st.session_state.last_bot_reply).replace("\n","<br>")}</div>', unsafe_allow_html=True)
-            # Update last bot reply content
             for i in range(len(st.session_state.messages) - 1, -1, -1):
                 if st.session_state.messages[i]["role"] == "bot" and st.session_state.messages[i]["content"] is None:
                     st.session_state.messages[i]["content"] = st.session_state.last_bot_reply

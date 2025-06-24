@@ -1,5 +1,6 @@
 import streamlit as st
 import random
+import difflib
 
 # --- CSS for chat bubbles ---
 st.markdown("""
@@ -35,86 +36,94 @@ st.title("AverlinMz – Study Chatbot")
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+# Helper: fuzzy‐contains
+def contains_keyword(msg, keywords, cutoff=0.75):
+    words = msg.split()
+    for kw in keywords:
+        if kw in msg:
+            return True
+        for w in words:
+            if difflib.SequenceMatcher(None, w, kw).ratio() >= cutoff:
+                return True
+    return False
+
 def generate_reply(user_msg):
     msg = user_msg.lower()
 
     # 1) Introduce / creator
-    if any(x in msg for x in ["introduce", "who are you", "your name", "about you", "creator", "who made you"]):
+    if contains_keyword(msg, ["introduce","who are you","your name","about you","creator","who made you"]):
         return ("Hello! I’m AverlinMz, your study chatbot 🌱. "
                 "My creator is Aylin Muzaffarli, born in 2011 in Azerbaijan. "
-                "She's into music, programming, robotics, AI, physics, and more. "
+                "She’s into music, programming, robotics, AI, physics, and more. "
                 "Questions? Reach her at muzaffaraylin@gmail.com. Good luck!")
     # 2) What can you do?
-    if "what can you do" in msg or "what you can do" in msg:
+    if contains_keyword(msg, ["what can you do","what you can do"]):
         return ("I can cheer you on, give study tips, emotional support, and subject-specific advice. "
                 "Just type your thoughts or questions anytime!")
     # 3) Affection
-    if any(x in msg for x in ["i love you", "i like you"]):
+    if contains_keyword(msg, ["i love you","i like you"]):
         return ("Aww, that means a lot! 💖 I’m here to help you study and stay motivated anytime.")
     # 4) Talk to me
-    if "talk to me" in msg:
+    if contains_keyword(msg, ["talk to me"]):
         return ("I’m all ears! 🎧 Tell me what’s on your mind or how your study went today.")
-    # 5) Subject-specific Olympiad advice
-    if "prep for biology" in msg or ("biology" in msg and "advice" in msg):
-        return ("Biology tips 🧬: Master the core concepts (cell, genetics, ecology), "
-                "practice diagram drawing, review past Olympiad problems, and make flashcards for terms.")
-    if "history" in msg and "advice" in msg:
-        return ("History tips 📜: Create timelines, practice writing structured essays, "
-                "use primary sources, and quiz yourself on key dates and events.")
-    if "geography" in msg and "advice" in msg:
-        return ("Geography tips 🌍: Learn to read maps, memorize key physical features, "
-                "understand case studies, and practice spatial reasoning questions.")
-    if ("language" in msg or "english" in msg or "russian" in msg) and "advice" in msg:
-        return ("Language learning tips 🗣️: Read varied texts, do listening practice, "
-                "learn grammar in context, and speak or write regularly to build fluency.")
-    # 6) Greetings (including common typos)
-    if any(greet in msg for greet in ["hey", "hi", "hello", "hrllo", "helo"]):
+    # 5) Subject advice
+    if contains_keyword(msg, ["biology"]) and contains_keyword(msg, ["advice","advise","prep"]):
+        return ("Biology 🧬: Master cell structure, genetics, ecology. Draw diagrams, use flashcards, "
+                "and practice past Olympiad problems.")
+    if contains_keyword(msg, ["history"]) and contains_keyword(msg, ["advice","advise","prep"]):
+        return ("History 📜: Build timelines, practice essays, use primary sources, and quiz key dates.")
+    if contains_keyword(msg, ["geography"]) and contains_keyword(msg, ["advice","advise","prep"]):
+        return ("Geography 🌍: Read maps, memorize landmarks, study case-studies, and practice spatial questions.")
+    if contains_keyword(msg, ["language","english","russian"]) and contains_keyword(msg, ["advice","advise","prep"]):
+        return ("Languages 🗣️: Read varied texts, do listening practice, learn grammar in context, "
+                "and speak or write regularly for fluency.")
+    # 6) Greetings
+    if contains_keyword(msg, ["hey","hi","hello","hrllo","helo","yo"]):
         return ("Hey there! What are you studying right now? "
                 "Starting is half the battle — you’ve already won that part!")
     # 7) Emotional support
-    if any(word in msg for word in ["tired", "exhausted"]):
+    if contains_keyword(msg, ["tired","exhausted"]):
         return ("Feeling tired? 😴 Take a short break—stretch, hydrate, breathe—and come back refreshed.")
-    if any(word in msg for word in ["sad", "down", "depressed", "crying"]):
+    if contains_keyword(msg, ["sad","down","depressed","crying"]):
         return ("I’m sorry you’re feeling that way 💙. It’s okay to feel sad; you’ve got support here.")
-    if any(word in msg for word in ["anxious", "worried", "panic", "nervous"]):
-        return ("Anxiety is tough. Try a breathing exercise or a 5-minute walk. One step at a time 🧘‍♀️.")
+    if contains_keyword(msg, ["anxious","worried","panic","nervous"]):
+        return ("Anxiety is tough. Pause, breathe, or take a 5-minute walk. One step at a time 🧘‍♀️.")
     # 8) Failure & doubt
-    if any(word in msg for word in ["failed", "mistake", "i can't", "gave up"]):
-        return ("Every mistake teaches you something. 📚 Failure is feedback, not final. Keep at it!")
+    if contains_keyword(msg, ["failed","mistake","i can't","gave up"]):
+        return ("Every mistake teaches you something. 📚 Failure is feedback, not final. Keep going!")
     # 9) Celebration & gratitude
-    if any(word in msg for word in ["i did it", "solved it", "success"]):
-        return ("🎉 Congratulations! Your hard work paid off—celebrate this win, you earned it!")
-    if any(word in msg for word in ["good job", "well done"]):
-        return ("Thank you, but the real credit is yours—you’re putting in the effort every day! 💪")
-    if any(word in msg for word in ["thank you", "thanks"]):
-        return ("You’re welcome! 😊 Keep shining, and don’t hesitate to drop by again.")
+    if contains_keyword(msg, ["i did it","solved it","success"]):
+        return ("🎉 Congratulations! Hard work paid off—celebrate this win, you earned it!")
+    if contains_keyword(msg, ["good job","well done"]):
+        return ("Thank you! But you’re the one doing the hard work. 💪")
+    if contains_keyword(msg, ["thank you","thanks"]):
+        return ("You’re welcome! 😊 Keep shining, and drop by any time.")
     # 10) Help & check-ins
-    if "help" in msg:
-        return ("Sure—I’m here for help or just to listen. What’s on your mind today?")
+    if contains_keyword(msg, ["help"]):
+        return ("Sure—I’m here to help or just listen. What’s up?")
     # 11) Farewells
-    if any(bye in msg for bye in ["goodbye", "bye", "see ya", "see you"]):
-        return ("See you later! 👋 Keep up the great work, and come back anytime you need a boost.")
-    # 12) General Olympiad advice
-    if "advice" in msg or ("prepare" in msg and "olympiad" in msg):
-        return ("Olympiad prep 💡: Study smart—focus on concepts, practice past problems, "
-                "review your mistakes, and balance rest with work. Quality > quantity!")
+    if contains_keyword(msg, ["goodbye","bye","see ya","see you"]):
+        return ("See you later! 👋 Keep up the great work, and come back whenever you need a boost.")
+    # 12) Olympiad advice
+    if contains_keyword(msg, ["olympiad","olympiads","olympiad prep"]) and contains_keyword(msg, ["prepare","advice","advise"]):
+        return ("Olympiad prep 💡: Study smart—focus on concepts, practice past problems, review mistakes, "
+                "and balance rest with work. Quality > quantity!")
     # 13) Productivity & planning
-    if any(word in msg for word in ["consistent", "discipline", "productive"]):
-        return ("Discipline > motivation. Set tiny daily goals, track progress, and forgive slip-ups.")
-    if any(word in msg for word in ["break", "rest", "sleep"]):
-        return ("Rest is part of the plan. 💤 A well-rested mind retains more and learns faster.")
-    if any(word in msg for word in ["smart", "study plan", "study smarter"]):
-        return ("Smart study means prioritizing high-value topics, active recall, and spaced repetition.")
+    if contains_keyword(msg, ["consistent","discipline","productive"]):
+        return ("Discipline > motivation. Set tiny daily goals, reflect weekly, and forgive slip-ups.")
+    if contains_keyword(msg, ["break","rest","sleep"]):
+        return ("Rest is part of the plan. 💤 A well-rested mind learns faster.")
+    if contains_keyword(msg, ["smart","study plan","study smarter"]):
+        return ("Smart study means active recall, spaced repetition, and prioritizing high-impact topics.")
     # 14) Fallback motivational
     replies = [
-        "Keep going 💪. Every small effort adds up to big results.",
+        "Keep going 💪. Every small effort adds up.",
         "Progress > perfection. You’re doing amazing!",
-        "Believe in your growth. Your journey is unfolding one step at a time.",
-        "You’ve got this 🌟. Just one more problem, one more paragraph—keep moving forward.",
+        "Believe in your growth. Your journey unfolds one step at a time.",
+        "You’ve got this 🌟. One more problem, one more fact—keep going.",
         "Struggle means you’re learning. Be patient with yourself."
     ]
     return random.choice(replies)
-
 
 # Chat input & display
 user_input = st.text_input("Write your message:")
@@ -122,6 +131,7 @@ if st.button("Send") and user_input.strip():
     st.session_state.messages.insert(0, {"bot": generate_reply(user_input)})
     st.session_state.messages.insert(0, {"user": user_input})
 
+# Render bubbles
 st.markdown('<div class="chat-container">', unsafe_allow_html=True)
 for msg in st.session_state.messages:
     if "user" in msg:

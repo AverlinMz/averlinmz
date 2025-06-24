@@ -73,6 +73,11 @@ RESPONSE_DATA = {
         "Awesome! What do you want to talk about today?",
         "Great! I'm here whenever you need me."
     ],
+    "user_feeling_bad":[
+        "I'm sorry to hear that. Remember, it's okay to feel this way sometimes. I'm here to support you. 💙",
+        "Take your time, rest if you need to. You're stronger than you think. 🌈",
+        "If you want to talk about it or need motivation, I'm here to listen."
+    ],
     "introduction":[
         "I’m AverlinMz, your supportive study companion built with 💡 by Aylin Muzaffarli. I help with study strategies, emotional support, and academic motivation!\n\nNote: I can't explain full theories like a teacher, but I’ll always be your friendly study coach."
     ],
@@ -249,6 +254,10 @@ KEYWORDS = {
         "i'm doing well", "i am doing well", "i'm good", "i am good", "i'm fine", "i am fine",
         "doing great", "feeling good", "feeling great", "all good", "i'm okay", "i am okay"
     ],
+    "user_feeling_bad":[
+        "tired", "sad", "burnout", "overwhelmed", "anxious", "stress", "not good", "bad day",
+        "exhausted", "frustrated", "upset", "worried", "depressed", "unhappy"
+    ],
     "introduction":["who are you","introduce","your name","introduce yourself"],
     "creator_info":["tell me about your creator","who is your creator","who created you"],
     "ack_creator":["i'm your creator","im your creator","i am your creator","i am aylin","im ur creator","i am ur creator"],
@@ -277,23 +286,37 @@ def get_bot_reply(user_input):
     msg = clean_text(user_input)
     response = []
 
-    # Check subjects category separately (more detailed keys)
+    # Handle feeling categories with priority:
+    # Respond to user feelings first (good or bad)
+    if any(word in msg for word in KEYWORDS["user_feeling_good"]):
+        return random.choice(RESPONSE_DATA["user_feeling_good"])
+
+    if any(word in msg for word in KEYWORDS["user_feeling_bad"]):
+        return random.choice(RESPONSE_DATA["user_feeling_bad"])
+
+    # How are you questions next
+    if any(word in msg for word in KEYWORDS["how_are_you"]):
+        return random.choice(RESPONSE_DATA["how_are_you"])
+
+    # Greetings
+    if any(word in msg for word in KEYWORDS["greetings"]):
+        return random.choice(RESPONSE_DATA["greetings"])
+
+    # Subjects category (detailed)
     if any(subj in msg for subj in KEYWORDS["subjects"]):
         for subj_key in RESPONSE_DATA["subjects"]:
             if subj_key in msg:
-                response.append(RESPONSE_DATA["subjects"][subj_key])
+                return RESPONSE_DATA["subjects"][subj_key]
 
-    # Check other categories
+    # Other categories
     for category, keywords in KEYWORDS.items():
-        if category == "subjects":
+        if category in ["user_feeling_good", "user_feeling_bad", "how_are_you", "greetings", "subjects"]:
             continue
         if any(word in msg for word in keywords) and category in RESPONSE_DATA:
-            response.append(random.choice(RESPONSE_DATA[category]))
+            return random.choice(RESPONSE_DATA[category])
 
     # Fallback if no match
-    if not response:
-        response.append(random.choice(RESPONSE_DATA["fallback"]))
-    return "\n\n".join(response)
+    return random.choice(RESPONSE_DATA["fallback"])
 
 # Chat input form
 with st.form("chat_form", clear_on_submit=True):

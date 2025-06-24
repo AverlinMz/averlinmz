@@ -1,33 +1,31 @@
 import streamlit as st
 import random
 
-# Project name
-st.title("AverlinMz - Your Study Companion")
+st.title("AverlinMz - Study Chatbot")
 
-# Motivational replies in English
-replies = [
-    "Great job! Keep up the amazing work.",
-    "Consistency is key, you're doing fantastic!",
-    "Every step counts.",
-    "Take breaks and keep your balance.",
-    "You are improving every day!",
-    "Your dedication is inspiring — keep pushing forward!",
-    "Small progress is still progress. Well done!",
-    "Believe in yourself; you're capable of amazing things.",
-    "Keep going! Success is just around the corner.",
-    "Remember, rest fuels productivity. Take care of yourself.",
-    "Your effort today builds your tomorrow.",
-    "Stay positive and focused — you've got this!"
-]
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-# Text input for study journal
-entry = st.text_area("Write about your study session", height=150)
+def generate_reply(user_msg):
+    replies = [
+        "Keep going, you're doing great!",
+        "Don't forget to take breaks!",
+        "Your hard work will pay off!",
+        "Every step counts!",
+        "Believe in yourself!"
+    ]
+    return random.choice(replies)
 
-# When user submits entry
-if st.button("Get Motivational Reply"):
-    if entry.strip() == "":
-        st.warning("Please write something about your study first!")
+user_input = st.text_input("Write your message:")
+
+if st.button("Send"):
+    if user_input.strip() != "":
+        st.session_state.messages.append({"user": user_input})
+        reply = generate_reply(user_input)
+        st.session_state.messages.append({"bot": reply})
+
+for msg in st.session_state.messages:
+    if "user" in msg:
+        st.markdown(f"**You:** {msg['user']}")
     else:
-        # Pick random reply from English replies
-        response = random.choice(replies)
-        st.success(response)
+        st.markdown(f"**Bot:** {msg['bot']}")

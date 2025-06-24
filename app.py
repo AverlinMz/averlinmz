@@ -57,18 +57,12 @@ new MutationObserver(scrollToBottom).observe(
 # Title
 st.markdown('<div class="title-container"><h1>AverlinMz – Study Chatbot</h1></div>', unsafe_allow_html=True)
 
-# RESPONSE_DATA including new friendly conversational category "how_are_you"
+# RESPONSE_DATA with new "user_feeling_good" category added
 RESPONSE_DATA = {
     "greetings":[
         "Hello there! 👋 How’s your day going? Ready to dive into learning today?",
         "Hey hey! 🌟 Hope you’re feeling inspired today. What’s on your mind?",
         "Hi friend! 😊 I’m here for you — whether you want to study, vent, or just chat."
-    ],
-    "how_are_you":[
-        "I'm doing well, thanks for asking! How about you?",
-        "Great! How are you doing today?",
-        "Good! Ready to chat and learn?",
-        "Let's talk! What’s on your mind?"
     ],
     "introduction":[
         "I’m AverlinMz, your supportive study companion built with 💡 by Aylin Muzaffarli. I help with study strategies, emotional support, and academic motivation!\n\nNote: I can't explain full theories like a teacher, but I’ll always be your friendly study coach."
@@ -233,6 +227,11 @@ RESPONSE_DATA = {
         "Did you know the human brain can hold about 7±2 pieces of information at once?",
         "Challenge: Try explaining today’s study topic in 3 sentences or less!"
     ],
+    "user_feeling_good":[
+        "Glad to hear that! Keep it up! 😊",
+        "Awesome! What do you want to talk about today?",
+        "Great! I'm here whenever you need me."
+    ],
     "fallback":[
         "Hmm 🤔 I didn’t catch that. Could you rephrase it a bit? I’m here to help! 💬",
         "That’s a tricky one! I'm your learning ally, not a human expert — but I’ll try my best if you reword it a little."
@@ -241,7 +240,6 @@ RESPONSE_DATA = {
 
 KEYWORDS = {
     "greetings":["hello","hi","hey","good morning","good evening"],
-    "how_are_you":["how are you","how r you","how're you","how do you do","how you doing"],
     "introduction":["who are you","introduce","your name","introduce yourself"],
     "creator_info":["tell me about your creator","who is your creator","who created you"],
     "ack_creator":["i'm your creator","im your creator","i am your creator","i am aylin","im ur creator","i am ur creator"],
@@ -260,7 +258,11 @@ KEYWORDS = {
     "learning_styles":["learning style","visual learner","auditory learner","kinesthetic learner"],
     "exam_prep":["exam preparation","prepare for exam","exam tips","test prep"],
     "reflection_questions":["reflect","reflection","think about"],
-    "fun_facts":["fun fact","challenge","quiz"]
+    "fun_facts":["fun fact","challenge","quiz"],
+    "user_feeling_good":[
+        "i'm doing well", "i am doing well", "i'm good", "i am good", "i'm fine", "i am fine",
+        "doing great", "feeling good", "feeling great", "all good", "i'm okay", "i am okay"
+    ]
 }
 
 def clean_text(text):

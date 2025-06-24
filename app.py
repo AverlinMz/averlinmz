@@ -17,12 +17,12 @@ if "last_bot_reply" not in st.session_state:
 # Page config
 st.set_page_config(
     page_title="AverlinMz Chatbot",
-    page_icon="💡",
+    page_icon="\ud83d\udca1",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# CSS styling (same as before, condensed here)
+# CSS styling
 st.markdown("""
 <style>
 .stApp { padding: 0 !important; margin: 0 !important; }
@@ -43,7 +43,7 @@ header, footer { display: none !important; }
 
 .chat-window {
     flex-grow: 1; overflow-y: auto; max-height: 60vh;
-    padding: 15px; display: flex; flex-direction: column;
+    padding: 15px; display: flex; flex-direction: column-reverse;
     gap: 15px;
 }
 
@@ -72,7 +72,7 @@ header, footer { display: none !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# Auto-scroll JS (scrolls to bottom after new messages)
+# Auto-scroll JS
 st.markdown("""
 <script>
 function scrollToBottom() {
@@ -87,141 +87,45 @@ new MutationObserver(scrollToBottom).observe(
 </script>
 """, unsafe_allow_html=True)
 
+# Title
+st.markdown('<div class="title-container"><h1>AverlinMz – Study Chatbot</h1></div>', unsafe_allow_html=True)
 
-# Rich, warm replies
+# Response generation
 RESPONSES = {
-    "introduction": {
-        "keywords": ["introduce","who are you","your name","about you","creator","who made you"],
-        "reply": (
-            "🌟 Hey! I'm AverlinMz, your personal study chatbot, here to support you through your learning journey. "
-            "I was created by the brilliant Aylin Muzaffarli, who’s passionate about music, programming, robotics, AI, and physics! "
-            "Whether you want study tips, motivation, or just a friendly chat, I’m here 24/7 for you. Let's make learning fun and effective together! 🎉📚"
-        )
-    },
-    "capabilities": {
-        "keywords": ["what can you do","what you can do","what can u do","capabilities","help"],
-        "reply": (
-            "🤖 Glad you asked! Here's what I can do for you:\n\n"
-            "✨ Provide detailed, subject-specific study advice.\n"
-            "💪 Motivate and encourage you when the going gets tough.\n"
-            "❤️ Offer emotional support when you’re feeling stressed, tired, or overwhelmed.\n"
-            "🎯 Help you plan and organize your study sessions for maximum efficiency.\n"
-            "💡 Answer questions honestly and challenge you to think deeper.\n\n"
-            "Think of me as your study buddy and personal cheerleader, always ready to help! 🚀"
-        )
-    },
-    "olympiad_tips": {
-        "keywords": ["olymp","olympuad","tip","tips","advise","advice"],
-        "reply": (
-            "🏅 Preparing for Olympiads? Here’s how you can shine bright:\n\n"
-            "1️⃣ Focus on truly understanding core concepts instead of rote memorization.\n"
-            "2️⃣ Solve as many past Olympiad problems as you can — it's the best practice!\n"
-            "3️⃣ Analyze your mistakes deeply and learn from them — this turns failures into successes.\n"
-            "4️⃣ Balance your study with rest and hobbies to keep your mind fresh and creative.\n"
-            "5️⃣ Stay curious and enjoy the challenge — your passion will carry you far! 🌈\n\n"
-            "Remember, Olympiads are about growth and learning, not just winning. Keep believing in yourself! 💫"
-        )
+    "study_smart": {
+        "keywords": ["study smart", "study smarter", "study tips", "study plan"],
+        "reply": "Hey friend! 🌟 Here are some powerful tips to study smarter, not harder:
+
+1. **Active recall** – quiz yourself instead of just rereading.
+2. **Spaced repetition** – review material over increasing intervals.
+3. **Pomodoro technique** – work 25 mins, break 5, repeat! 🍅
+4. **Teach what you learn** – if you can explain it, you’ve mastered it.
+5. **Plan weekly goals** – focus on outcomes, not just time spent.
+
+And don’t forget: rest is part of the process 💤. Your brain loves clarity, not clutter. You’ve got this! 🚀"
     },
     "tired": {
-        "keywords": ["tired","burned out","exhausted","fatigue"],
-        "reply": (
-            "😴 Feeling tired is completely natural when you’re pushing hard! Here’s some advice:\n\n"
-            "🧘‍♀️ Take a short break — stretch, breathe deeply, or go for a quick walk.\n"
-            "💧 Hydrate yourself well; sometimes fatigue is a sign your body needs water.\n"
-            "💤 Don’t underestimate power naps — even 15-20 minutes can recharge your brain.\n"
-            "🌿 Remember, rest is an essential part of effective learning, not wasted time.\n\n"
-            "Your body and mind will thank you, and you’ll come back stronger and sharper! Keep going, you’re doing amazing! 🌟"
-        )
+        "keywords": ["tired", "burned out", "exhausted", "no energy"],
+        "reply": "Oh no 😞 You sound really drained. That’s totally okay – you’re human! 🧡
+
+Here’s what you can try:
+- ✋ Step away from the screen. Even 10 minutes helps.
+- 💧 Hydrate and grab a healthy snack.
+- 🌬️ Breathe in deeply 5 times. Slowly. Really slowly.
+- 💤 Nap or stretch your legs – your body needs care.
+
+You’re doing more than enough. Let go of pressure. Come back stronger 💪 I believe in you!"
     },
-    "sad": {
-        "keywords": ["sad","down","depressed","crying"],
-        "reply": (
-            "I’m really sorry you’re feeling this way 💙. Remember, it’s okay to have tough days.\n"
-            "Your feelings are valid, and you’re not alone — I’m here to listen anytime you want to share.\n"
-            "Sometimes, a little rest, talking to a friend, or a calm walk can help lighten the load.\n"
-            "You’re stronger than you think, and this moment will pass. 🌈"
-        )
-    },
-    "anxious": {
-        "keywords": ["anxious","worried","panic","nervous"],
-        "reply": (
-            "Anxiety can be really tough, but you’re doing your best and that matters 🧡.\n"
-            "Try to pause for a moment — take slow, deep breaths or step outside for some fresh air 🌿.\n"
-            "Breaking tasks into small steps can make things feel more manageable.\n"
-            "Remember, I believe in you and I’m here for every step of your journey! 💪"
-        )
-    },
-    "failure": {
-        "keywords": ["failed","mistake","i can't","gave up", "lost"],
-        "reply": (
-            "Mistakes and setbacks are part of the learning adventure! 📚\n"
-            "Every mistake teaches you something new and brings you closer to your goals.\n"
-            "Be kind to yourself and remember, persistence beats perfection.\n"
-            "You have the strength to rise again and improve — keep going, I believe in you! 🌟"
-        )
-    },
-    "success": {
-        "keywords": ["i did it","solved it","success","finished","completed"],
-        "reply": (
-            "🎉 Congratulations! That’s fantastic news.\n"
-            "Celebrate this achievement — every win, big or small, deserves recognition.\n"
-            "Keep this momentum going and remember, I’m always here cheering you on! 🚀"
-        )
-    },
-    "thanks": {
-        "keywords": ["thank you","thanks","thx","ty"],
-        "reply": (
-            "You’re very welcome! 😊 I’m proud of your efforts.\n"
-            "Feel free to come back anytime you need advice, motivation, or just a chat. Keep up the amazing work! 🌟"
-        )
-    },
-    "farewell": {
-        "keywords": ["goodbye","bye","see ya","see you","later"],
-        "reply": (
-            "See you later! 👋 Keep up the great work and don’t hesitate to come back when you need a boost.\n"
-            "Wishing you all the best on your study journey! ✨"
-        )
-    },
-    "productivity": {
-        "keywords": ["consistent","discipline","productive","motivation"],
-        "reply": (
-            "Discipline truly beats motivation — here’s how to build it:\n\n"
-            "✅ Set small, achievable goals each day to keep momentum.\n"
-            "✅ Track your progress and celebrate even minor wins.\n"
-            "✅ Be patient and forgive yourself when things don’t go perfectly.\n"
-            "Consistency over time leads to amazing results. You’ve got this! 💪🔥"
-        )
-    },
-    "rest": {
-        "keywords": ["break","rest","sleep","relax"],
-        "reply": (
-            "Rest is a vital part of learning and growth! 💤\n"
-            "Your brain processes and consolidates knowledge best when it’s well rested.\n"
-            "Make sure to get quality sleep, take short breaks during study, and balance work with fun.\n"
-            "Remember: rest fuels your focus and creativity. Treat yourself kindly! 🌿"
-        )
-    },
-    "study_smart": {
-        "keywords": ["study smart", "study smarter", "study advice", "study tips"],
-        "reply": (
-            "📘 Let's dive into some powerful ways to study smarter, not harder:\n\n"
-            "1️⃣ **Active recall**: test yourself often rather than passively rereading. Use flashcards or apps like Anki!\n"
-            "2️⃣ **Spaced repetition**: revisit topics multiple times spaced over days or weeks to lock them into long-term memory.\n"
-            "3️⃣ **Prioritize key topics**: focus first on foundational concepts before tackling complex details.\n"
-            "4️⃣ **Mix subjects**: switch between different topics to keep your brain active and improve retention.\n"
-            "5️⃣ **Take quality breaks**: short breaks rejuvenate your mind and improve focus when you return.\n"
-            "6️⃣ **Set micro-goals**: break your study into small, achievable tasks to stay motivated and track progress.\n\n"
-            "Keep consistency, not cramming, as your goal. You’re capable of amazing things — keep pushing forward! 💪🚀"
-        )
+    "default": {
+        "keywords": [],
+        "reply": "Hmm 🤔 I’m still learning. Could you rephrase that a bit? You're doing awesome anyway! 🌈"
     }
 }
 
 FALLBACK_REPLIES = [
-    "Hmm 🤔 I’m still learning. Could you please rephrase that? You're doing amazing! 🌟",
-    "Keep going! Every bit of progress counts! 💪",
-    "Remember, growth is a journey, not a race. One step at a time! 🌱",
-    "You've got this! I'm cheering for you! 🎉",
-    "Struggles mean you're pushing your limits. Stay patient and strong! 💖"
+    "You're making real progress – don’t stop now! 💥",
+    "Every step matters, even the tiny ones 🐾 Keep going!",
+    "You are capable of amazing things. Believe it 💫"
 ]
 
 def contains_keyword(msg, keywords, cutoff=0.75):
@@ -241,17 +145,6 @@ def generate_reply(user_msg):
             return data["reply"]
     return random.choice(FALLBACK_REPLIES)
 
-
-# Simulate bot typing effect
-def bot_typing_simulation(reply_text, container):
-    container.markdown('<div class="bot">🤖 Typing...</div>', unsafe_allow_html=True)
-    time.sleep(2)  # simulate delay
-    container.markdown(f'<div class="bot">{escape(reply_text).replace("\\n","<br>")}</div>', unsafe_allow_html=True)
-
-
-# Title
-st.markdown('<div class="title-container"><h1>AverlinMz – Study Chatbot</h1></div>', unsafe_allow_html=True)
-
 # Input form
 with st.form("chat_form", clear_on_submit=True):
     user_input = st.text_input(
@@ -262,47 +155,39 @@ with st.form("chat_form", clear_on_submit=True):
     )
     submit = st.form_submit_button("Send")
     if submit and user_input.strip():
-        # Append user message
         st.session_state.messages.append({"role": "user", "content": user_input})
-
-        # Generate bot reply
         reply = generate_reply(user_input)
         st.session_state.last_bot_reply = reply
-
-        # Append a placeholder for bot message (None for now)
         st.session_state.messages.append({"role": "bot", "content": None})
-
-        # Mark typing state true
         st.session_state.typing = True
 
-# Render chat window
+# Render chat window (displaying full message history)
 st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
 
-# Show only last 6 messages (3 pairs), most recent at top (so reverse slice)
-msgs_to_show = st.session_state.messages[-6:]
-msgs_to_show.reverse()  # newest messages first
+messages = st.session_state.messages[:]
+messages.reverse()
 
-for msg in msgs_to_show:
-    content = msg["content"]
-    role = msg["role"]
-    cls = "user" if role == "user" else "bot"
+for i in range(0, len(messages), 2):
+    if i + 1 < len(messages):
+        user_msg = messages[i + 1]
+        bot_msg = messages[i]
 
-    if content is None and role == "bot":
-        # Show typing animation container for bot message
-        bot_container = st.empty()
-        if st.session_state.typing:
-            bot_typing_simulation(st.session_state.last_bot_reply, bot_container)
-            # Replace placeholder content with actual reply in session_state
-            # Update session_state messages to keep bot message content updated:
-            for i in range(len(st.session_state.messages) - 1, -1, -1):
-                if st.session_state.messages[i]["role"] == "bot" and st.session_state.messages[i]["content"] is None:
-                    st.session_state.messages[i]["content"] = st.session_state.last_bot_reply
-                    break
-            st.session_state.typing = False
+        st.markdown(f'<div class="user">{escape(user_msg["content"]).replace("\n","<br>")}</div>', unsafe_allow_html=True)
+
+        if bot_msg["content"] is None:
+            container = st.empty()
+            if st.session_state.typing:
+                container.markdown('<div class="bot">🤖 Typing...</div>', unsafe_allow_html=True)
+                time.sleep(2)
+                container.markdown(f'<div class="bot">{escape(st.session_state.last_bot_reply).replace("\n","<br>")}</div>', unsafe_allow_html=True)
+                for j in range(len(st.session_state.messages) - 1, -1, -1):
+                    if st.session_state.messages[j]["role"] == "bot" and st.session_state.messages[j]["content"] is None:
+                        st.session_state.messages[j]["content"] = st.session_state.last_bot_reply
+                        break
+                st.session_state.typing = False
+            else:
+                container.markdown(f'<div class="bot">{escape(st.session_state.last_bot_reply).replace("\n","<br>")}</div>', unsafe_allow_html=True)
         else:
-            bot_container.markdown(f'<div class="{cls}">{escape(st.session_state.last_bot_reply).replace("\\n","<br>")}</div>', unsafe_allow_html=True)
-    else:
-        # Normal rendering of messages
-        st.markdown(f'<div class="{cls}">{escape(content).replace("\\n","<br>")}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="bot">{escape(bot_msg["content"]).replace("\n","<br>")}</div>', unsafe_allow_html=True)
 
 st.markdown('</div></div>', unsafe_allow_html=True)

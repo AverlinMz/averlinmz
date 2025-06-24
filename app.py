@@ -1,193 +1,189 @@
 import streamlit as st
 import random
+import difflib
 
-st.set_page_config(page_title="AverlinMz - Study Chatbot", layout="wide")
-
-# CSS styles for message bubbles and full screen background
-st.markdown(
-    """
-    <style>
-    body, html, #root, .main {
-        height: 100%;
-        margin: 0;
-        background-color: #f5f7fa;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    .chat-container {
-        max-width: 700px;
-        margin: auto;
-        padding: 1rem;
-        height: 90vh;
-        display: flex;
-        flex-direction: column;
-        background: white;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        border-radius: 10px;
-    }
-    .messages {
-        flex-grow: 1;
-        overflow-y: auto;
-        padding-right: 10px;
-        margin-bottom: 1rem;
-    }
-    .message {
-        padding: 10px 15px;
-        margin: 8px 0;
-        max-width: 75%;
-        border-radius: 20px;
-        line-height: 1.4;
-    }
-    .user-message {
-        background-color: #1a73e8;
-        color: white;
-        align-self: flex-end;
-        border-bottom-right-radius: 5px;
-    }
-    .bot-message {
-        background-color: #e4e6eb;
-        color: #202124;
-        align-self: flex-start;
-        border-bottom-left-radius: 5px;
-    }
-    .input-area {
-        display: flex;
-        gap: 10px;
-    }
-    .input-area input[type="text"] {
-        flex-grow: 1;
-        padding: 10px 15px;
-        border-radius: 25px;
-        border: 1px solid #ccc;
-        font-size: 16px;
-        outline: none;
-    }
-    .input-area button {
-        background-color: #1a73e8;
-        border: none;
-        border-radius: 25px;
-        color: white;
-        font-weight: bold;
-        padding: 0 20px;
-        cursor: pointer;
-        font-size: 16px;
-        transition: background-color 0.3s ease;
-    }
-    .input-area button:hover {
-        background-color: #155ab6;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
+# — Page config for full-width layout —
+st.set_page_config(
+    page_title="AverlinMz Chatbot",
+    page_icon="💡",
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
-st.title("AverlinMz - Study Chatbot")
+# — CSS for full-screen chat & bubbles —
+st.markdown("""
+<style>
+body, .css-18e3th9 {  /* streamlit main container */
+    padding: 0;
+    margin: 0;
+    background-color: #F7F9FA;
+}
+header, footer { display: none; }  /* hide header/footer */
+#MainMenu, .css-1v3fvcr { visibility: hidden; }  /* hide menu bar */
 
-# Initialize conversation history
+.chat-window {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 60px;  /* leave space for input */
+    overflow-y: auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+.chat-container {
+    display: flex;
+    flex-direction: column-reverse;  /* newest first */
+    gap: 12px;
+    max-width: 800px;
+    margin: auto;
+}
+.user {
+    align-self: flex-end;
+    background-color: #D1F2EB;
+    color: #0B3D2E;
+    padding: 10px 14px;
+    border-radius: 16px 16px 4px 16px;
+    font-family: 'Poppins', sans-serif;
+    max-width: 80%;
+    word-wrap: break-word;
+}
+.bot {
+    align-self: flex-start;
+    background-color: #EFEFEF;
+    color: #333333;
+    padding: 10px 14px;
+    border-radius: 16px 16px 16px 4px;
+    font-family: 'Poppins', sans-serif;
+    max-width: 80%;
+    word-wrap: break-word;
+}
+.input-area {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    padding: 10px 20px;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+}
+input, button {
+    font-family: 'Poppins', sans-serif;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# — Title (centered via layout), color changed to black —
+st.markdown("<h1 style='color: black; text-align: center; font-family: Poppins;'>AverlinMz – Study Chatbot</h1>", unsafe_allow_html=True)
+
+# Initialize history
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+# Fuzzy keyword helper
+def contains_keyword(msg, keywords, cutoff=0.75):
+    words = msg.split()
+    for kw in keywords:
+        if kw in msg:
+            return True
+        for w in words:
+            if difflib.SequenceMatcher(None, w, kw).ratio() >= cutoff:
+                return True
+    return False
+
+# Reply logic
 def generate_reply(user_msg):
     msg = user_msg.lower()
+    # Introduce
+    if contains_keyword(msg, ["introduce","who are you","your name","about you","creator","who made you"]):
+        return ("Hello! I’m AverlinMz, your study chatbot 🌱. "
+                "My creator is Aylin Muzaffarli (b.2011, Azerbaijan). "
+                "She loves music, programming, robotics, AI, physics, and more. "
+                "Reach her at muzaffaraylin@gmail.com. Good luck!")
+    # What can u/you do
+    if contains_keyword(msg, ["what can you do","what you can do","what can u do"]):
+        return ("I can cheer you on, share study tips (general or subject-specific!), "
+                "and offer emotional support. Chat anytime you need a boost!")
+    # Olympiad tips
+    if contains_keyword(msg, ["olymp","olympuad"]) and contains_keyword(msg, ["tip","tips","advise","advice"]):
+        return ("Olympiad tips 💡: Study smart—focus on core concepts, practice past problems, "
+                "review mistakes, and balance work with rest. Quality > quantity!")
+    # Subject advice
+    if contains_keyword(msg, ["biology"]) and contains_keyword(msg, ["tip","tips","advise","advice"]):
+        return ("Biology 🧬: Master cell structure, genetics, and ecology. Draw diagrams, "
+                "use flashcards, and practice Olympiad questions.")
+    if contains_keyword(msg, ["history"]) and contains_keyword(msg, ["tip","tips","advise","advice"]):
+        return ("History 📜: Build timelines, practice structured essays, analyze sources, "
+                "and quiz yourself on key dates.")
+    if contains_keyword(msg, ["geography"]) and contains_keyword(msg, ["tip","tips","advise","advice"]):
+        return ("Geography 🌍: Interpret maps, memorize landforms, study case-studies, "
+                "and practice spatial reasoning.")
+    if contains_keyword(msg, ["language","english","russian"]) and contains_keyword(msg, ["tip","tips","advise","advice"]):
+        return ("Languages 🗣️: Read varied texts, listen actively, learn grammar contextually, "
+                "and speak/write regularly to build fluency.")
+    # Affection
+    if contains_keyword(msg, ["i love you","i like you"]):
+        return ("Aww, that warms my circuits! 💖 I’m here to support you anytime.")
+    # Talk to me
+    if contains_keyword(msg, ["talk to me"]):
+        return ("I’m listening! 🎧 Tell me how your study is going or what’s on your mind.")
+    # Greetings
+    if contains_keyword(msg, ["hey","hi","hello","hrllo","helo"]):
+        return ("Hey there! What are you studying right now? Starting is half the battle—you’ve done it!")
+    # Emotional
+    if contains_keyword(msg, ["tired","exhausted"]):
+        return ("Feeling tired? 😴 Pause for a break—stretch, hydrate, breathe—and come back refreshed.")
+    if contains_keyword(msg, ["sad","down","depressed","crying"]):
+        return ("I’m sorry you’re feeling down 💙. Your feelings are valid, and I’m here with you.")
+    if contains_keyword(msg, ["anxious","worried","panic","nervous"]):
+        return ("Anxiety’s tough. Pause, breathe deeply, or take a 5-minute walk. One step at a time 🧘.")
+    # Failure/doubt
+    if contains_keyword(msg, ["failed","mistake","i can't","gave up"]):
+        return ("Mistakes are lessons. 📚 They guide you forward—keep going!")
+    # Celebration
+    if contains_keyword(msg, ["i did it","solved it","success"]):
+        return ("🎉 You did it! Celebrate this win—you earned it!")
+    if contains_keyword(msg, ["good job","well done"]):
+        return ("Thanks—but you’re the hero here. You put in the work!")
+    if contains_keyword(msg, ["thank you","thanks"]):
+        return ("You’re welcome! 😊 I’m proud of you. Come back any time.")
+    # Help
+    if contains_keyword(msg, ["help"]):
+        return ("Of course—I’m here to assist or just listen. What’s up?")
+    # Farewell
+    if contains_keyword(msg, ["goodbye","bye","see ya","see you"]):
+        return ("See you later 👋. Keep up the great work and return when you need a boost.")
+    # Productivity
+    if contains_keyword(msg, ["consistent","discipline","productive"]):
+        return ("Discipline > motivation. Set micro-goals, track progress, forgive slip-ups.")
+    if contains_keyword(msg, ["break","rest","sleep"]):
+        return ("Rest is part of the process. 💤 A fresh mind learns faster.")
+    if contains_keyword(msg, ["smart","study plan","study smarter"]):
+        return ("Study smart: active recall, spaced repetition, and high-impact topics.")
+    # Fallback
+    replies = [
+        "Keep going 💪. Every small effort counts.",
+        "Progress > perfection—you’re doing great!",
+        "Believe in your growth. One step at a time.",
+        "You’ve got this 🌟. Keep moving forward.",
+        "Struggle means growth. Be patient with yourself."
+    ]
+    return random.choice(replies)
 
-    if any(greet in msg for greet in ["hey", "hi", "hello", "yo", "hrllo"]):
-        return ("Hey! I'm here for you. What are you studying today? "
-                "Remember, taking the first step is the hardest — but you've already done it!")
+# — Chat input form (enter to send) —
+with st.form(key="chat_form", clear_on_submit=True):
+    user_input = st.text_input("", placeholder="Write your message…")
+    send = st.form_submit_button("Send")
+    if send and user_input.strip():
+        st.session_state.messages.insert(0, {"bot": generate_reply(user_input)})
+        st.session_state.messages.insert(0, {"user": user_input})
 
-    elif any(x in msg for x in ["introduce", "who are you", "your name", "about you", "creator", "who made you"]):
-        return ("Hello. My name is AverlinMz, your study chatbot. "
-                "My creator is Aylin Muzaffarli, born in 2011 in Azerbaijan. "
-                "She's passionate about music, programming, robotics, AI, physics, top universities, and more. "
-                "If you have questions, you can write to: muzaffaraylin@gmail.com. Good luck!")
-
-    elif "tired" in msg or "exhausted" in msg:
-        return ("It's okay to feel tired. Rest is part of the process. "
-                "Take a short break, hydrate, and come back stronger!")
-
-    elif "sad" in msg or "down" in msg or "depressed" in msg:
-        return ("I'm sorry you're feeling that way. Just know you're not alone. "
-                "Take it one breath at a time. You're doing better than you think.")
-
-    elif "overwhelmed" in msg or "burned out" in msg or "can't do it" in msg:
-        return ("You’re trying your best, and that’s enough. Take a deep breath. "
-                "Simplify your to-do list and focus on just one small win today.")
-
-    elif "i did it" in msg or "solved it" in msg or "success" in msg:
-        return ("Yesss! I'm proud of you! Hard work really does pay off. "
-                "Keep up the great momentum!")
-
-    elif "good job" in msg or "well done" in msg:
-        return ("Thank you! But remember — it's you who's putting in the real work. "
-                "I'm just here to cheer you on!")
-
-    elif "help" in msg:
-        return ("Of course, I'm here to help. Ask me anything or just type how you're feeling.")
-
-    elif "creator" in msg or "ok, i m ur creator" in msg:
-        return ("Aylin! You're the mind behind this. I'm honored to exist because of you. "
-                "Keep building cool things — the world needs your ideas!")
-
-    elif any(bye in msg for bye in ["goodbye", "bye", "see ya", "see you"]):
-        return ("See you soon! Keep doing your best, take care, and come back when you need a boost!")
-
-    elif "advise" in msg or "advice" in msg or ("prepare" in msg and "olympiad" in msg):
-        return ("Great question! Here's some Olympiad advice: "
-                "Study smart, not just hard. Quality matters more than quantity. "
-                "Quality of your work = focus × time. Rest, reflect, and focus on deep understanding. You've got this!")
-
-    elif any(subj in msg for subj in ["biology", "history", "geography", "language", "languages"]):
-        return ("For subjects like biology, history, geography, and languages, focus on understanding concepts deeply, "
-                "use active recall techniques like flashcards, and practice past problems and questions regularly. "
-                "Try to relate topics to real-world examples — it helps with memory and motivation!")
-
-    elif "love you" in msg or "like you" in msg:
-        return ("That's sweet! I'm here to support you anytime. Let's keep working towards your goals!")
-
-    elif "talk to me" in msg:
-        return ("Sure! I'm all ears. What's on your mind?")
-
-    elif "what can you do" in msg or "what do you do" in msg:
-        return ("I'm your study companion chatbot! I provide motivational support, "
-                "give study advice, help you stay focused, and cheer you on during your learning journey!")
-
-    else:
-        replies = [
-            ("Keep going, you're doing great! Every effort you put in shapes your future. "
-             "Consistency is the key to success."),
-            ("Don't forget to take breaks! Balance is important for long-term productivity. "
-             "Stay healthy and motivated."),
-            ("Your hard work will pay off! Challenges make you stronger, so keep pushing forward."),
-            ("Every step counts! Progress is progress, no matter how small. You're on the right track."),
-            ("Believe in yourself! You are capable of amazing things. Never doubt your potential.")
-        ]
-        return random.choice(replies)
-
-# Show chat container
+# — Render chat window & bubbles —
+st.markdown('<div class="chat-window">', unsafe_allow_html=True)
 st.markdown('<div class="chat-container">', unsafe_allow_html=True)
-
-# Display conversation history from top to bottom (newest on top)
-st.markdown('<div class="messages">', unsafe_allow_html=True)
-for msg in reversed(st.session_state.messages):
+for msg in st.session_state.messages:
     if "user" in msg:
-        st.markdown(f'<div class="message user-message">You: {msg["user"]}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="user">{msg["user"]}</div>', unsafe_allow_html=True)
     else:
-        st.markdown(f'<div class="message bot-message">Bot: {msg["bot"]}</div>', unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)
-
-# Input area with send button
-col1, col2 = st.columns([8,1])
-with col1:
-    user_input = st.text_input("Write your message here and press Enter or Send:", key="input")
-with col2:
-    send = st.button("Send")
-
-# Send message on button click or pressing Enter
-if send or (user_input and st.session_state.get("last_input") != user_input):
-    if user_input.strip() != "":
-        st.session_state.messages.append({"user": user_input})
-        reply = generate_reply(user_input)
-        st.session_state.messages.append({"bot": reply})
-        st.session_state["last_input"] = user_input
-        st.session_state["input"] = ""  # clear input box
-        st.experimental_rerun()
-
-st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="bot">{msg["bot"]}</div>', unsafe_allow_html=True)
+st.markdown('</div></div>', unsafe_allow_html=True)

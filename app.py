@@ -13,12 +13,16 @@ def generate_reply(user_msg):
     if any(greet in msg for greet in ["hey", "hi", "hello", "yo"]):
         return ("Hey! I'm here for you. What are you studying today? "
                 "Taking the first step is always the hardest — but you've already done it!")
-
+    
     elif any(x in msg for x in ["introduce", "who are you", "your name", "about you", "creator", "who made you"]):
         return ("Hello. My name is AverlinMz, your study chatbot 🌱. "
                 "My creator is Aylin Muzaffarli, born in 2011 in Azerbaijan. "
                 "She's passionate about music, programming, robotics, AI, physics, top universities, and more. "
                 "If you have questions, write to: muzaffaraylin@gmail.com 💌. Good luck on your journey!")
+
+    elif "what can you do" in msg or "what you can do" in msg:
+        return ("I’m here to support your studying journey 💡. I can give motivation, advice, and emotional support. "
+                "Just chat with me when you need a boost or want to talk about your progress or doubts!")
 
     elif "tired" in msg or "exhausted" in msg:
         return ("It's completely okay to feel tired 😴. Rest is not a weakness — it's a tool. "
@@ -56,7 +60,7 @@ def generate_reply(user_msg):
         return ("Of course, I’m here to help 🤝. Tell me what you’re struggling with, or how you’re feeling.")
 
     elif any(bye in msg for bye in ["goodbye", "bye", "see ya", "see you"]):
-        return ("Goodbye for now 👋. Keep your head up and your heart strong. Come back anytime you need support!")
+        return ("See you soon 👋. Keep doing your best, take care, and come back when you need a boost!")
 
     elif "advise" in msg or "advice" in msg or ("prepare" in msg and "olympiad" in msg):
         return ("Here’s Olympiad advice 💡: Study smart — not just hard. Focus on concepts, not just problems. "
@@ -90,11 +94,11 @@ user_input = st.text_input("Write your message:")
 
 if st.button("Send"):
     if user_input.strip() != "":
-        st.session_state.messages.append({"user": user_input})
+        st.session_state.messages.insert(0, {"user": user_input})
         reply = generate_reply(user_input)
-        st.session_state.messages.append({"bot": reply})
+        st.session_state.messages.insert(0, {"bot": reply})
 
-# Display conversation history
+# Display conversation history (latest on top)
 for msg in st.session_state.messages:
     if "user" in msg:
         st.markdown(f"**You:** {msg['user']}")

@@ -3,7 +3,7 @@ import random
 import string
 from html import escape
 
-# Initialize session state variables
+# Initialize session state
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
@@ -15,7 +15,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# CSS styling (unchanged)
+# CSS styling
 st.markdown("""
 <style>
 .stApp { padding: 0 !important; margin: 0 !important; }
@@ -39,7 +39,7 @@ header, footer { display: none !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# Auto-scroll JS (unchanged)
+# Auto-scroll JS
 st.markdown("""
 <script>
 function scrollToBottom() {
@@ -57,12 +57,18 @@ new MutationObserver(scrollToBottom).observe(
 # Title
 st.markdown('<div class="title-container"><h1>AverlinMz – Study Chatbot</h1></div>', unsafe_allow_html=True)
 
-# --- RESPONSE_DATA and KEYWORDS (exactly as before) ---
+# RESPONSE_DATA including new friendly conversational category "how_are_you"
 RESPONSE_DATA = {
     "greetings":[
         "Hello there! 👋 How’s your day going? Ready to dive into learning today?",
         "Hey hey! 🌟 Hope you’re feeling inspired today. What’s on your mind?",
         "Hi friend! 😊 I’m here for you — whether you want to study, vent, or just chat."
+    ],
+    "how_are_you":[
+        "I'm doing well, thanks for asking! How about you?",
+        "Great! How are you doing today?",
+        "Good! Ready to chat and learn?",
+        "Let's talk! What’s on your mind?"
     ],
     "introduction":[
         "I’m AverlinMz, your supportive study companion built with 💡 by Aylin Muzaffarli. I help with study strategies, emotional support, and academic motivation!\n\nNote: I can't explain full theories like a teacher, but I’ll always be your friendly study coach."
@@ -235,6 +241,7 @@ RESPONSE_DATA = {
 
 KEYWORDS = {
     "greetings":["hello","hi","hey","good morning","good evening"],
+    "how_are_you":["how are you","how r you","how're you","how do you do","how you doing"],
     "introduction":["who are you","introduce","your name","introduce yourself"],
     "creator_info":["tell me about your creator","who is your creator","who created you"],
     "ack_creator":["i'm your creator","im your creator","i am your creator","i am aylin","im ur creator","i am ur creator"],
@@ -262,14 +269,18 @@ def clean_text(text):
 def get_bot_reply(user_input):
     msg = clean_text(user_input)
     response = []
+    # Check subjects category separately (more detailed keys)
+    if any(subj in msg for subj in KEYWORDS["subjects"]):
+        for subj_key in RESPONSE_DATA["subjects"]:
+            if subj_key in msg:
+                response.append(RESPONSE_DATA["subjects"][subj_key])
+    # Check other categories
     for category, keywords in KEYWORDS.items():
         if category == "subjects":
-            for subj_key in RESPONSE_DATA["subjects"]:
-                if subj_key in msg:
-                    response.append(RESPONSE_DATA["subjects"][subj_key])
             continue
         if any(word in msg for word in keywords) and category in RESPONSE_DATA:
             response.append(random.choice(RESPONSE_DATA[category]))
+    # Fallback if no match
     if not response:
         response.append(random.choice(RESPONSE_DATA["fallback"]))
     return "\n\n".join(response)
@@ -279,9 +290,10 @@ with st.form("chat_form", clear_on_submit=True):
     user_input = st.text_input("Write your message…", key="input_field", label_visibility="collapsed")
     if st.form_submit_button("Send") and user_input.strip():
         st.session_state.messages.append({"role":"user","content":user_input})
-        st.session_state.messages.append({"role":"bot","content":get_bot_reply(user_input)})
+        bot_reply = get_bot_reply(user_input)
+        st.session_state.messages.append({"role":"bot","content":bot_reply})
 
-# Render chat
+# Render chat history
 st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
 for user_msg, bot_msg in reversed(list(zip(st.session_state.messages[::2], st.session_state.messages[1::2]))):
     st.markdown(f'<div class="user">{escape(user_msg["content"]).replace("\\n","<br>")}</div>', unsafe_allow_html=True)

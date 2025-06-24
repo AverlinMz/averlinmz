@@ -17,7 +17,7 @@ if "last_bot_reply" not in st.session_state:
 # Page config
 st.set_page_config(
     page_title="AverlinMz Chatbot",
-    page_icon="\ud83d\udca1",
+    page_icon="💡",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -90,7 +90,7 @@ new MutationObserver(scrollToBottom).observe(
 # Title
 st.markdown('<div class="title-container"><h1>AverlinMz – Study Chatbot</h1></div>', unsafe_allow_html=True)
 
-# Response generation
+# Define responses
 RESPONSES = {
     "study_smart": {
         "keywords": ["study smart", "study smarter", "study tips", "study plan"],
@@ -128,6 +128,7 @@ FALLBACK_REPLIES = [
     "You are capable of amazing things. Believe it 💫"
 ]
 
+# Helper functions
 def contains_keyword(msg, keywords, cutoff=0.75):
     msg = msg.lower()
     for kw in keywords:
@@ -145,7 +146,7 @@ def generate_reply(user_msg):
             return data["reply"]
     return random.choice(FALLBACK_REPLIES)
 
-# Input form
+# Chat input form
 with st.form("chat_form", clear_on_submit=True):
     user_input = st.text_input(
         "message_input",
@@ -161,9 +162,10 @@ with st.form("chat_form", clear_on_submit=True):
         st.session_state.messages.append({"role": "bot", "content": None})
         st.session_state.typing = True
 
-# Render chat window (displaying full message history)
+# Render chat window
 st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
 
+# Display all messages, newest first
 messages = st.session_state.messages[:]
 messages.reverse()
 
@@ -180,6 +182,7 @@ for i in range(0, len(messages), 2):
                 container.markdown('<div class="bot">🤖 Typing...</div>', unsafe_allow_html=True)
                 time.sleep(2)
                 container.markdown(f'<div class="bot">{escape(st.session_state.last_bot_reply).replace("\n","<br>")}</div>', unsafe_allow_html=True)
+                # Update placeholder
                 for j in range(len(st.session_state.messages) - 1, -1, -1):
                     if st.session_state.messages[j]["role"] == "bot" and st.session_state.messages[j]["content"] is None:
                         st.session_state.messages[j]["content"] = st.session_state.last_bot_reply

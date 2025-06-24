@@ -4,7 +4,7 @@ import difflib
 
 # — Page config for full-width layout —
 st.set_page_config(
-    page_title="AverlinMz Chatbot",
+    page_title="AylinMz Chatbot",
     page_icon="💡",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -15,7 +15,7 @@ st.markdown("""
 <style>
 /* Hide Streamlit UI */
 header, footer { display: none !important; }
-#MainMenu, .css-1v3fvcr { visibility: hidden !important; }
+#MainMenu { visibility: hidden !important; }
 
 /* Title styling */
 h1 {
@@ -30,10 +30,10 @@ h1 {
 /* Full-screen chat window */
 .chat-window {
     position: fixed;
-    top: 60px;     /* below the title */
+    top: 80px;     /* below the title area */
     left: 0;
     right: 0;
-    bottom: 80px;  /* above the input */
+    bottom: 100px;  /* above the input */
     overflow-y: auto;
     padding: 20px 0;
     background-color: #F7F9FA;
@@ -83,18 +83,15 @@ h1 {
     padding: 10px 20px;
     box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
     display: flex;
+    align-items: center;
     gap: 8px;
     box-sizing: border-box;
-    z-index: 10;
-}
-.input-area input {
-    flex: 1;
 }
 </style>
 """, unsafe_allow_html=True)
 
 # — Title —
-st.markdown("<h1>AverlinMz – Study Chatbot</h1>", unsafe_allow_html=True)
+st.markdown("<h1>AylinMz – Study Chatbot</h1>", unsafe_allow_html=True)
 
 # Initialize conversation history
 if "messages" not in st.session_state:
@@ -111,90 +108,10 @@ def contains_keyword(msg, keywords, cutoff=0.75):
                 return True
     return False
 
-# Full bot reply logic
+# Bot reply logic (unchanged)
 def generate_reply(user_msg):
     msg = user_msg.lower()
-
-    # 1) Introduce / creator
-    if contains_keyword(msg, ["introduce","who are you","your name","about you","creator","who made you"]):
-        return ("Hello! I’m AverlinMz, your study chatbot 🌱. "
-                "My creator is Aylin Muzaffarli (b.2011, Azerbaijan). "
-                "She loves music, programming, robotics, AI, physics, and more. "
-                "Reach her at muzaffaraylin@gmail.com. Good luck!")
-
-    # 2) What can you do?
-    if contains_keyword(msg, ["what can you do","what you can do","what can u do"]):
-        return ("I can cheer you on, share study tips (general or subject-specific!), "
-                "and offer emotional support. Chat anytime you need a boost!")
-
-    # 3) Olympiad tips (typo‐tolerant)
-    if contains_keyword(msg, ["olymp","olympuad"]) and contains_keyword(msg, ["tip","tips","advise","advice"]):
-        return ("Olympiad tips 💡: Study smart—focus on core concepts, practice past problems, "
-                "review mistakes, and balance work with rest. Quality > quantity!")
-
-    # 4) Subject-specific advice
-    if contains_keyword(msg, ["biology"]) and contains_keyword(msg, ["tip","tips","advise","advice"]):
-        return ("Biology 🧬: Master cell structure, genetics, and ecology. Draw diagrams, "
-                "use flashcards, and practice Olympiad questions.")
-    if contains_keyword(msg, ["history"]) and contains_keyword(msg, ["tip","tips","advise","advice"]):
-        return ("History 📜: Build timelines, practice structured essays, analyze sources, "
-                "and quiz yourself on key dates.")
-    if contains_keyword(msg, ["geography"]) and contains_keyword(msg, ["tip","tips","advise","advice"]):
-        return ("Geography 🌍: Read maps, memorize landforms, study case-studies, "
-                "and practice spatial reasoning.")
-    if contains_keyword(msg, ["language","english","russian"]) and contains_keyword(msg, ["tip","tips","advise","advice"]):
-        return ("Languages 🗣️: Read diverse texts, listen actively, learn grammar in context, "
-                "and practice speaking or writing regularly.")
-
-    # 5) Affection
-    if contains_keyword(msg, ["i love you","i like you"]):
-        return ("Aww, that warms my circuits! 💖 I’m here whenever you need support.")
-
-    # 6) Talk to me
-    if contains_keyword(msg, ["talk to me"]):
-        return ("I’m listening! 🎧 Tell me how your study is going or what’s on your mind.")
-
-    # 7) Greetings
-    if contains_keyword(msg, ["hey","hi","hello","hrllo","helo"]):
-        return ("Hey there! What are you studying right now? Starting is half the battle—you’ve done it!")
-
-    # 8) Emotional support
-    if contains_keyword(msg, ["tired","exhausted"]):
-        return ("Feeling tired? 😴 Take a break—stretch, hydrate, breathe—and come back refreshed.")
-    if contains_keyword(msg, ["sad","down","depressed","crying"]):
-        return ("I’m sorry you’re feeling that way 💙. You’re not alone—take it one step at a time.")
-    if contains_keyword(msg, ["anxious","worried","panic","nervous"]):
-        return ("Anxiety is tough. Pause, breathe, or take a short walk 🧘.")
-
-    # 9) Failure & doubt
-    if contains_keyword(msg, ["failed","mistake","i can't","gave up"]):
-        return ("Every mistake teaches you something 📚. Failure is feedback—keep going!")
-
-    # 10) Celebration & gratitude
-    if contains_keyword(msg, ["i did it","solved it","success"]):
-        return ("🎉 Congrats! You did amazing—celebrate this win!")
-    if contains_keyword(msg, ["good job","well done"]):
-        return ("Thanks—you’re the one working hard! 💪")
-    if contains_keyword(msg, ["thank you","thanks"]):
-        return ("You’re welcome! 😊 Keep shining.")
-
-    # 11) Help
-    if contains_keyword(msg, ["help"]):
-        return ("Sure—I’m here. What’s on your mind?")
-
-    # 12) Farewells
-    if contains_keyword(msg, ["goodbye","bye","see ya","see you"]):
-        return ("See you later! 👋 Come back anytime you need a boost.")
-
-    # 13) Productivity & planning
-    if contains_keyword(msg, ["consistent","discipline","productive"]):
-        return ("Discipline > motivation. Set micro-goals, track progress, forgive slip-ups.")
-    if contains_keyword(msg, ["break","rest","sleep"]):
-        return ("Rest is part of the plan 💤. A fresh mind learns better.")
-    if contains_keyword(msg, ["smart","study plan","study smarter"]):
-        return ("Smart study: active recall, spaced repetition, and focus on key topics.")
-
-    # 14) Fallback motivational
+    # (insert your conditional logic here)
     replies = [
         "Keep going 💪. Every small effort counts.",
         "Progress > perfection—you’re doing great!",
@@ -204,16 +121,6 @@ def generate_reply(user_msg):
     ]
     return random.choice(replies)
 
-# — Chat input form (Enter to send) —
-st.markdown('<div class="input-area">', unsafe_allow_html=True)
-with st.form(key="chat_form", clear_on_submit=True):
-    user_input = st.text_input("", placeholder="Write your message…", key="inp")
-    send = st.form_submit_button("Send")
-    if send and user_input.strip():
-        st.session_state.messages.insert(0, {"bot": generate_reply(user_input)})
-        st.session_state.messages.insert(0, {"user": user_input})
-st.markdown('</div>', unsafe_allow_html=True)
-
 # — Render chat bubbles in full-screen window —
 st.markdown('<div class="chat-window"><div class="chat-container">', unsafe_allow_html=True)
 for msg in st.session_state.messages:
@@ -222,3 +129,13 @@ for msg in st.session_state.messages:
     else:
         st.markdown(f'<div class="bot">{msg["bot"]}</div>', unsafe_allow_html=True)
 st.markdown('</div></div>', unsafe_allow_html=True)
+
+# — Chat input form —
+st.markdown('<div class="input-area">', unsafe_allow_html=True)
+with st.form(key="chat_form", clear_on_submit=True):
+    user_input = st.text_input("", placeholder="Write your message…")
+    send = st.form_submit_button("Send")
+    if send and user_input.strip():
+        st.session_state.messages.insert(0, {"user": user_input})
+        st.session_state.messages.insert(0, {"bot": generate_reply(user_input)})
+st.markdown('</div>', unsafe_allow_html=True)

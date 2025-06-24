@@ -7,12 +7,10 @@ from html import escape
 def init_session():
     if "messages" not in st.session_state:
         st.session_state.messages = []
-    if "introduced" not in st.session_state:
-        st.session_state.introduced = False  # track if intro done
-    if "last_user" not in st.session_state:
-        st.session_state.last_user = ""
-    if "last_bot" not in st.session_state:
-        st.session_state.last_bot = ""
+    if "last_user_input" not in st.session_state:
+        st.session_state.last_user_input = ""
+    if "answered_intro" not in st.session_state:
+        st.session_state.answered_intro = False
 init_session()
 
 # Page config
@@ -74,8 +72,9 @@ RESPONSE_DATA = {
     "exam_prep": [
         "Start early, make a plan, and review consistently. 📚 You’re capable of great things!",
         "Break topics into chunks and take breaks in between. You’ll learn smarter! 💡",
-        "Make sure to get enough sleep before your exams — rest helps memory!",
-        "Practice past papers to get familiar with the format and question types."
+        "Practice past papers under timed conditions — it really helps! 🕰️",
+        "Don’t cram last minute. Get good sleep and eat well before the exam! 🛌🍎",
+        "I’m still learning, but these are great tips that work for many students!"
     ],
     "passed_exam": [
         "🎉 CONGRATULATIONS! That’s amazing news! I knew you could do it.",
@@ -90,6 +89,7 @@ RESPONSE_DATA = {
         "I'm designed to help students stay focused and positive. Ask me anything about learning! 💬"
     ],
     "introduction": [
+        # If user asked before, no "Hello"
         "I'm AverlinMz, your study chatbot 🌱. My creator is Aylin Muzaffarli (b.2011, Azerbaijan). She loves music, programming, robotics, AI, physics, and more. Reach her at averlinmz.github.io!"
     ],
     "creator_info": [
@@ -105,61 +105,32 @@ RESPONSE_DATA = {
         "Absolutely! All credit goes to Aylin Muzaffarli! 🌟"
     ],
     "motivation": [
-        "Believe in yourself! Every small step gets you closer to your goals. 🚀",
-        "Keep pushing forward, even when it’s tough. Your effort will pay off! 💪",
-        "Remember: failure is a part of learning. Don’t give up! 🌟"
+        "Keep pushing forward, every step counts! 🚀",
+        "Remember why you started and keep your goals in sight! 🌟",
+        "I’m here to support you whenever you feel stuck. You got this! 💪"
     ],
     "study_tips": [
-        "Set specific goals for each study session. It helps stay focused and productive.",
-        "Use active recall and spaced repetition to remember better.",
-        "Take short breaks every 25-30 minutes to keep your brain fresh."
+        "Try to study in focused 25-minute sessions with 5-minute breaks (Pomodoro technique). ⏲️",
+        "Make summaries of what you learn — writing helps memory. ✍️",
+        "Use flashcards to memorize facts and formulas. 🃏"
     ],
     "time_management": [
-        "Make a daily schedule and stick to it as much as possible.",
-        "Prioritize your tasks by importance and deadline.",
-        "Avoid multitasking — focus on one thing at a time for better results."
+        "Make a daily schedule and prioritize your tasks. 📅",
+        "Avoid multitasking — focus on one thing at a time. 🎯",
+        "Use timers to keep track of study and rest periods."
     ],
     "subjects": {
-        "math": (
-            "Mathematics is the study of numbers, shapes, and patterns. "
-            "It helps develop logical thinking and problem-solving skills. "
-            "Practicing regularly by solving problems enhances your understanding and confidence."
-        ),
-        "physics": (
-            "Physics explores the laws of nature and how the universe behaves. "
-            "It covers topics like motion, energy, and forces. "
-            "Understanding physics helps explain everyday phenomena and supports technology development."
-        ),
-        "chemistry": (
-            "Chemistry is the science of matter and how substances interact and change. "
-            "It involves studying atoms, molecules, reactions, and materials. "
-            "Learning chemistry helps understand everything from cooking to medicine."
-        ),
-        "biology": (
-            "Biology is the study of living things, from tiny cells to whole ecosystems. "
-            "It explains how organisms grow, function, and interact with their environment. "
-            "Biology is essential for health, environment, and biotechnology."
-        ),
-        "english": (
-            "Learning English improves communication skills in speaking, reading, writing, and listening. "
-            "It opens opportunities for education and work worldwide. "
-            "Practice daily by reading, speaking, and listening to different types of content."
-        ),
-        "robotics": (
-            "Robotics combines engineering and programming to create machines that can perform tasks. "
-            "It involves learning about hardware like sensors and motors, as well as software control. "
-            "Robotics is key in automation, AI, and technology innovation."
-        ),
-        "ai": (
-            "Artificial Intelligence (AI) is the field that enables machines to mimic human intelligence. "
-            "It uses programming, math, and logic to build systems that learn and adapt. "
-            "AI is shaping the future of technology and society."
-        )
+        "math": "Math is the language of patterns and logic. Practice problem-solving every day, focusing on understanding concepts deeply rather than memorizing formulas. ➕➗",
+        "physics": "Physics explains how the universe works — from motion to energy. Start with classical mechanics and build intuition by doing experiments or simulations. 🚀",
+        "chemistry": "Chemistry studies matter and its interactions. Learn about atoms, molecules, chemical reactions, and lab safety to build a strong foundation. 🔬",
+        "biology": "Biology explores life in all forms — from cells to ecosystems. Focus on understanding systems and processes. 🧬",
+        "english": "Improving English requires regular reading, writing, and speaking practice. Engage with stories, articles, and conversations to build fluency. 📖",
+        "robotics": "Robotics combines hardware and software. Start with basics like sensors and microcontrollers, then try building simple robots to practice. 🤖",
+        "ai": "Artificial Intelligence combines programming, math, and logic. Start with Python basics, then explore machine learning concepts. 🧠"
     },
     "fallback": [
-        "Hmm, I’m not sure how to answer that — try rephrasing or asking something about study or motivation! 🤔",
-        "I didn’t quite get that, but I’m here to help! Maybe ask about a subject or how you feel. 😊",
-        "I'm still learning and improving every day! Feel free to ask me about studying or motivation."
+        "Hmm, I’m not sure how to answer that — try rephrasing or asking something about study or motivation! 🤔 I'm still learning.",
+        "I didn’t quite get that, but I’m here to help! Maybe ask about a subject or how you feel. 😊 I'm still learning."
     ]
 }
 
@@ -170,14 +141,15 @@ KEYWORDS = {
     "user_feeling_bad": ["i'm sad", "not good", "tired", "depressed", "bad"],
     "love": ["i love you", "you are cute", "like you"],
     "exam_prep": [
-        "exam tips", "how to prepare", "study for test", "exam help",
+        "exam tips", "exam tip", "how to prepare", "study for test", "exam help",
         "give me advice", "advice for exam", "exam advice", "prepare for exam",
-        "how to study", "study tips"
+        "how to study", "study tips", "give me a tip", "give me tip",
+        "tip for exam prep", "tips for exam prep", "advice on exam prep", "help with exam"
     ],
     "passed_exam": ["i passed", "got good mark", "i won"],
     "capabilities": ["what can you do", "your functions", "features"],
     "introduction": ["introduce", "who are you", "your name", "about you", "creator", "who made you"],
-    "creator_info": ["who is aylin", "who made you", "your developer"],
+    "creator_info": ["who is aylin", "who made you", "your developer", "tell me about aylin", "about aylin"],
     "contact_creator": ["how to contact", "reach aylin", "contact you", "talk to aylin"],
     "ack_creator": ["aylin is cool", "thank aylin", "credit to aylin"],
     "motivation": ["motivate me", "encourage me", "need motivation", "inspire me"],
@@ -186,58 +158,54 @@ KEYWORDS = {
     "subjects": ["math", "physics", "chemistry", "biology", "english", "robotics", "ai"]
 }
 
-# Text cleaner
 def clean_text(text):
     return text.lower().translate(str.maketrans('', '', string.punctuation)).strip()
 
-# Bot reply logic
 def get_bot_reply(user_input):
     msg = clean_text(user_input)
     cleaned = {cat: [clean_text(kw) for kw in kws] for cat, kws in KEYWORDS.items()}
 
-    # Special handling for introduction (avoid repeating "Hello!" every time)
-    intro_keywords = cleaned.get('introduction', [])
-    if any(kw in msg for kw in intro_keywords):
-        if not st.session_state.introduced:
-            st.session_state.introduced = True
-            return random.choice(RESPONSE_DATA['introduction'])
+    # Special handling for introduction to avoid repeating "Hello" every time
+    if any(kw in msg for kw in cleaned.get('introduction', [])):
+        if not st.session_state.answered_intro:
+            st.session_state.answered_intro = True
+            return RESPONSE_DATA['introduction'][0]
         else:
-            # Second time or more - shorter reply
-            return "I'm your study chatbot, here to help you learn and stay motivated."
+            return RESPONSE_DATA['introduction'][0].replace("Hello! ", "")
 
-    # Check categories with direct keyword matching
+    # If user asks about Aylin explicitly, reply creator_info
+    if any(kw in msg for kw in cleaned.get('creator_info', [])):
+        return random.choice(RESPONSE_DATA['creator_info'])
+
+    # Keywords matching
     for cat in [
-        'user_feeling_good','user_feeling_bad','love','how_are_you','greetings','exam_prep','capabilities',
-        'passed_exam','creator_info','contact_creator','ack_creator','motivation','study_tips','time_management']:
+        'user_feeling_good','user_feeling_bad','love','how_are_you','greetings',
+        'exam_prep','capabilities','passed_exam','contact_creator','ack_creator',
+        'motivation','study_tips','time_management'
+    ]:
         if any(kw in msg for kw in cleaned.get(cat, [])):
             return random.choice(RESPONSE_DATA[cat])
 
-    # Subjects check (exact subject word in message)
+    # Subjects
     for subj in cleaned.get('subjects', []):
         if subj in msg and subj in RESPONSE_DATA['subjects']:
             return RESPONSE_DATA['subjects'][subj]
 
-    # Catch-all for any other categories not caught above
-    for cat, kws in cleaned.items():
-        if cat in [
-            'user_feeling_good','user_feeling_bad','love','how_are_you','greetings','exam_prep','capabilities',
-            'subjects','passed_exam','introduction','creator_info','contact_creator','ack_creator',
-            'motivation','study_tips','time_management']:
-            continue
-        if cat in RESPONSE_DATA and any(kw in msg for kw in kws):
-            return random.choice(RESPONSE_DATA[cat])
+    # Aylin keywords (also sometimes users say just 'Aylin' alone)
+    if "aylin" in msg:
+        return random.choice(RESPONSE_DATA['creator_info'])
 
-    # If no match, fallback with learning message
-    fallback_msg = random.choice(RESPONSE_DATA['fallback'])
-    return fallback_msg + " I'm still learning."
+    # No matches — fallback answer with encouragement to try again
+    return random.choice(RESPONSE_DATA['fallback'])
 
 # Chat form & display
 with st.form('chat_form', clear_on_submit=True):
     user_input = st.text_input('Write your message…', key='input_field')
     if st.form_submit_button('Send') and user_input.strip():
         st.session_state.messages.append({'role': 'user', 'content': user_input})
-        bot_response = get_bot_reply(user_input)
-        st.session_state.messages.append({'role': 'bot', 'content': bot_response})
+        reply = get_bot_reply(user_input)
+        st.session_state.messages.append({'role': 'bot', 'content': reply})
+        st.session_state.last_user_input = user_input
 
 # Render chat messages
 st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
@@ -247,7 +215,6 @@ for i in range(len(msgs) - 2, -1, -2):
     bot_msg = msgs[i+1]['content'] if i+1 < len(msgs) else ''
     st.markdown(f'<div class="user">{escape(user_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
     st.markdown(f'<div class="bot">{escape(bot_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
-
 st.markdown('</div></div>', unsafe_allow_html=True)
 
 # Sidebar tips

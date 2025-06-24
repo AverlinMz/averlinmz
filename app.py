@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 """, unsafe_allow_html=True)
 
-# Responses dict
+# Responses dictionary
 RESPONSES = {
     "introduction": {
         "keywords": ["introduce", "who are you", "your name", "about you", "creator", "who made you"],
@@ -293,7 +293,6 @@ def generate_reply(user_msg):
     # Default fallback
     return random.choice(FALLBACK_REPLIES)
 
-
 # --- Page content ---
 
 # Title
@@ -311,8 +310,13 @@ with st.form(key="chat_form", clear_on_submit=True):
         bot_response = generate_reply(user_input)
         st.session_state.messages.append({"role": "bot", "content": bot_response})
 
-        # Rerun to clear input and show new messages
-        st.experimental_rerun()
+        # Set rerun flag
+        st.session_state["rerun_needed"] = True
+
+# Outside the form: check rerun flag and rerun if needed
+if st.session_state.get("rerun_needed", False):
+    st.session_state["rerun_needed"] = False
+    st.experimental_rerun()
 
 # Chat container and window
 st.markdown('<div class="chat-container">', unsafe_allow_html=True)

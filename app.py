@@ -12,31 +12,62 @@ def generate_reply(user_msg):
 
     if any(greet in msg for greet in ["hey", "hi", "hello", "yo"]):
         return ("Hey! I'm here for you. What are you studying today? "
-                "Remember, taking the first step is the hardest but you got this!")
+                "Remember, taking the first step is the hardest — but you got this!")
+    
+    elif "introduce" in msg or "who are you" in msg or "your name" in msg:
+        return ("Hello. My name is AverlinMz, your study chatbot. "
+                "My creator is Aylin Muzaffarli, born in 2011 in Azerbaijan. "
+                "She's passionate about music, programming, robotics, AI, physics, top universities, and more. "
+                "If you have questions, you can write to: muzaffaraylin@gmail.com. Good luck!")
+
     elif "tired" in msg or "exhausted" in msg:
-        return ("It's okay to rest sometimes. Taking a short break can refresh your mind. "
-                "Come back stronger and keep pushing forward!")
-    elif "sad" in msg or "down" in msg:
-        return ("I’m sorry you’re feeling down. Remember, tough times don’t last, "
-                "but tough people do. You're stronger than you think.")
+        return ("It's okay to feel tired. Rest is part of the process. "
+                "Take a short break, hydrate, and come back stronger!")
+
+    elif "sad" in msg or "down" in msg or "depressed" in msg:
+        return ("I'm sorry you're feeling that way. Just know you're not alone. "
+                "Take it one breath at a time. You're doing better than you think.")
+
+    elif "overwhelmed" in msg or "burned out" in msg or "can't do it" in msg:
+        return ("You’re trying your best, and that’s enough. Take a deep breath. "
+                "Simplify your to-do list and focus on just one small win today.")
+
+    elif "i did it" in msg or "solved it" in msg or "success" in msg:
+        return ("Yesss! I'm proud of you! Hard work really does pay off. "
+                "Keep up the great momentum!")
+
     elif "good job" in msg or "well done" in msg:
-        return ("Thank you! Your progress inspires me too. Keep up the amazing work, "
-                "and don’t forget to celebrate your achievements, big or small!")
+        return ("Thank you! But remember — it's you who's putting in the real work. "
+                "I'm just here to cheer you on!")
+
     elif "help" in msg:
-        return ("I’m here to support you. What do you need help with? "
-                "Feel free to share your doubts or questions anytime.")
+        return ("Of course, I'm here to help. Ask me anything or just type how you're feeling.")
+
     elif "creator" in msg or "ok, i m ur creator" in msg:
-        return ("Wow! You’re my creator? That’s incredible! Your hard work and passion "
-                "will definitely pay off. Keep believing in yourself!")
+        return ("Aylin! You're the mind behind this. I'm honored to exist because of you. "
+                "Keep building cool things — the world needs your ideas!")
+
     elif any(bye in msg for bye in ["goodbye", "bye", "see ya", "see you"]):
-        return ("Goodbye! Remember, every day is a new chance to improve. "
-                "I'll be here whenever you need me. Take care!")
-    elif "advise" in msg or "advice" in msg or "prepare" in msg and "olympiad" in msg:
-        return ("Great question! Here's some advice for Olympiad preparation: "
-                "Study smart, not just hard. Focus on quality over quantity. "
-                "Remember, quality of your work = focus × time. "
-                "Practice problems regularly, but make sure you understand concepts deeply. "
-                "Don't forget to rest and keep a positive mindset. You’ve got this!")
+        return ("See you soon! Keep doing your best, take care, and come back when you need a boost!")
+
+    elif "advise" in msg or "advice" in msg or ("prepare" in msg and "olympiad" in msg):
+        return ("Great question! Here's some Olympiad advice: "
+                "Study smart, not just hard. Quality matters more than quantity. "
+                "Quality of your work = focus × time. Rest, reflect, and focus on deep understanding. You've got this!")
+
+    elif "consistent" in msg or "discipline" in msg or "productive" in msg:
+        return ("Consistency is built from small, daily actions. "
+                "Set small goals, reflect weekly, and celebrate even tiny wins. "
+                "You don’t need motivation — just systems!")
+
+    elif "break" in msg or "rest" in msg or "sleep" in msg:
+        return ("Rest is not a weakness — it's a strategy. "
+                "Sleep sharpens your focus and boosts memory. Take breaks without guilt.")
+
+    elif "smart" in msg or "study plan" in msg:
+        return ("Smart studying means setting priorities, reducing distractions, and reviewing often. "
+                "Don’t aim for perfection — aim for clarity and consistency.")
+
     else:
         replies = [
             ("Keep going, you're doing great! Every effort you put in shapes your future. "
@@ -45,7 +76,7 @@ def generate_reply(user_msg):
              "Stay healthy and motivated."),
             ("Your hard work will pay off! Challenges make you stronger, so keep pushing forward."),
             ("Every step counts! Progress is progress, no matter how small. You're on the right track."),
-            ("Believe in yourself! You are capable of amazing things, never doubt your potential.")
+            ("Believe in yourself! You are capable of amazing things. Never doubt your potential.")
         ]
         return random.choice(replies)
 
@@ -54,9 +85,7 @@ user_input = st.text_input("Write your message:")
 
 if st.button("Send"):
     if user_input.strip() != "":
-        # Add user message to history
         st.session_state.messages.append({"user": user_input})
-        # Generate bot reply
         reply = generate_reply(user_input)
         st.session_state.messages.append({"bot": reply})
 

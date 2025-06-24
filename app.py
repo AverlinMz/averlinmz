@@ -91,7 +91,7 @@ new MutationObserver(scrollToBottom).observe(
 # Title
 st.markdown('<div class="title-container"><h1>AverlinMz – Study Chatbot</h1></div>', unsafe_allow_html=True)
 
-# Sample expanded responses for themes
+# Full expanded response repository
 RESPONSE_DATA = {
     "greetings": [
         "Hello there! 👋 How’s your day going? Ready to dive into learning today?",
@@ -99,15 +99,30 @@ RESPONSE_DATA = {
         "Hi friend! 😊 I’m here for you — whether you want to study, vent, or just chat."
     ],
     "introduce": [
-        "Hi there! 🤖 I'm AverlinMz, your study buddy and supportive chatbot. I was lovingly created by Aylin Muzaffarli — a young enthusiast from Azerbaijan 🇦🇿 who loves programming, AI, and science! Ask me anything related to studies, motivation, or even just life. 💬✨"
+        "Hi! I’m AverlinMz 🌱, your friendly study chatbot designed to support, motivate, and guide you through your academic journey. I was created by Aylin Muzaffarli — a student passionate about programming, physics, and helping others succeed. I'm not a teacher, just a helpful companion along the way! 🚀",
+        "Hey there 👋 I’m AverlinMz. I can give you study tips, cheer you on during tough days, and remind you to take care of yourself. Think of me as your study buddy with unlimited energy ✨"
     ],
     "study_tips": [
-        "Here are some smart study strategies:<br>1. Use active recall — test yourself often.<br>2. Practice spaced repetition — revisit content over time.<br>3. Avoid multitasking — focus deeply for short bursts.<br>4. Teach the material — it reveals your blind spots.<br>You’ve got this! 🌟🚀",
+        "Here are some smart study strategies:",
+        "1. Use active recall — test yourself often.",
+        "2. Practice spaced repetition — revisit content over time.",
+        "3. Avoid multitasking — focus deeply for short bursts.",
+        "4. Teach the material — it reveals your blind spots.",
+        "You’ve got this! 🌟🚀",
         "Study smarter, not harder! Plan with intention, set small goals, reward progress, and take breaks. Consistency wins! 📊🙌"
     ],
     "emotional_support": [
         "Feeling overwhelmed? 😔 It’s okay. Take a deep breath. Rest is part of the process. I’m here with you. 🌈",
-        "Mistakes happen — they’re how we grow. Progress isn’t linear, and every step counts. Keep going. You matter. ✨"
+        "Mistakes happen — they’re how we grow. Progress isn’t linear, and every step counts. Keep going. You matter. ✨",
+        "Exhausted? 😴 Pause, stretch, breathe. Even machines need recharging. You're allowed to rest. I'm cheering you on from here."
+    ],
+    "capabilities": [
+        "Here’s what I can help with:",
+        "📈 Study tips (general or subject-specific)",
+        "💡 Motivation and emotional support",
+        "🔹 Study planning reminders",
+        "✨ Encouragement through tough times",
+        "I'm not a teacher or therapist, but I'll do my best as your study companion!"
     ],
     "fallback": [
         "Hmm 🤔 I’m still learning. Could you rephrase that? I’m here for support and study help! 🚀",
@@ -120,14 +135,16 @@ def clean_text(text):
 
 def get_bot_reply(user_input):
     msg = clean_text(user_input)
-    if any(word in msg for word in ["hello", "hi", "hey"]):
+    if any(word in msg for word in ["hello", "hi", "hey", "greetings"]):
         return random.choice(RESPONSE_DATA["greetings"])
     elif any(word in msg for word in ["who are you", "introduce", "your name", "creator"]):
         return random.choice(RESPONSE_DATA["introduce"])
-    elif any(word in msg for word in ["study", "tips", "advice", "plan"]):
+    elif any(word in msg for word in ["study", "tips", "advice", "plan", "study smarter"]):
         return random.choice(RESPONSE_DATA["study_tips"])
-    elif any(word in msg for word in ["tired", "sad", "burnout", "overwhelmed"]):
+    elif any(word in msg for word in ["tired", "sad", "burnout", "overwhelmed", "down"]):
         return random.choice(RESPONSE_DATA["emotional_support"])
+    elif any(word in msg for word in ["what can you do", "capabilities", "how can you help"]):
+        return random.choice(RESPONSE_DATA["capabilities"])
     else:
         return random.choice(RESPONSE_DATA["fallback"])
 

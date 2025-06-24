@@ -113,7 +113,78 @@ RESPONSES = {
         "keywords": ["introduce","who are you","your name","about you","creator","who made you"],
         "reply": "Hello! I'm AverlinMz, your study chatbot 🌱. My creator is Aylin Muzaffarli (b.2011, Azerbaijan). She loves music, programming, robotics, AI, physics, and more. Reach her at muzaffaraylin@gmail.com. Good luck!"
     },
-    # … include all your other response entries here …
+    "capabilities": {
+        "keywords": ["what can you do","what you can do","what can u do"],
+        "reply": "I can cheer you on, share study tips (general or subject-specific!), and offer emotional support. Chat anytime you need a boost!"
+    },
+    "olympiad_tips": {
+        "keywords": ["olymp","olympuad","tip","tips","advise","advice"],
+        "reply": "Olympiad tips 💡: Study smart—focus on core concepts, practice past problems, review mistakes, and balance work with rest. Quality > quantity!"
+    },
+    "biology_tips": {
+        "keywords": ["biology","bio"],
+        "reply": "Biology 🧬: Master cell structure, genetics, and ecology. Draw diagrams, use flashcards, and practice Olympiad questions."
+    },
+    "history_tips": {
+        "keywords": ["history","hist"],
+        "reply": "History 📜: Build timelines, practice structured essays, analyze sources, and quiz yourself on key dates."
+    },
+    "geography_tips": {
+        "keywords": ["geography","geo"],
+        "reply": "Geography 🌍: Interpret maps, memorize landforms, study case-studies, and practice spatial reasoning."
+    },
+    "language_tips": {
+        "keywords": ["language","english","russian","spanish","french"],
+        "reply": "Languages 🗣️: Read varied texts, listen actively, learn grammar contextually, and speak/write regularly to build fluency."
+    },
+    "encouragement": {
+        "keywords": ["i love you","i like you"],
+        "reply": "Aww, that warms my circuits! 💖 I'm here to support you anytime."
+    },
+    "greeting": {
+        "keywords": ["hey","hi","hello","hrllo","helo"],
+        "reply": "Hey there! What are you studying right now? Starting is half the battle—you've done it!"
+    },
+    "tired": {
+        "keywords": ["tired","exhausted","fatigue"],
+        "reply": "Feeling tired? 😴 Pause for a break—stretch, hydrate, breathe—and come back refreshed."
+    },
+    "sad": {
+        "keywords": ["sad","down","depressed","crying"],
+        "reply": "I'm sorry you're feeling down 💙. Your feelings are valid, and I'm here with you."
+    },
+    "anxious": {
+        "keywords": ["anxious","worried","panic","nervous"],
+        "reply": "Anxiety's tough. Pause, breathe deeply, or take a 5-minute walk. One step at a time 🧘."
+    },
+    "failure": {
+        "keywords": ["failed","mistake","i can't","gave up"],
+        "reply": "Mistakes are lessons. 📚 They guide you forward—keep going!"
+    },
+    "success": {
+        "keywords": ["i did it","solved it","success","finished"],
+        "reply": "🎉 You did it! Celebrate this win—you earned it!"
+    },
+    "thanks": {
+        "keywords": ["thank you","thanks"],
+        "reply": "You’re welcome! 😊 I’m proud of you. Come back any time."
+    },
+    "help": {
+        "keywords": ["help"],
+        "reply": "Of course—I’m here to assist or just listen. What’s up?"
+    },
+    "farewell": {
+        "keywords": ["goodbye","bye","see ya","see you"],
+        "reply": "See you later 👋. Keep up the great work and return when you need a boost."
+    },
+    "productivity": {
+        "keywords": ["consistent","discipline","productive"],
+        "reply": "Discipline > motivation. Set micro-goals, track progress, forgive slip-ups."
+    },
+    "rest": {
+        "keywords": ["break","rest","sleep"],
+        "reply": "Rest is part of the process. 💤 A fresh mind learns faster."
+    },
     "study_smart": {
         "keywords": ["smart","study plan","study smarter"],
         "reply": "Study smart: active recall, spaced repetition, and high-impact topics."
@@ -125,7 +196,7 @@ FALLBACK_REPLIES = [
     "Progress > perfection—you're doing great!",
     "Believe in your growth. One step at a time.",
     "You've got this 🌟. Keep moving forward.",
-    "Struggle means growth. Be patient with yourself.",
+    "Struggle means growth. Be patient with yourself."
 ]
 
 def contains_keyword(msg, keywords, cutoff=0.75):
@@ -143,7 +214,6 @@ def generate_reply(user_msg):
     for data in RESPONSES.values():
         if contains_keyword(lm, data["keywords"]):
             return data["reply"]
-    # … any multi-key logic …
     return random.choice(FALLBACK_REPLIES)
 
 # Render UI

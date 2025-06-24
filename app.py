@@ -91,55 +91,51 @@ new MutationObserver(scrollToBottom).observe(
 # Title
 st.markdown('<div class="title-container"><h1>AverlinMz – Study Chatbot</h1></div>', unsafe_allow_html=True)
 
-# Responses organized by theme
 RESPONSE_DATA = {
     "greetings": [
-        "Hey there! 🌟 How’s your day going so far? Let’s make today productive!",
-        "Hi! 😊 I’m so glad you stopped by. What would you like to focus on today?",
-        "Hello friend! 👋 I’m always here to help you grow and achieve more."
-    ],
-    "introduce": [
-        "I’m AverlinMz, your friendly study companion 🤖💡. Created by Aylin Muzaffarli, I’m here to support your learning journey, encourage your progress, and help you stay on track. Let’s level up together!"
-    ],
-    "capabilities": [
-        "Here’s what I can do 🧠:
-- Motivate you with kind words and real talk 💬
-- Share study tips, time management tricks and exam strategies 📚
-- Provide subject-specific advice: math, physics, biology and more! 🔬
-- Help you stay emotionally balanced 🧘‍♀️
-- Be your cheerleader through tough times and victories 🎉"
+        "Hello there! 👋 How’s your day going? Ready to dive into learning today?",
+        "Hey hey! 🌟 Hope you’re feeling inspired today. What’s on your mind?",
+        "Hi friend! 😊 I’m here for you — whether you want to study, vent, or just chat."
     ],
     "study_tips": [
-        "Here’s how to study smart, not hard! 💡
-1. Use active recall — test yourself instead of just rereading notes.
-2. Do spaced repetition — review material regularly over time.
-3. Eliminate distractions — study in focused sessions with full attention.
-4. Teach others — explaining concepts makes them stick.
-5. Reward progress — small wins deserve celebrations! 🎉"
-    ],
-    "subject_tips": [
-        "📐 Math: Practice regularly and don’t skip proofs. Learn shortcuts, but understand the logic.",
-        "🔬 Physics: Focus on concepts, not just formulas. Visualize problems and use real-world examples.",
-        "🧪 Chemistry: Learn patterns in the periodic table and do experiments when possible.",
-        "🧬 Biology: Draw diagrams, understand processes, and use mnemonics.",
-        "💻 CS: Practice coding daily, read documentation, and build small projects."
+        "Here are some smart study strategies:\n1. Use active recall — test yourself often.\n2. Practice spaced repetition — revisit content over time.\n3. Avoid multitasking — focus deeply for short bursts.\n4. Teach the material — it reveals your blind spots.\nYou’ve got this! 🌟🚀",
+        "Study smarter, not harder! Plan with intention, set small goals, reward progress, and take breaks. Consistency wins! 📊🙌"
     ],
     "emotional_support": [
-        "It’s okay to feel overwhelmed. 🌧️ Take a breath, rest if needed, and come back stronger. Your journey matters. 💙",
-        "Burnout is real. Step away, recharge, and remember: you’re not alone in this. 🌿 I believe in you."
+        "Feeling overwhelmed? 😔 It’s okay. Take a deep breath. Rest is part of the process. I’m here with you. 🌈",
+        "Mistakes happen — they’re how we grow. Progress isn’t linear, and every step counts. Keep going. You matter. ✨"
     ],
-    "motivation": [
-        "“Success is the sum of small efforts, repeated day in and day out.” — Robert Collier 💪",
-        "Every step you take is progress. Don’t stop now — your dreams need your courage! 🌈"
+    "capabilities": [
+        "I'm AverlinMz, your friendly study buddy! 🌟 I can give subject tips, study advice, encouragement, and help you stay on track. Think of me like a super-charged school companion."
     ],
-    "goodbye": [
-        "Goodbye! 👋 Keep being awesome, and remember: I’m always here when you need me.",
-        "See you soon! 🎓 Study well, rest well, live well."
+    "subjects": [
+        "Math: ✅ Focus on solving problems, not just memorizing formulas. Understand the *why*, not just the *how*. Break problems down and revisit your mistakes.",
+        "Physics: ✨ Build strong intuition. Use visualizations and diagrams. Try explaining concepts aloud or simulating with tools like VPython!",
+        "Chemistry: 🔮 Understand periodic trends, bonding principles, and reactions deeply. Practice balancing equations and visualizing molecular structures.",
+        "Biology: 🧬 Create concept maps. Focus on big systems (like cells and genetics). Draw diagrams and explain aloud.",
+        "Computer Science: 🪡 Learn by building! Solve small coding problems daily. Read others' code. Comment your logic and debug step by step."
+    ],
+    "intro": [
+        "Hi there! I’m AverlinMz 🤖, your AI-powered chatbot friend. Created by Aylin Müzaffərli from Azerbaijan, I love helping students learn, stay motivated, and feel supported."
+    ],
+    "quote": [
+        "“Success is the sum of small efforts, repeated day in and day out.” — Robert Collier 🚀",
+        "“Believe you can and you're halfway there.” — Theodore Roosevelt 🌟"
     ],
     "fallback": [
-        "Hmm 🤔 I’m still learning. Could you rephrase that a bit? I’ll try my best to help next time!",
-        "I may not have the perfect answer yet, but I’m cheering for you anyway! 🎉 Try a different question?"
+        "Hmm 🤔 That one’s tricky. I’m still learning. Try asking differently? Or ask about studying, feelings, or a subject you love!",
+        "I'm best at giving advice, support, and tips! Think of me more like a buddy than a textbook. 🪡"
     ]
+}
+
+KEYWORDS = {
+    "greetings": ["hello", "hi", "hey"],
+    "study_tips": ["study", "tips", "advice", "plan"],
+    "emotional_support": ["tired", "sad", "burnout", "overwhelmed"],
+    "capabilities": ["what can you do", "how can you help"],
+    "subjects": ["math", "physics", "chemistry", "biology", "computer science"],
+    "intro": ["introduce", "who are you"],
+    "quote": ["quote", "inspire", "motivation"]
 }
 
 def clean_text(text):
@@ -147,24 +143,11 @@ def clean_text(text):
 
 def get_bot_reply(user_input):
     msg = clean_text(user_input)
-    if any(word in msg for word in ["hello", "hi", "hey", "greetings"]):
-        return random.choice(RESPONSE_DATA["greetings"])
-    elif "introduce" in msg or "who are you" in msg:
-        return random.choice(RESPONSE_DATA["introduce"])
-    elif "what can you do" in msg or "capabilities" in msg:
-        return random.choice(RESPONSE_DATA["capabilities"])
-    elif any(word in msg for word in ["study", "tips", "advice", "study smart"]):
-        return random.choice(RESPONSE_DATA["study_tips"])
-    elif any(word in msg for word in ["math", "physics", "chemistry", "biology", "computer"]):
-        return random.choice(RESPONSE_DATA["subject_tips"])
-    elif any(word in msg for word in ["tired", "burned", "sad", "down", "anxious", "exhausted"]):
-        return random.choice(RESPONSE_DATA["emotional_support"])
-    elif "quote" in msg or "inspire" in msg:
-        return random.choice(RESPONSE_DATA["motivation"])
-    elif any(word in msg for word in ["bye", "goodbye", "see you"]):
-        return random.choice(RESPONSE_DATA["goodbye"])
-    else:
-        return random.choice(RESPONSE_DATA["fallback"])
+    replies = []
+    for key, words in KEYWORDS.items():
+        if any(word in msg for word in words):
+            replies.append(random.choice(RESPONSE_DATA[key]))
+    return "\n\n".join(replies) if replies else random.choice(RESPONSE_DATA["fallback"])
 
 # Input form
 with st.form("chat_form", clear_on_submit=True):
@@ -208,7 +191,7 @@ for user_msg, bot_msg in pairs:
                     break
             st.session_state.typing = False
         else:
-            container.markdown(f'<div class="bot">{escape(st.session_state.last_bot_reply).replace("\n","<br>")}</div>', unsafe_allow_html=True)
+            container.markdown(f'<div class="bot">{escape(bot_msg["content"]).replace("\n","<br>")}</div>', unsafe_allow_html=True)
     else:
         st.markdown(f'<div class="bot">{escape(bot_msg["content"]).replace("\n","<br>")}</div>', unsafe_allow_html=True)
 

@@ -121,8 +121,14 @@ KEYWORDS = {
     "passed_exam": ["i passed", "got good mark", "i won"],
     "capabilities": ["what can you do", "your functions", "features"],
     "introduction": ["introduce", "who are you", "your name", "about you", "creator", "who made you"],
-    "creator_info": ["who is aylin", "who made you", "your developer"],
-    "contact_creator": ["how to contact", "reach aylin", "contact you", "talk to aylin"],
+    "creator_info": [
+        "who is aylin", "who made you", "your developer",
+        "tell me about aylin", "tell me about your creator", "about aylin"
+    ],
+    "contact_creator": [
+        "how to contact", "reach aylin", "contact you", "talk to aylin",
+        "how can i contact your creator", "how to contact your creator", "contact aylin"
+    ],
     "ack_creator": ["aylin is cool", "thank aylin", "credit to aylin"],
     "subjects": ["math", "physics", "chemistry", "biology", "english", "robotics", "ai"]
 }

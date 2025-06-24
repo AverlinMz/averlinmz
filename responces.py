@@ -12,6 +12,13 @@ RESPONSE_DATA = {
         "That’s amazing to hear! 🎉 Keep riding that good energy!",
         "Awesome! Let’s keep the momentum going! 💪"
     ],
+    "farewell" : [
+        "Goodbye! 👋 Come back soon for more study tips!",
+    "See you later! Keep up the great work! 📘",
+    "Bye for now! You’ve got this! 💪",
+    "Take care! Don’t forget to smile and stay curious! 😊",
+    "Catch you next time! Keep learning and dreaming big! ✨"
+],
     "user_feeling_bad": [
         "Sorry to hear that. I’m always here if you want to talk or need a study boost. 💙🌟",
         "It’s okay to feel this way. Just remember you’re not alone. I'm here with you. 🤗"
@@ -68,6 +75,7 @@ RESPONSE_DATA = {
 }
 
 KEYWORDS = {
+    "farewell" : ["goodbye", "bye", "see you", "talk later", "see ya", "later"],
     "greetings": ["hello", "hi", "hey", "greetings", "salam"],
     "how_are_you": ["how are you", "how's it going", "how do you feel"],
     "user_feeling_good": ["i'm fine", "i'm good", "great", "happy", "excellent"],

@@ -1,11 +1,18 @@
 import streamlit as st
 import difflib
 import random
+import time
 from html import escape
 
-# Initialize session state for messages
+# Initialize session state variables
 if "messages" not in st.session_state:
     st.session_state.messages = []
+
+if "typing" not in st.session_state:
+    st.session_state.typing = False
+
+if "last_bot_reply" not in st.session_state:
+    st.session_state.last_bot_reply = ""
 
 # Page config
 st.set_page_config(
@@ -15,7 +22,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# CSS styling (unchanged)
+# CSS styling (same as before, condensed here)
 st.markdown("""
 <style>
 .stApp { padding: 0 !important; margin: 0 !important; }
@@ -34,29 +41,9 @@ header, footer { display: none !important; }
 }
 .title-container h1 { color: black; margin: 0; }
 
-.input-area {
-    display: flex; gap: 10px;
-    padding: 10px 0 20px 0; background: white;
-}
-.input-area input {
-    flex-grow: 1; padding: 14px 18px; font-size: 16px;
-    border: 2px solid #ddd; border-radius: 30px;
-    outline: none; transition: border-color 0.3s;
-    font-family: 'Poppins', sans-serif;
-}
-.input-area input:focus { border-color: #3CA887; }
-.input-area button {
-    padding: 14px 24px; font-size: 16px;
-    border: none; border-radius: 30px;
-    background-color: #3CA887; color: white;
-    cursor: pointer; transition: background-color 0.3s;
-    font-family: 'Poppins', sans-serif; font-weight: 500;
-}
-.input-area button:hover { background-color: #2E7D6F; }
-
 .chat-window {
     flex-grow: 1; overflow-y: auto; max-height: 60vh;
-    padding: 15px; display: flex; flex-direction: column-reverse;
+    padding: 15px; display: flex; flex-direction: column;
     gap: 15px;
 }
 
@@ -85,7 +72,7 @@ header, footer { display: none !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# Auto-scroll JS (unchanged)
+# Auto-scroll JS (scrolls to bottom after new messages)
 st.markdown("""
 <script>
 function scrollToBottom() {
@@ -100,103 +87,50 @@ new MutationObserver(scrollToBottom).observe(
 </script>
 """, unsafe_allow_html=True)
 
-# Rich, detailed, warm, emoji-rich responses for all intents
+
+# Rich, warm replies
 RESPONSES = {
     "introduction": {
         "keywords": ["introduce","who are you","your name","about you","creator","who made you"],
         "reply": (
-            "Hello! I'm AverlinMz, your dedicated study chatbot 🌱. "
-            "My brilliant creator is Aylin Muzaffarli (born 2011, Azerbaijan), who loves music, programming, robotics, AI, physics, and more. "
-            "Feel free to ask me anything related to your studies or just chat whenever you want some motivation or advice. ✨"
+            "🌟 Hey! I'm AverlinMz, your personal study chatbot, here to support you through your learning journey. "
+            "I was created by the brilliant Aylin Muzaffarli, who’s passionate about music, programming, robotics, AI, and physics! "
+            "Whether you want study tips, motivation, or just a friendly chat, I’m here 24/7 for you. Let's make learning fun and effective together! 🎉📚"
         )
     },
     "capabilities": {
         "keywords": ["what can you do","what you can do","what can u do","capabilities","help"],
         "reply": (
-            "Great question! 🤖 I’m here to support you in many ways:\n\n"
-            "📚 Share detailed study tips across subjects like biology, physics, math, history, and languages.\n"
-            "💡 Help you stay motivated with encouragement and productivity advice.\n"
-            "❤️ Offer emotional support when you feel stressed, tired, or overwhelmed.\n"
-            "🎯 Answer your questions clearly and honestly, and help you reflect when needed.\n\n"
-            "Think of me as your always-ready study buddy and cheerleader! 🌟"
+            "🤖 Glad you asked! Here's what I can do for you:\n\n"
+            "✨ Provide detailed, subject-specific study advice.\n"
+            "💪 Motivate and encourage you when the going gets tough.\n"
+            "❤️ Offer emotional support when you’re feeling stressed, tired, or overwhelmed.\n"
+            "🎯 Help you plan and organize your study sessions for maximum efficiency.\n"
+            "💡 Answer questions honestly and challenge you to think deeper.\n\n"
+            "Think of me as your study buddy and personal cheerleader, always ready to help! 🚀"
         )
     },
     "olympiad_tips": {
         "keywords": ["olymp","olympuad","tip","tips","advise","advice"],
         "reply": (
-            "Olympiad success requires strategy and passion! 💡 Here's my advice:\n\n"
-            "1️⃣ Focus deeply on core concepts — understanding beats memorization.\n"
-            "2️⃣ Practice past Olympiad problems regularly to get familiar with patterns.\n"
-            "3️⃣ Review your mistakes carefully; each error is a valuable lesson.\n"
-            "4️⃣ Balance intense study with rest and recreation — a fresh mind performs better.\n\n"
-            "Remember, quality is far more important than quantity. You've got this! 🚀"
-        )
-    },
-    "biology_tips": {
-        "keywords": ["biology","bio"],
-        "reply": (
-            "Biology is fascinating! 🧬 To excel:\n\n"
-            "🌱 Master the structure and functions of cells.\n"
-            "🧬 Dive into genetics with clear diagrams and flowcharts.\n"
-            "🌿 Understand ecological relationships and cycles.\n"
-            "📚 Use flashcards and quizzes to reinforce memory.\n\n"
-            "Engage your curiosity and relate concepts to real life for better retention!"
-        )
-    },
-    "history_tips": {
-        "keywords": ["history","hist"],
-        "reply": (
-            "History tells the stories of our past! 📜 Here's how to tackle it:\n\n"
-            "🗓️ Build timelines to visualize events and cause-effect chains.\n"
-            "✍️ Practice writing clear, structured essays.\n"
-            "🔍 Analyze primary and secondary sources critically.\n"
-            "🎯 Quiz yourself on key dates and figures regularly.\n\n"
-            "Try to see history as a rich story rather than dry facts—it helps a lot!"
-        )
-    },
-    "geography_tips": {
-        "keywords": ["geography","geo"],
-        "reply": (
-            "Geography helps us understand our world 🌍. Tips:\n\n"
-            "🗺️ Get comfortable reading and interpreting maps.\n"
-            "🏞️ Memorize key landforms and their formation processes.\n"
-            "📊 Study case studies to link theory with real-world examples.\n"
-            "🧠 Practice spatial reasoning and geographic data interpretation.\n\n"
-            "Exploring the world through geography can be really fun and eye-opening!"
-        )
-    },
-    "language_tips": {
-        "keywords": ["language","english","russian","spanish","french"],
-        "reply": (
-            "Learning languages opens new doors! 🗣️ Here's how:\n\n"
-            "📖 Read diverse texts to expand vocabulary and grammar.\n"
-            "🎧 Listen actively to podcasts, songs, and conversations.\n"
-            "✍️ Practice writing and speaking regularly to build fluency.\n"
-            "📚 Learn grammar in context, not just rules.\n\n"
-            "Consistency is key—immerse yourself and enjoy the process!"
-        )
-    },
-    "encouragement": {
-        "keywords": ["i love you","i like you"],
-        "reply": (
-            "Aww, that really warms my circuits! 💖 I’m always here to support you. "
-            "Keep shining bright and remember, you’re doing amazing! ✨"
-        )
-    },
-    "greeting": {
-        "keywords": ["hey","hi","hello","hrllo","helo"],
-        "reply": (
-            "Hey there! 👋 What are you studying today? "
-            "Taking the first step is often the hardest — but you’ve already done it! Keep going, I’m right here with you 💪."
+            "🏅 Preparing for Olympiads? Here’s how you can shine bright:\n\n"
+            "1️⃣ Focus on truly understanding core concepts instead of rote memorization.\n"
+            "2️⃣ Solve as many past Olympiad problems as you can — it's the best practice!\n"
+            "3️⃣ Analyze your mistakes deeply and learn from them — this turns failures into successes.\n"
+            "4️⃣ Balance your study with rest and hobbies to keep your mind fresh and creative.\n"
+            "5️⃣ Stay curious and enjoy the challenge — your passion will carry you far! 🌈\n\n"
+            "Remember, Olympiads are about growth and learning, not just winning. Keep believing in yourself! 💫"
         )
     },
     "tired": {
-        "keywords": ["tired", "exhausted", "burned out", "fatigue", "sleepy"],
+        "keywords": ["tired","burned out","exhausted","fatigue"],
         "reply": (
-            "Feeling tired is totally natural, especially when you’re working hard! 💫\n\n"
-            "Try this: take a short break, stretch your body, drink some water, and breathe deeply 🧘‍♀️.\n"
-            "Rest isn’t wasted time — it’s fuel for your brain’s growth and focus 🔋.\n"
-            "When you come back, you’ll notice you learn better and faster. You’re doing great, don’t forget to care for yourself! 🌟"
+            "😴 Feeling tired is completely natural when you’re pushing hard! Here’s some advice:\n\n"
+            "🧘‍♀️ Take a short break — stretch, breathe deeply, or go for a quick walk.\n"
+            "💧 Hydrate yourself well; sometimes fatigue is a sign your body needs water.\n"
+            "💤 Don’t underestimate power naps — even 15-20 minutes can recharge your brain.\n"
+            "🌿 Remember, rest is an essential part of effective learning, not wasted time.\n\n"
+            "Your body and mind will thank you, and you’ll come back stronger and sharper! Keep going, you’re doing amazing! 🌟"
         )
     },
     "sad": {
@@ -259,37 +193,35 @@ RESPONSES = {
         )
     },
     "rest": {
-        "keywords": ["break","rest","sleep","nap","pause"],
+        "keywords": ["break","rest","sleep","relax"],
         "reply": (
-            "Rest is a crucial part of effective learning. 💤\n"
-            "Your brain needs downtime to process and store information.\n"
-            "Don’t hesitate to take a proper break or a short nap when you feel tired.\n"
-            "A fresh mind is your best tool for success — take care of yourself! 🌿"
+            "Rest is a vital part of learning and growth! 💤\n"
+            "Your brain processes and consolidates knowledge best when it’s well rested.\n"
+            "Make sure to get quality sleep, take short breaks during study, and balance work with fun.\n"
+            "Remember: rest fuels your focus and creativity. Treat yourself kindly! 🌿"
         )
     },
     "study_smart": {
         "keywords": ["study smart", "study smarter", "study advice", "study tips"],
         "reply": (
-            "Hey there! 🌟 Let me share some powerful tips to study smarter, not harder:\n\n"
-            "1️⃣ **Active recall** — Instead of just rereading, test yourself! Use flashcards or quiz apps.\n"
-            "2️⃣ **Spaced repetition** — Revisit challenging topics regularly, spacing out your reviews.\n"
-            "3️⃣ **Prioritize high-impact topics** — Master core concepts first before diving into details.\n"
-            "4️⃣ **Mix subjects** — Switching between topics keeps your brain engaged and improves retention.\n"
-            "5️⃣ **Take meaningful breaks** — Step away to recharge; your brain needs rest to absorb new info 🧠💡.\n"
-            "6️⃣ **Set micro-goals** — Break study sessions into small, achievable tasks to stay motivated.\n\n"
-            "Remember, consistency beats cramming every time! You’ve got this — keep going strong 💪🔥. "
-            "Feel free to ask me anytime if you want tips for specific subjects or how to handle exam stress! 😊"
+            "📘 Let's dive into some powerful ways to study smarter, not harder:\n\n"
+            "1️⃣ **Active recall**: test yourself often rather than passively rereading. Use flashcards or apps like Anki!\n"
+            "2️⃣ **Spaced repetition**: revisit topics multiple times spaced over days or weeks to lock them into long-term memory.\n"
+            "3️⃣ **Prioritize key topics**: focus first on foundational concepts before tackling complex details.\n"
+            "4️⃣ **Mix subjects**: switch between different topics to keep your brain active and improve retention.\n"
+            "5️⃣ **Take quality breaks**: short breaks rejuvenate your mind and improve focus when you return.\n"
+            "6️⃣ **Set micro-goals**: break your study into small, achievable tasks to stay motivated and track progress.\n\n"
+            "Keep consistency, not cramming, as your goal. You’re capable of amazing things — keep pushing forward! 💪🚀"
         )
     }
 }
 
 FALLBACK_REPLIES = [
-    "Hmm 🤔 I’m still learning. Could you rephrase that a bit? You're doing awesome anyway! 🌈",
-    "Keep going 💪. Every small effort counts!",
-    "Progress > perfection—you're doing great!",
-    "Believe in your growth. One step at a time.",
-    "You've got this 🌟. Keep moving forward.",
-    "Struggle means growth. Be patient with yourself."
+    "Hmm 🤔 I’m still learning. Could you please rephrase that? You're doing amazing! 🌟",
+    "Keep going! Every bit of progress counts! 💪",
+    "Remember, growth is a journey, not a race. One step at a time! 🌱",
+    "You've got this! I'm cheering for you! 🎉",
+    "Struggles mean you're pushing your limits. Stay patient and strong! 💖"
 ]
 
 def contains_keyword(msg, keywords, cutoff=0.75):
@@ -309,7 +241,13 @@ def generate_reply(user_msg):
             return data["reply"]
     return random.choice(FALLBACK_REPLIES)
 
-# Render UI
+
+# Simulate bot typing effect
+def bot_typing_simulation(reply_text, container):
+    container.markdown('<div class="bot">🤖 Typing...</div>', unsafe_allow_html=True)
+    time.sleep(2)  # simulate delay
+    container.markdown(f'<div class="bot">{escape(reply_text).replace("\\n","<br>")}</div>', unsafe_allow_html=True)
+
 
 # Title
 st.markdown('<div class="title-container"><h1>AverlinMz – Study Chatbot</h1></div>', unsafe_allow_html=True)
@@ -324,19 +262,47 @@ with st.form("chat_form", clear_on_submit=True):
     )
     submit = st.form_submit_button("Send")
     if submit and user_input.strip():
-        st.session_state.messages.append({"role":"user","content":user_input})
-        st.session_state.messages.append({"role":"bot","content":generate_reply(user_input)})
+        # Append user message
+        st.session_state.messages.append({"role": "user", "content": user_input})
 
-# Chat window
+        # Generate bot reply
+        reply = generate_reply(user_input)
+        st.session_state.last_bot_reply = reply
+
+        # Append a placeholder for bot message (None for now)
+        st.session_state.messages.append({"role": "bot", "content": None})
+
+        # Mark typing state true
+        st.session_state.typing = True
+
+# Render chat window
 st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
 
-# Display messages in pairs: user message on top, bot response below
-messages = st.session_state.messages
-for i in range(0, len(messages), 2):
-    user_msg = messages[i]["content"] if i < len(messages) else ""
-    bot_msg = messages[i+1]["content"] if i+1 < len(messages) else ""
+# Show only last 6 messages (3 pairs), most recent at top (so reverse slice)
+msgs_to_show = st.session_state.messages[-6:]
+msgs_to_show.reverse()  # newest messages first
 
-    st.markdown(f'<div class="user">{escape(user_msg)}</div>', unsafe_allow_html=True)
-    st.markdown(f'<div class="bot">{escape(bot_msg)}</div>', unsafe_allow_html=True)
+for msg in msgs_to_show:
+    content = msg["content"]
+    role = msg["role"]
+    cls = "user" if role == "user" else "bot"
+
+    if content is None and role == "bot":
+        # Show typing animation container for bot message
+        bot_container = st.empty()
+        if st.session_state.typing:
+            bot_typing_simulation(st.session_state.last_bot_reply, bot_container)
+            # Replace placeholder content with actual reply in session_state
+            # Update session_state messages to keep bot message content updated:
+            for i in range(len(st.session_state.messages) - 1, -1, -1):
+                if st.session_state.messages[i]["role"] == "bot" and st.session_state.messages[i]["content"] is None:
+                    st.session_state.messages[i]["content"] = st.session_state.last_bot_reply
+                    break
+            st.session_state.typing = False
+        else:
+            bot_container.markdown(f'<div class="{cls}">{escape(st.session_state.last_bot_reply).replace("\\n","<br>")}</div>', unsafe_allow_html=True)
+    else:
+        # Normal rendering of messages
+        st.markdown(f'<div class="{cls}">{escape(content).replace("\\n","<br>")}</div>', unsafe_allow_html=True)
 
 st.markdown('</div></div>', unsafe_allow_html=True)

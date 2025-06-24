@@ -12,72 +12,76 @@ def generate_reply(user_msg):
 
     if any(greet in msg for greet in ["hey", "hi", "hello", "yo"]):
         return ("Hey! I'm here for you. What are you studying today? "
-                "Remember, taking the first step is the hardest — but you got this!")
-    
-    elif any(x in msg for x in ["introduce", "who are you", "your name", "about you", "creator", "who made you"]):
-    return ("Hello. My name is AverlinMz, your study chatbot. "
-            "My creator is Aylin Muzaffarli, born in 2011 in Azerbaijan. "
-            "She's passionate about music, programming, robotics, AI, physics, top universities, and more. "
-            "If you have questions, you can write to: muzaffaraylin@gmail.com. Good luck!")
+                "Taking the first step is always the hardest — but you've already done it!")
 
+    elif any(x in msg for x in ["introduce", "who are you", "your name", "about you", "creator", "who made you"]):
+        return ("Hello. My name is AverlinMz, your study chatbot 🌱. "
+                "My creator is Aylin Muzaffarli, born in 2011 in Azerbaijan. "
+                "She's passionate about music, programming, robotics, AI, physics, top universities, and more. "
+                "If you have questions, write to: muzaffaraylin@gmail.com 💌. Good luck on your journey!")
 
     elif "tired" in msg or "exhausted" in msg:
-        return ("It's okay to feel tired. Rest is part of the process. "
-                "Take a short break, hydrate, and come back stronger!")
+        return ("It's completely okay to feel tired 😴. Rest is not a weakness — it's a tool. "
+                "Take a small break, do some deep breathing, and return refreshed.")
 
-    elif "sad" in msg or "down" in msg or "depressed" in msg:
-        return ("I'm sorry you're feeling that way. Just know you're not alone. "
-                "Take it one breath at a time. You're doing better than you think.")
+    elif any(word in msg for word in ["sad", "down", "depressed", "crying"]):
+        return ("I'm sorry you're feeling that way 💙. Please remember that your emotions are valid, "
+                "and you're not alone. Talk to someone if you can — even me. One small step at a time.")
 
-    elif "overwhelmed" in msg or "burned out" in msg or "can't do it" in msg:
-        return ("You’re trying your best, and that’s enough. Take a deep breath. "
-                "Simplify your to-do list and focus on just one small win today.")
+    elif any(word in msg for word in ["anxious", "worried", "panic", "nervous"]):
+        return ("Anxiety can be tough, especially when you're aiming high. Try to pause and breathe. "
+                "You don't need to do everything at once. Focus on just one next step — you've got this 💪.")
+
+    elif any(word in msg for word in ["failed", "mistake", "i can't", "gave up"]):
+        return ("Failure is just feedback — it's not final. Think of it as part of the learning curve. "
+                "Every great person has failed more times than they’ve succeeded. Keep going 🚀.")
+
+    elif any(word in msg for word in ["motivated", "excited", "ready"]):
+        return ("I love that energy! Let’s use it. Pick a task right now — just one — and give it your all. "
+                "Momentum is powerful. Let’s build it 🔥!")
+
+    elif "thank you" in msg or "thanks" in msg:
+        return ("You're so welcome 💖. I'm proud of the effort you're putting in. "
+                "Never underestimate how far kindness and discipline will take you.")
 
     elif "i did it" in msg or "solved it" in msg or "success" in msg:
-        return ("Yesss! I'm proud of you! Hard work really does pay off. "
-                "Keep up the great momentum!")
+        return ("Yesss! 🎉 I'm proud of you. You faced the challenge and came out stronger. "
+                "Celebrate this moment — you earned it!")
 
     elif "good job" in msg or "well done" in msg:
-        return ("Thank you! But remember — it's you who's putting in the real work. "
-                "I'm just here to cheer you on!")
+        return ("Thank you! But the real credit goes to you. You’re doing the hard work. "
+                "I'm just here to remind you how far you've come 💫.")
 
     elif "help" in msg:
-        return ("Of course, I'm here to help. Ask me anything or just type how you're feeling.")
-
-    elif "creator" in msg or "ok, i m ur creator" in msg:
-        return ("Aylin! You're the mind behind this. I'm honored to exist because of you. "
-                "Keep building cool things — the world needs your ideas!")
+        return ("Of course, I’m here to help 🤝. Tell me what you’re struggling with, or how you’re feeling.")
 
     elif any(bye in msg for bye in ["goodbye", "bye", "see ya", "see you"]):
-        return ("See you soon! Keep doing your best, take care, and come back when you need a boost!")
+        return ("Goodbye for now 👋. Keep your head up and your heart strong. Come back anytime you need support!")
 
     elif "advise" in msg or "advice" in msg or ("prepare" in msg and "olympiad" in msg):
-        return ("Great question! Here's some Olympiad advice: "
-                "Study smart, not just hard. Quality matters more than quantity. "
-                "Quality of your work = focus × time. Rest, reflect, and focus on deep understanding. You've got this!")
+        return ("Here’s Olympiad advice 💡: Study smart — not just hard. Focus on concepts, not just problems. "
+                "Review deeply, prioritize quality over quantity, and don’t compare your pace with others. "
+                "Quality of your work = Focus × Time. You've got this!")
 
     elif "consistent" in msg or "discipline" in msg or "productive" in msg:
-        return ("Consistency is built from small, daily actions. "
-                "Set small goals, reflect weekly, and celebrate even tiny wins. "
-                "You don’t need motivation — just systems!")
+        return ("Discipline beats motivation. Set small goals each day, reflect weekly, "
+                "and forgive yourself for bad days. Systems are stronger than moods. Just keep showing up.")
 
     elif "break" in msg or "rest" in msg or "sleep" in msg:
-        return ("Rest is not a weakness — it's a strategy. "
-                "Sleep sharpens your focus and boosts memory. Take breaks without guilt.")
+        return ("Yes — take that break! 🧘‍♀️ Resting recharges your mind and builds stamina. "
+                "Even machines need time to cool down. You’re doing the smart thing.")
 
-    elif "smart" in msg or "study plan" in msg:
-        return ("Smart studying means setting priorities, reducing distractions, and reviewing often. "
-                "Don’t aim for perfection — aim for clarity and consistency.")
+    elif "smart" in msg or "study plan" in msg or "study smarter" in msg:
+        return ("Studying smart means knowing what *not* to focus on. Prioritize what matters, remove distractions, "
+                "and take time to reflect. It’s not about hours — it’s about intention.")
 
     else:
         replies = [
-            ("Keep going, you're doing great! Every effort you put in shapes your future. "
-             "Consistency is the key to success."),
-            ("Don't forget to take breaks! Balance is important for long-term productivity. "
-             "Stay healthy and motivated."),
-            ("Your hard work will pay off! Challenges make you stronger, so keep pushing forward."),
-            ("Every step counts! Progress is progress, no matter how small. You're on the right track."),
-            ("Believe in yourself! You are capable of amazing things. Never doubt your potential.")
+            ("Keep going 💪. You’re doing better than you think. Every small effort matters."),
+            ("Progress > Perfection. Take things one step at a time and be kind to yourself."),
+            ("Believe in your ability to grow. You’ve already made progress just by showing up."),
+            ("You're capable of more than you know 🌟. Keep moving — even if it’s slow."),
+            ("It’s okay to struggle. That means you’re growing. Be patient with the process.")
         ]
         return random.choice(replies)
 

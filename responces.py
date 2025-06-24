@@ -22,7 +22,7 @@ RESPONSE_DATA = {
     ],
     "passed_exam": [
         "🎉 CONGRATULATIONS! That’s amazing news! I knew you could do it.",
-        "Woohoo! So proud of you! 🥳 What’s next on your journey?"
+        "Woohoo! So proud of you! 🥳 "
     ],
     "love": [
         "Aww 💖 That's sweet! I'm just code, but I support you 100%!",

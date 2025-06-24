@@ -3,11 +3,11 @@ import difflib
 import random
 from html import escape
 
-# Initialize session state
+# Initialize session state for messages
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Page configuration
+# Page config
 st.set_page_config(
     page_title="AverlinMz Chatbot",
     page_icon="💡",
@@ -30,60 +30,35 @@ header, footer {
     visibility: hidden !important; 
 }
 
-/* Chat container */
+/* Container styling */
 .chat-container {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 100px);
     max-width: 900px;
     margin: 0 auto;
     padding: 20px;
     box-sizing: border-box;
 }
 
-/* Chat window */
-.chat-window {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding: 15px;
-    display: flex;
-    flex-direction: column-reverse;  /* Newest messages at bottom */
-    gap: 15px;
+/* Title */
+.title-container {
+    text-align: center;
+    padding-bottom: 10px;
+    background: white;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+}
+.title-container h1 {
+    color: black;  /* black title */
+    margin: 0;
 }
 
-/* Message bubbles */
-.user {
-    align-self: flex-end;
-    background-color: #D1F2EB;
-    color: #0B3D2E;
-    padding: 12px 16px;
-    border-radius: 18px 18px 4px 18px;
-    font-family: 'Poppins', sans-serif;
-    max-width: 80%;
-    word-wrap: break-word;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-.bot {
-    align-self: flex-start;
-    background-color: #EFEFEF;
-    color: #333333;
-    padding: 12px 16px;
-    border-radius: 18px 18px 18px 4px;
-    font-family: 'Poppins', sans-serif;
-    max-width: 80%;
-    word-wrap: break-word;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-/* Input area */
+/* Input area (normal flow, not fixed) */
 .input-area {
     display: flex;
     gap: 10px;
-    padding: 15px;
+    padding: 10px 0 20px 0;
     background: white;
-    border-top: 1px solid #eee;
-    position: sticky;
-    bottom: 0;
 }
 .input-area input {
     flex-grow: 1;
@@ -114,21 +89,39 @@ header, footer {
     background-color: #2E7D6F;
 }
 
-/* Title styling */
-.title-container {
-    text-align: center;
-    padding: 15px 0;
-    background: white;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+/* Chat window */
+.chat-window {
+    flex-grow: 1;
+    overflow-y: auto;
+    max-height: 60vh;
+    padding: 15px;
+    display: flex;
+    flex-direction: column-reverse;  /* newest at bottom */
+    gap: 15px;
 }
-.title-container h1 {
-    color: #2E7D6F;
+
+/* Message bubbles */
+.user {
+    align-self: flex-end;
+    background-color: #D1F2EB;
+    color: #0B3D2E;
+    padding: 12px 16px;
+    border-radius: 18px 18px 4px 18px;
     font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    margin: 0;
+    max-width: 80%;
+    word-wrap: break-word;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.bot {
+    align-self: flex-start;
+    background-color: #EFEFEF;
+    color: #333333;
+    padding: 12px 16px;
+    border-radius: 18px 18px 18px 4px;
+    font-family: 'Poppins', sans-serif;
+    max-width: 80%;
+    word-wrap: break-word;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 /* Scrollbar styling */
@@ -149,28 +142,25 @@ header, footer {
 </style>
 """, unsafe_allow_html=True)
 
-# Auto-scroll JavaScript
+# Auto-scroll JS
 st.markdown("""
 <script>
-// Auto-scroll to bottom
-window.addEventListener('load', function() {
-    scrollToBottom();
-});
-
 function scrollToBottom() {
     const chatWindow = document.querySelector('.chat-window');
-    chatWindow.scrollTop = chatWindow.scrollHeight;
+    if (chatWindow) {
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
 }
-
-// Listen for Streamlit events to trigger scrolling
-document.addEventListener('DOMContentLoaded', function() {
-    const observer = new MutationObserver(scrollToBottom);
-    observer.observe(document.querySelector('.chat-window'), {childList: true, subtree: true});
+window.onload = scrollToBottom;
+const observer = new MutationObserver(scrollToBottom);
+document.addEventListener('DOMContentLoaded', () => {
+    const chatWindow = document.querySelector('.chat-window');
+    if (chatWindow) observer.observe(chatWindow, { childList: true, subtree: true });
 });
 </script>
 """, unsafe_allow_html=True)
 
-# Predefined responses
+# Responses dict
 RESPONSES = {
     "introduction": {
         "keywords": ["introduce", "who are you", "your name", "about you", "creator", "who made you"],
@@ -227,93 +217,43 @@ RESPONSES = {
     "success": {
         "keywords": ["i did it", "solved it", "success", "finished"],
         "reply": "🎉 You did it! Celebrate this win—you earned it!"
+    },
+    "thanks": {
+        "keywords": ["thank you", "thanks"],
+        "reply": "You’re welcome! 😊 I’m proud of you. Come back any time."
+    },
+    "help": {
+        "keywords": ["help"],
+        "reply": "Of course—I’m here to assist or just listen. What’s up?"
+    },
+    "farewell": {
+        "keywords": ["goodbye", "bye", "see ya", "see you"],
+        "reply": "See you later 👋. Keep up the great work and return when you need a boost."
+    },
+    "productivity": {
+        "keywords": ["consistent", "discipline", "productive"],
+        "reply": "Discipline > motivation. Set micro-goals, track progress, forgive slip-ups."
+    },
+    "rest": {
+        "keywords": ["break", "rest", "sleep"],
+        "reply": "Rest is part of the process. 💤 A fresh mind learns faster."
+    },
+    "study_smart": {
+        "keywords": ["smart", "study plan", "study smarter"],
+        "reply": "Study smart: active recall, spaced repetition, and high-impact topics."
     }
 }
 
-# Fallback messages
+# Fallback replies
 FALLBACK_REPLIES = [
     "Keep going 💪. Every small effort counts!",
     "Progress > perfection—you're doing great!",
     "Believe in your growth. One step at a time.",
     "You've got this 🌟. Keep moving forward.",
     "Struggle means growth. Be patient with yourself.",
-    "Remember why you started. You can do this!",
-    "Small progress is still progress. Celebrate it!",
-    "Your effort today is an investment in tomorrow."
 ]
 
-# Fuzzy keyword helper
+# Helper for fuzzy keyword detection
 def contains_keyword(msg, keywords, cutoff=0.75):
     msg = msg.lower()
-    words = msg.split()
-    for kw in keywords:
-        if kw in msg:
-            return True
-        for w in words:
-            if difflib.SequenceMatcher(None, w, kw).ratio() >= cutoff:
-                return True
-    return False
-
-# Reply logic
-def generate_reply(user_msg):
-    user_msg = user_msg.lower()
-    
-    # Check predefined responses
-    for category, data in RESPONSES.items():
-        if contains_keyword(user_msg, data["keywords"]):
-            return data["reply"]
-    
-    # Subject-specific tips
-    if contains_keyword(user_msg, ["biology"]) and contains_keyword(user_msg, ["tip", "tips"]):
-        return RESPONSES["biology_tips"]["reply"]
-    
-    if contains_keyword(user_msg, ["history"]) and contains_keyword(user_msg, ["tip", "tips"]):
-        return RESPONSES["history_tips"]["reply"]
-    
-    if contains_keyword(user_msg, ["geography"]) and contains_keyword(user_msg, ["tip", "tips"]):
-        return RESPONSES["geography_tips"]["reply"]
-    
-    if contains_keyword(user_msg, ["language", "english", "russian"]) and contains_keyword(user_msg, ["tip", "tips"]):
-        return RESPONSES["language_tips"]["reply"]
-    
-    # Emotional support
-    if contains_keyword(user_msg, ["sad", "down", "depressed"]):
-        return RESPONSES["sad"]["reply"]
-    
-    # Fallback
-    return random.choice(FALLBACK_REPLIES)
-
-# Page layout
-st.markdown('<div class="title-container"><h1>AverlinMz – Study Chatbot</h1></div>', unsafe_allow_html=True)
-
-# Chat container
-st.markdown('<div class="chat-container">', unsafe_allow_html=True)
-
-# Chat window
-st.markdown('<div class="chat-window">', unsafe_allow_html=True)
-for msg in st.session_state.messages:
-    if msg["role"] == "user":
-        st.markdown(f'<div class="user">{escape(msg["content"])}</div>', unsafe_allow_html=True)
-    else:
-        st.markdown(f'<div class="bot">{escape(msg["content"])}</div>', unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)  # Close chat-window
-
-# Input area
-st.markdown('<div class="input-area">', unsafe_allow_html=True)
-user_input = st.text_input("", placeholder="Write your message...", key="input_field", label_visibility="collapsed")
-send_button = st.button("Send", key="send_button")
-st.markdown('</div>', unsafe_allow_html=True)  # Close input-area
-
-st.markdown('</div>', unsafe_allow_html=True)  # Close chat-container
-
-# Handle user input
-if send_button and user_input.strip():
-    # Add user message
-    st.session_state.messages.append({"role": "user", "content": user_input})
-    
-    # Generate and add bot reply
-    bot_reply = generate_reply(user_input)
-    st.session_state.messages.append({"role": "bot", "content": bot_reply})
-    
-    # Clear the input field by forcing a rerun
-    st.experimental_rerun()
+    words

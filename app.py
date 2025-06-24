@@ -29,10 +29,9 @@ header, footer { display: none !important; }
 .title-container h1 { color: black; margin: 0; }
 
 .chat-window { flex-grow: 1; overflow-y: auto; max-height: 60vh; padding: 15px; display: flex; flex-direction: column; gap: 15px; }
-.user, .bot { width: 100%; word-wrap: break-word; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-family: 'Poppins', sans-serif; }
-.user { background-color: #D1F2EB; color: #0B3D2E; padding: 12px 16px; border-radius: 18px 18px 4px 18px; align-self: flex-start; }
-.bot  { background-color: #EFEFEF; color: #333; padding: 12px 16px; border-radius: 18px 18px 18px 4px; align-self: flex-start; }
-
+.user, .bot { align-self: center; width: 100%; word-wrap: break-word; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-family: 'Poppins', sans-serif; }
+.user { background-color: #D1F2EB; color: #0B3D2E; padding: 12px 16px; border-radius: 18px 18px 4px 18px; }
+.bot  { background-color: #EFEFEF; color: #333; padding: 12px 16px; border-radius: 18px 18px 18px 4px; }
 .chat-window::-webkit-scrollbar { width: 8px; }
 .chat-window::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
 .chat-window::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
@@ -40,25 +39,10 @@ header, footer { display: none !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# Auto-scroll JS
-st.markdown("""
-<script>
-function scrollToBottom() {
-    const w = document.querySelector('.chat-window');
-    if (w) w.scrollTop = w.scrollHeight;
-}
-window.onload = scrollToBottom;
-new MutationObserver(scrollToBottom).observe(
-    document.querySelector('.chat-window'),
-    { childList: true, subtree: true }
-);
-</script>
-""", unsafe_allow_html=True)
-
 # Title
 st.markdown('<div class="title-container"><h1>AverlinMz – Study Chatbot</h1></div>', unsafe_allow_html=True)
 
-# Full response data with rich exam prep and new "passed exam" responses
+# Full response data
 RESPONSE_DATA = {
     "greetings": [
         "Hello there! 👋 How’s your day going? Ready to dive into learning today?",
@@ -133,11 +117,6 @@ RESPONSE_DATA = {
         "🎉 Great job on your progress! Every step forward counts. Keep up the amazing work!",
         "🌟 I’m proud of your effort. Remember, consistency beats perfection."
     ],
-    "passed_exam": [
-        "🎉 Congratulations on passing your exam! All your hard work paid off — keep shining! 🌟",
-        "Awesome news! You passed! That’s a big achievement. Proud of you! 💪",
-        "You did it! Passing the exam shows your dedication and skill. Celebrate your success! 🎊"
-    ],
     "resources": [
         "📚 Helpful Resources:\n- Khan Academy for foundational lessons.\n- Quizlet for flashcards.\n- Coursera and edX for free university courses.\n- Brilliant.org for interactive STEM challenges."
     ],
@@ -148,40 +127,12 @@ RESPONSE_DATA = {
         "🎨 Learning Style Tips:\n- Visual: Use diagrams and color-coded notes.\n- Auditory: Record and listen to explanations.\n- Kinesthetic: Practice hands-on activities or experiments."
     ],
     "exam_prep": [
-        "📖 Ultimate Exam Preparation Guide:\n\n"
-        "🧠 Study Strategy:\n"
-        "1. Begin preparation 4–6 weeks before the exam.\n"
-        "2. Create a subject-wise timetable with specific topics.\n"
-        "3. Use active recall – practice with flashcards and past papers.\n"
-        "4. Apply spaced repetition – revisit topics at increasing intervals.\n"
-        "5. Simulate test conditions: timed sessions, no notes.\n"
-        "6. Solve a variety of question types – conceptual, numerical, essay.\n"
-        "7. Focus on understanding, not just memorizing.\n\n"
-
-        "⏰ Time Management:\n"
-        "1. Use the Pomodoro technique – 25 mins study, 5 mins break.\n"
-        "2. Prioritize tasks with the Eisenhower Matrix (urgent vs. important).\n"
-        "3. Set clear daily goals – review at the end of the day.\n"
-        "4. Break big tasks into small chunks.\n\n"
-
-        "🧘 Stress Management:\n"
-        "1. Practice deep breathing or short meditation sessions.\n"
-        "2. Take tech-free breaks – walk, stretch, listen to calming music.\n"
-        "3. Avoid multitasking – focus brings peace.\n"
-        "4. Stay connected – talk to someone when feeling overwhelmed.\n\n"
-
-        "💪 Physical & Mental Health:\n"
-        "1. Sleep 7–9 hours per night – memory consolidation happens during sleep.\n"
-        "2. Eat brain-friendly foods: nuts, berries, fish, dark chocolate.\n"
-        "3. Stay hydrated – even mild dehydration can affect focus.\n"
-        "4. Avoid excessive caffeine – balance energy and calm.\n\n"
-
-        "📅 Final Week Checklist:\n"
-        "• Revise summaries and high-yield notes.\n"
-        "• Don't cram – use light reviews and rest more.\n"
-        "• Organize exam materials in advance.\n"
-        "• Visualize success – use positive mental rehearsal.\n"
-        "• Believe in yourself – you’ve prepared, now trust your brain. 💚"
+        "📖 Exam Preparation Guide:\n1. Begin at least 4 weeks before the exam.\n2. Create a revision timetable covering all topics.\n3. Use active recall – practice past paper questions.\n4. Apply spaced repetition on key formulas and concepts.\n5. Simulate exam conditions: timed quizzes, no notes.\n6. Review errors immediately and clarify doubts.\n7. Maintain healthy sleep (7–9 hours) and nutrition.\n8. Schedule light exercise and relaxation to manage stress."
+    ],
+    "passed_exam": [
+        "🎉 Congratulations on passing your exam! All your hard work paid off!",
+        "Awesome! Passing an exam is a big achievement — well done!",
+        "You did it! Celebrate your success and keep pushing forward!"
     ],
     "subjects": {
         "math": (
@@ -213,7 +164,7 @@ RESPONSE_DATA = {
     ]
 }
 
-# Keywords dictionary, including new passed exam variants
+# Keywords
 KEYWORDS = {
     "greetings": ["hello","hi","hey","good morning","good evening"],
     "how_are_you": ["how are you","how're you","how r u","how you doing","how do you do"],
@@ -232,11 +183,11 @@ KEYWORDS = {
     "stress_management": ["stress management","manage stress","relax","stress relief","calm down"],
     "self_assessment": ["self assessment","self-evaluate","test myself","quiz myself"],
     "progress_praise": ["i did it","i finished","progress","achievement","i succeeded"],
-    "passed_exam": ["i passed my exam","i passed the exam","i cleared the exam","i passed","i cleared","passed exam","passed my test","passed test"],
     "resources": ["resources","recommendations","study resources","helpful websites"],
     "time_management": ["time management","pomodoro","manage time","schedule"],
     "learning_styles": ["learning style","visual learner","auditory learner","kinesthetic learner"],
     "exam_prep": ["exam prep","exam preparation","prep advice","give me exam prep advice","preparation","prep","prepation","prep tips","prep for exam","exam prep tips"],
+    "passed_exam": ["i passed my exam","i passed the exam","i passed test","i passed my test","passed exam","passed test","i did pass","i cleared my exam"],
     "subjects": ["math","physics","chemistry","biology","computer science"],
     "reflection_questions": ["reflect","reflection","think about"],
     "fun_facts": ["fun fact","challenge","quiz"]
@@ -253,8 +204,8 @@ def get_bot_reply(user_input):
 
     # Priority intents
     for cat in [
-        'passed_exam', 'progress_praise', 'user_feeling_good','user_feeling_bad','love',
-        'how_are_you','greetings','exam_prep','capabilities'
+        'user_feeling_good','user_feeling_bad','love',
+        'how_are_you','greetings','exam_prep','capabilities','passed_exam'
     ]:
         if any(kw in msg for kw in cleaned.get(cat, [])):
             return random.choice(RESPONSE_DATA[cat])
@@ -264,7 +215,7 @@ def get_bot_reply(user_input):
             return RESPONSE_DATA['subjects'][subj]
     # Other categories
     for cat, kws in cleaned.items():
-        if cat in ['passed_exam', 'progress_praise', 'user_feeling_good','user_feeling_bad','love','how_are_you','greetings','exam_prep','capabilities','subjects']:
+        if cat in ['user_feeling_good','user_feeling_bad','love','how_are_you','greetings','exam_prep','capabilities','subjects','passed_exam']:
             continue
         if cat in RESPONSE_DATA and any(kw in msg for kw in kws):
             return random.choice(RESPONSE_DATA[cat])
@@ -280,18 +231,15 @@ with st.form('chat_form', clear_on_submit=True):
         # Then add bot reply
         st.session_state.messages.append({'role': 'bot', 'content': get_bot_reply(user_input)})
 
-# Render chat messages with user's messages ABOVE bot's replies
+# Render chat messages with newest at top, user above bot for each pair
 st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
 
-# Display all messages in the order: user first, then bot, then user, then bot ...
-# But since we append user then bot, the list is: [user, bot, user, bot, ...]
-# So we display them as pairs (user above bot)
-for i in range(0, len(st.session_state.messages), 2):
-    if i < len(st.session_state.messages):
-        user_msg = st.session_state.messages[i]['content']
-        st.markdown(f'<div class="user">{escape(user_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
-    if i+1 < len(st.session_state.messages):
-        bot_msg = st.session_state.messages[i+1]['content']
-        st.markdown(f'<div class="bot">{escape(bot_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
+msgs = st.session_state.messages
+# Iterate backwards over message pairs, newest first
+for i in range(len(msgs) - 2, -1, -2):  
+    user_msg = msgs[i]['content']
+    bot_msg = msgs[i+1]['content'] if i+1 < len(msgs) else ''
+    st.markdown(f'<div class="user">{escape(user_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="bot">{escape(bot_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
 
 st.markdown('</div></div>', unsafe_allow_html=True)

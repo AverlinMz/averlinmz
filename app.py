@@ -94,7 +94,7 @@ st.markdown('<div class="title-container"><h1>AverlinMz – Study Chatbot</h1></
 RESPONSES = {
     "study_smart": {
         "keywords": ["study smart", "study smarter", "study tips", "study plan"],
-        "reply": "Hey friend! 🌟 Here are some powerful tips to study smarter, not harder:
+        "reply": """Hey friend! 🌟 Here are some powerful tips to study smarter, not harder:
 
 1. **Active recall** – quiz yourself instead of just rereading.
 2. **Spaced repetition** – review material over increasing intervals.
@@ -102,11 +102,11 @@ RESPONSES = {
 4. **Teach what you learn** – if you can explain it, you’ve mastered it.
 5. **Plan weekly goals** – focus on outcomes, not just time spent.
 
-And don’t forget: rest is part of the process 💤. Your brain loves clarity, not clutter. You’ve got this! 🚀"
+And don’t forget: rest is part of the process 💤. Your brain loves clarity, not clutter. You’ve got this! 🚀"""
     },
     "tired": {
         "keywords": ["tired", "burned out", "exhausted", "no energy"],
-        "reply": "Oh no 😞 You sound really drained. That’s totally okay – you’re human! 🧡
+        "reply": """Oh no 😞 You sound really drained. That’s totally okay – you’re human! 🧡
 
 Here’s what you can try:
 - ✋ Step away from the screen. Even 10 minutes helps.
@@ -114,7 +114,7 @@ Here’s what you can try:
 - 🌬️ Breathe in deeply 5 times. Slowly. Really slowly.
 - 💤 Nap or stretch your legs – your body needs care.
 
-You’re doing more than enough. Let go of pressure. Come back stronger 💪 I believe in you!"
+You’re doing more than enough. Let go of pressure. Come back stronger 💪 I believe in you!"""
     },
     "default": {
         "keywords": [],

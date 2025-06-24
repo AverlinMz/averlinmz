@@ -2,7 +2,6 @@ import streamlit as st
 import random
 import string
 from html import escape
-import re
 
 # Initialize session state
 def init_session():
@@ -153,19 +152,14 @@ RESPONSE_DATA = {
         ),
         "ai": (
             "Artificial Intelligence (AI) is the field that enables machines to mimic human intelligence. "
-            "It uses programming, math, and data to create systems that learn and make decisions. "
-            "Studying AI prepares you for the future of technology and problem solving."
+            "It uses programming, math, and logic to build systems that learn and adapt. "
+            "AI is shaping the future of technology and society."
         )
     },
     "fallback": [
-        "Hmm, I’m not sure how to answer that — try rephrasing or asking something about study or motivation! 🤔 I'm still learning.",
-        "I didn’t quite get that, but I’m here to help! Maybe ask about a subject or how you feel. 😊 I'm still learning."
-    ],
-    "follow_up": [
-        "That sounds interesting! Tell me more.",
-        "Thanks for sharing! What else would you like to talk about?",
-        "Great! How do you feel about that?",
-        "Nice plan! What steps will you take next?"
+        "Hmm, I’m not sure how to answer that — try rephrasing or asking something about study or motivation! 🤔",
+        "I didn’t quite get that, but I’m here to help! Maybe ask about a subject or how you feel. 😊",
+        "I'm still learning and improving every day! Feel free to ask me about studying or motivation."
     ]
 }
 
@@ -175,88 +169,75 @@ KEYWORDS = {
     "user_feeling_good": ["i'm fine", "i'm good", "great", "happy", "excellent"],
     "user_feeling_bad": ["i'm sad", "not good", "tired", "depressed", "bad"],
     "love": ["i love you", "you are cute", "like you"],
-    "exam_prep": ["exam tips", "how to prepare", "study for test", "exam help", "give me advice for exam prep"],
+    "exam_prep": [
+        "exam tips", "how to prepare", "study for test", "exam help",
+        "give me advice", "advice for exam", "exam advice", "prepare for exam",
+        "how to study", "study tips"
+    ],
     "passed_exam": ["i passed", "got good mark", "i won"],
     "capabilities": ["what can you do", "your functions", "features"],
     "introduction": ["introduce", "who are you", "your name", "about you", "creator", "who made you"],
     "creator_info": ["who is aylin", "who made you", "your developer"],
     "contact_creator": ["how to contact", "reach aylin", "contact you", "talk to aylin"],
     "ack_creator": ["aylin is cool", "thank aylin", "credit to aylin"],
-    "motivation": ["motivate me", "i need motivation", "encourage me"],
-    "study_tips": ["study tips", "how to study", "study better"],
-    "time_management": ["manage time", "time management", "how to manage time"],
+    "motivation": ["motivate me", "encourage me", "need motivation", "inspire me"],
+    "study_tips": ["study tips", "how to study", "study advice"],
+    "time_management": ["time management", "manage time", "time planning"],
     "subjects": ["math", "physics", "chemistry", "biology", "english", "robotics", "ai"]
 }
 
+# Text cleaner
 def clean_text(text):
     return text.lower().translate(str.maketrans('', '', string.punctuation)).strip()
 
-def is_user_sharing_plan(text):
-    # Detect phrases where user shares future plans or goals
-    plan_patterns = [
-        r"\bi plan to\b",
-        r"\bi'm going to\b",
-        r"\bi will\b",
-        r"\bmy goal is\b",
-        r"\bi want to\b",
-        r"\bi'd like to\b",
-        r"\bi hope to\b"
-    ]
-    text_lower = text.lower()
-    return any(re.search(pattern, text_lower) for pattern in plan_patterns)
-
+# Bot reply logic
 def get_bot_reply(user_input):
     msg = clean_text(user_input)
     cleaned = {cat: [clean_text(kw) for kw in kws] for cat, kws in KEYWORDS.items()}
 
-    # Special handling for introduction - first time vs later times
-    if any(kw in msg for kw in cleaned.get("introduction", [])):
+    # Special handling for introduction (avoid repeating "Hello!" every time)
+    intro_keywords = cleaned.get('introduction', [])
+    if any(kw in msg for kw in intro_keywords):
         if not st.session_state.introduced:
             st.session_state.introduced = True
-            return random.choice(RESPONSE_DATA["introduction"])  # includes Hello!
+            return random.choice(RESPONSE_DATA['introduction'])
         else:
-            intro_text = random.choice(RESPONSE_DATA["introduction"])
-            if intro_text.startswith("Hello!"):
-                intro_text = intro_text[len("Hello!"):].strip()
-            return intro_text
+            # Second time or more - shorter reply
+            return "I'm your study chatbot, here to help you learn and stay motivated."
 
-    # Check if user is sharing plans or goals and respond more meaningfully
-    if is_user_sharing_plan(user_input):
-        return random.choice(RESPONSE_DATA["follow_up"])
-
-    # Check categories with keywords
+    # Check categories with direct keyword matching
     for cat in [
-        'user_feeling_good','user_feeling_bad','love','how_are_you','greetings','exam_prep',
-        'capabilities','passed_exam','creator_info','contact_creator','ack_creator',
-        'motivation','study_tips','time_management'
-    ]:
+        'user_feeling_good','user_feeling_bad','love','how_are_you','greetings','exam_prep','capabilities',
+        'passed_exam','creator_info','contact_creator','ack_creator','motivation','study_tips','time_management']:
         if any(kw in msg for kw in cleaned.get(cat, [])):
             return random.choice(RESPONSE_DATA[cat])
 
-    # Check subjects
+    # Subjects check (exact subject word in message)
     for subj in cleaned.get('subjects', []):
         if subj in msg and subj in RESPONSE_DATA['subjects']:
             return RESPONSE_DATA['subjects'][subj]
 
-    # If user just replied to bot's question or statement and doesn't match known categories
-    last_bot = st.session_state.last_bot.lower() if st.session_state.last_bot else ""
-    if last_bot and ("what's next" in last_bot or "how do you feel" in last_bot or "tell me more" in last_bot):
-        return random.choice(RESPONSE_DATA["follow_up"])
+    # Catch-all for any other categories not caught above
+    for cat, kws in cleaned.items():
+        if cat in [
+            'user_feeling_good','user_feeling_bad','love','how_are_you','greetings','exam_prep','capabilities',
+            'subjects','passed_exam','introduction','creator_info','contact_creator','ack_creator',
+            'motivation','study_tips','time_management']:
+            continue
+        if cat in RESPONSE_DATA and any(kw in msg for kw in kws):
+            return random.choice(RESPONSE_DATA[cat])
 
-    # Fallback with "I'm still learning."
-    fallback_response = random.choice(RESPONSE_DATA['fallback'])
-    return fallback_response
+    # If no match, fallback with learning message
+    fallback_msg = random.choice(RESPONSE_DATA['fallback'])
+    return fallback_msg + " I'm still learning."
 
 # Chat form & display
 with st.form('chat_form', clear_on_submit=True):
     user_input = st.text_input('Write your message…', key='input_field')
     if st.form_submit_button('Send') and user_input.strip():
         st.session_state.messages.append({'role': 'user', 'content': user_input})
-        reply = get_bot_reply(user_input)
-        st.session_state.messages.append({'role': 'bot', 'content': reply})
-        # Save last user and bot messages for context
-        st.session_state.last_user = user_input
-        st.session_state.last_bot = reply
+        bot_response = get_bot_reply(user_input)
+        st.session_state.messages.append({'role': 'bot', 'content': bot_response})
 
 # Render chat messages
 st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
@@ -266,6 +247,7 @@ for i in range(len(msgs) - 2, -1, -2):
     bot_msg = msgs[i+1]['content'] if i+1 < len(msgs) else ''
     st.markdown(f'<div class="user">{escape(user_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
     st.markdown(f'<div class="bot">{escape(bot_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
+
 st.markdown('</div></div>', unsafe_allow_html=True)
 
 # Sidebar tips
@@ -278,7 +260,4 @@ with st.sidebar:
         "- 'How do I manage time?'\n"
         "- 'Motivate me please!'\n"
         "- 'Who created you?'\n"
-        "- 'Give me advice for exam prep'\n"
-        "- 'How to contact your creator'\n"
-        "- 'I plan to study abroad'\n"
     )

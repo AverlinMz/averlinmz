@@ -97,7 +97,8 @@ RESPONSE_DATA = {
     ],
     "capabilities": [
         "I’m here to guide, motivate, and support you with study tips, emotional encouragement, subject-specific advice, and more. Think of me as your academic partner, not just a chatbot!",
-        "I provide study strategies, motivation, emotional support, and detailed advice on subjects like Math, Physics, Chemistry, Biology, Computer Science, languages, and more."
+        "I provide study strategies, motivation, emotional support, and detailed advice on subjects like Math, Physics, Chemistry, Biology, Computer Science, languages, and more.",
+        "I can also help with exam preparation advice, time management techniques, self-assessment quizzes, and fun learning challenges."
     ],
     "farewell": [
         "Goodbye for now 👋! Keep being amazing and come back whenever you need help, motivation, or just a kind word. 💚",
@@ -115,50 +116,57 @@ RESPONSE_DATA = {
         "It’s normal to feel stuck sometimes. Reflect on your progress and try small steps forward. You’ve got this! 💪"
     ],
     "study_tips": [
-        "📚 Study Smarter:\n"
-        "1. Use active recall – quiz yourself often.\n"
-        "2. Apply spaced repetition – review material over time.\n"
-        "3. Eliminate distractions – focus on one task at a time.\n"
-        "4. Teach others – explaining concepts helps retention.\n"
-        "5. Use visuals – mind maps and charts improve memory.\n"
-        "6. Rest intentionally – breaks prevent burnout.\n\n"
-        "You've got this! 💪✨",
-        "SMART Study Method:\n"
-        "• Specific: Set clear goals.\n"
-        "• Measurable: Track your progress.\n"
-        "• Achievable: Be realistic.\n"
-        "• Relevant: Focus on important topics.\n"
-        "• Time-bound: Use deadlines to stay on track.\n\n"
-        "Try using this method to boost your efficiency!"
+        "📚 Study Smarter:\n1. Use active recall – quiz yourself often.\n2. Apply spaced repetition – review material over time.\n3. Eliminate distractions – focus on one task at a time.\n4. Teach others – explaining concepts helps retention.\n5. Use visuals – mind maps and charts improve memory.\n6. Rest intentionally – breaks prevent burnout.\nYou've got this! 💪✨",
+        "SMART Study Method:\n• Specific: Set clear goals.\n• Measurable: Track your progress.\n• Achievable: Be realistic.\n• Relevant: Focus on important topics.\n• Time-bound: Use deadlines to stay on track.\nTry using this method to boost your efficiency!"
+    ],
+    "study_plan": [
+        "🗓️ Customizable Study Plans:\n- Set realistic goals for each day or week.\n- Include breaks and variety to stay motivated.\n- Review and adjust your plan as you learn more about your pace."
+    ],
+    "stress_management": [
+        "🧘 Stress Management Tips:\n• Practice deep breathing exercises daily.\n• Take short mindfulness breaks every hour.\n• Incorporate light exercise or stretching.\n• Maintain a balanced diet and prioritize sleep."
+    ],
+    "self_assessment": [
+        "✅ Self-Assessment Tips:\n- Quiz yourself with flashcards or practice questions.\n- Reflect on mistakes and identify knowledge gaps.\n- Celebrate small victories to stay motivated."
+    ],
+    "progress_praise": [
+        "🎉 Great job on your progress! Every step forward counts. Keep up the amazing work!",
+        "🌟 I’m proud of your effort. Remember, consistency beats perfection."
+    ],
+    "resources": [
+        "📚 Helpful Resources:\n- Khan Academy for foundational lessons.\n- Quizlet for flashcards.\n- Coursera and edX for free university courses.\n- Brilliant.org for interactive STEM challenges."
+    ],
+    "time_management": [
+        "⏰ Time Management Tips:\n- Use the Pomodoro technique (25 min focus + 5 min break).\n- Prioritize tasks using the Eisenhower matrix.\n- Batch similar tasks together to reduce context switching."
+    ],
+    "learning_styles": [
+        "🎨 Learning Style Tips:\n- Visual: Use diagrams and color-coded notes.\n- Auditory: Record and listen to explanations.\n- Kinesthetic: Practice hands-on activities or experiments."
+    ],
+    "exam_prep": [
+        "📖 Exam Preparation Guide:\n1. Begin at least 4 weeks before the exam.\n2. Create a revision timetable covering all topics.\n3. Use active recall – practice past paper questions.\n4. Apply spaced repetition on key formulas and concepts.\n5. Simulate exam conditions: timed quizzes, no notes.\n6. Review errors immediately and clarify doubts.\n7. Maintain healthy sleep (7–9 hours) and nutrition.\n8. Schedule light exercise and relaxation to manage stress."
     ],
     "subjects": {
         "math": (
-            "📐 Math Advice & Inspiration:\n\n"
-            "1. Understand the concept, not just the formula. Dive deep into why something works.\n"
-            "2. Practice daily with diverse problems to sharpen your skills.\n"
-            "3. When you make mistakes, analyze them carefully — they are your best teachers.\n"
-            "4. Study proofs to strengthen logical thinking.\n"
-            "5. Explain solutions aloud or write them down as if teaching someone else.\n\n"
-            "Math is not just numbers — it’s a way to train your mind to think critically and creatively. Keep challenging yourself, and celebrate every breakthrough! 🌟"
+            "📐 Math Advice & Inspiration:\n\n1. Master fundamental concepts before formulas.\n2. Solve varied problems: algebra, geometry, calculus.\n3. Analyze mistakes: identify pattern, correct approach.\n4. Study proofs to build logical rigor.\n5. Teach solutions aloud or write detailed steps."
         ),
         "physics": (
-            "🧲 Physics Advice & Inspiration:\n\n"
-            "1. Master the basics: Newton’s laws, energy, motion — these are the building blocks.\n"
-            "2. Draw detailed diagrams to visualize problems.\n"
-            "3. Connect theories to real-world phenomena to make learning meaningful.\n"
-            "4. Derive formulas yourself instead of rote memorization.\n"
-            "5. Solve conceptually first, then crunch numbers.\n\n"
-            "Physics is the poetry of the universe — understanding it empowers you to see the world in new light. Stay curious and keep exploring! 🚀"
+            "🧲 Physics Advice & Inspiration:\n\n1. Visualize problems: draw force diagrams.\n2. Connect equations to real-world scenarios.\n3. Derive key formulas yourself.\n4. Prioritize conceptual understanding before calculations.\n5. Practice numerical and conceptual questions equally."
         ),
         "chemistry": (
-            "⚗️ Chemistry Tips & Inspiration:\n\n"
-            "1. Memorize key reactions and periodic trends, but understand their significance.\n"
-            "... (all subject entries included similarly)"
+            "⚗️ Chemistry Tips & Inspiration:\n\n1. Learn periodic trends and reaction mechanisms.\n2. Balance equations methodically.\n3. Practice organic reaction pathways step-by-step.\n4. Use molecular models for structure visualization.\n5. Relate theory to lab observations."
+        ),
+        "biology": (
+            "🧬 Biology Strategy & Inspiration:\n\n1. Create detailed labelled diagrams (cell, cycles).\n2. Use flashcards for terminology and processes.\n3. Explain concepts to peers or record yourself.\n4. Relate parts to overall systems.\n5. Study examples of real-life applications."
+        ),
+        "computer science": (
+            "💻 Computer Science Guidance & Inspiration:\n\n1. Practice data structures: arrays, lists, trees.\n2. Master algorithms: sorting, searching, graphs.\n3. Code daily: small challenges build fluency.\n4. Read and debug others’ code.\n5. Document your thought process and solutions."
         )
     },
+    "reflection_questions": [
+        "🤔 Reflective Questions:\n- What challenged you most today and why?\n- How can you apply this knowledge in real scenarios?\n- What one change could optimize your study routine?"
+    ],
     "fun_facts": [
-        "🎲 Fun Fact:\nDid you know the human brain can hold about 7±2 pieces of information at once?",
-        "Challenge: Try explaining today’s study topic in 3 sentences or less!"
+        "🎲 Fun Fact: The human brain processes information at around 120 m/s!",
+        "Challenge: Explain today’s topic in 3 sentences or less."
     ],
     "fallback": [
         "Hmm 🤔 I didn’t catch that. Could you rephrase it a bit? I’m here to help! 💬",
@@ -170,24 +178,27 @@ RESPONSE_DATA = {
 KEYWORDS = {
     "greetings": ["hello","hi","hey","good morning","good evening"],
     "how_are_you": ["how are you","how're you","how r u","how you doing","how do you do"],
-    "user_feeling_good": [
-        "im doing well","i am doing well","im good","i am good","im fine","i am fine",
-        "doing great","feeling good","feeling great","all good","im okay","i am okay"
-    ],
-    "user_feeling_bad": [
-        "im tired","i am tired","im sad","i am sad","burnout","overwhelmed","anxious","stress",
-        "not good","bad day","exhausted","frustrated","upset","worried","depressed","unhappy"
-    ],
+    "user_feeling_good": ["im doing well","i am doing well","im good","i am good","im fine","i am fine","doing great","feeling good","feeling great","all good","im okay","i am okay"],
+    "user_feeling_bad": ["im tired","i am tired","im sad","i am sad","burnout","overwhelmed","anxious","stress","not good","bad day","exhausted","frustrated","upset","worried","depressed","unhappy"],
     "love": ["i love you","love you","i adore you","you are awesome","you rock"],
     "introduction": ["who are you","introduce","your name","introduce yourself"],
     "creator_info": ["tell me about your creator","who is your creator","who created you"],
     "ack_creator": ["im your creator","i am your creator","i am aylin","im ur creator"],
-    "capabilities": ["what can you do","how can you help","what do you do"],
+    "capabilities": ["what can you do","how can you help","what do you do","what else can you offer","what else you can offer","what else do you offer"],
     "farewell": ["goodbye","bye","see you","see ya"],
     "motivational_quote": ["quote","motivation","inspire","motivate me"],
     "emotional_support": ["tired","sad","burnout","overwhelmed","anxious","stress"],
     "study_tips": ["study smarter","how to study","study plan","study advice","tips for studying"],
-    "subjects": ["math","physics","chemistry","biology","computer science","language"],
+    "study_plan": ["study plan","custom study plan","schedule study","study schedule"],
+    "stress_management": ["stress management","manage stress","relax","stress relief","calm down"],
+    "self_assessment": ["self assessment","self-evaluate","test myself","quiz myself"],
+    "progress_praise": ["i did it","i finished","progress","achievement","i succeeded"],
+    "resources": ["resources","recommendations","study resources","helpful websites"],
+    "time_management": ["time management","pomodoro","manage time","schedule"],
+    "learning_styles": ["learning style","visual learner","auditory learner","kinesthetic learner"],
+    "exam_prep": ["exam prep","exam preparation","prep advice","give me exam prep advice","preparation","prep","prepation","prep tips","prep for exam","exam prep tips"],
+    "subjects": ["math","physics","chemistry","biology","computer science"],
+    "reflection_questions": ["reflect","reflection","think about"],
     "fun_facts": ["fun fact","challenge","quiz"]
 }
 
@@ -200,34 +211,24 @@ def get_bot_reply(user_input):
     msg = clean_text(user_input)
     cleaned = {cat: [clean_text(kw) for kw in kws] for cat, kws in KEYWORDS.items()}
 
-    # Feelings
-    if any(kw in msg for kw in cleaned['user_feeling_good']):
-        return random.choice(RESPONSE_DATA['user_feeling_good'])
-    if any(kw in msg for kw in cleaned['user_feeling_bad']):
-        return random.choice(RESPONSE_DATA['user_feeling_bad'])
-
-    # Love
-    if any(kw in msg for kw in cleaned['love']):
-        return random.choice(RESPONSE_DATA['love'])
-
-    # Greetings & how are you
-    if any(kw in msg for kw in cleaned['how_are_you']):
-        return random.choice(RESPONSE_DATA['how_are_you'])
-    if any(kw in msg for kw in cleaned['greetings']):
-        return random.choice(RESPONSE_DATA['greetings'])
-
-    # Subjects
+    # Priority intents
+    for cat in [
+        'user_feeling_good','user_feeling_bad','love',
+        'how_are_you','greetings','exam_prep','capabilities'
+    ]:
+        if any(kw in msg for kw in cleaned.get(cat, [])):
+            return random.choice(RESPONSE_DATA[cat])
+    # Subjects detailed
     for subj in cleaned.get('subjects', []):
         if subj in msg and subj in RESPONSE_DATA['subjects']:
             return RESPONSE_DATA['subjects'][subj]
-
     # Other categories
-    for cat in cleaned:
-        if cat in ['user_feeling_good','user_feeling_bad','how_are_you','greetings','love','subjects']:
+    for cat, kws in cleaned.items():
+        if cat in ['user_feeling_good','user_feeling_bad','love','how_are_you','greetings','exam_prep','capabilities','subjects']:
             continue
-        if any(kw in msg for kw in cleaned[cat]) and cat in RESPONSE_DATA:
+        if cat in RESPONSE_DATA and any(kw in msg for kw in kws):
             return random.choice(RESPONSE_DATA[cat])
-
+    # Fallback
     return random.choice(RESPONSE_DATA['fallback'])
 
 # Chat form & display
@@ -239,7 +240,7 @@ with st.form('chat_form', clear_on_submit=True):
 
 st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
 for msg in reversed(st.session_state.messages):
-    cls = 'user' if msg['role'] == 'user' else 'bot'
-    content = escape(msg['content']).replace('\n', '<br>')
+    cls = 'user' if msg['role']=='user' else 'bot'
+    content = escape(msg['content']).replace('\n','<br>')
     st.markdown(f'<div class="{cls}">{content}</div>', unsafe_allow_html=True)
 st.markdown('</div></div>', unsafe_allow_html=True)

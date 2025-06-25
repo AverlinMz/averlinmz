@@ -1,9 +1,0 @@
-streamlit
-torch
-transformers
-sentence-transformers
-gtts
-pydub
-SpeechRecognition
-ffmpeg-python
-openai

@@ -4,15 +4,14 @@ import string
 import os
 from html import escape
 import datetime
-from openai import OpenAI  # updated import
 
-# Load API key from environment
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-if OPENAI_API_KEY is None:
-    st.error("Error: OPENAI_API_KEY environment variable not set.")
-    st.stop()
+# ✅ NEW: Local GPT-2 support
+from transformers import GPT2LMHeadModel, GPT2Tokenizer
+import torch
 
-client = OpenAI(api_key=OPENAI_API_KEY)  # create OpenAI client instance
+# Load GPT-2 once
+tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+model = GPT2LMHeadModel.from_pretrained("gpt2")
 
 # Initialize session state
 def init_session():
@@ -73,24 +72,21 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Title with animation class
 st.markdown('<div class="title-container"><h1>AverlinMz – Study Chatbot</h1></div>', unsafe_allow_html=True)
 
-# Your RESPONSE_DATA & KEYWORDS (paste your full dict here exactly as before)
 RESPONSE_DATA = {
     "greetings": [
         "Hello there! 👋 How’s your day going? Ready to dive into learning today?",
         "Hey hey! 🌟 Hope you’re feeling inspired today. What’s on your mind?",
         "Hi friend! 😊 I’m here for you — whether you want to study, vent, or just chat."
     ],
-    # ... your full RESPONSE_DATA goes here ...
     "farewell": [
         "Goodbye! 👋 Come back soon for more study tips!",
         "See you later! Keep up the great work! 📘",
         "Bye for now! You’ve got this! 💪",
         "Take care! Don’t forget to smile and stay curious! 😊",
         "Catch you next time! Keep learning and dreaming big! ✨"
-    ],
+    ]
 }
 
 KEYWORDS = {
@@ -140,21 +136,21 @@ def detect_sentiment(text):
         return "negative"
     return "neutral"
 
-# NEW OpenAI call compatible with openai>=1.0.0
-def generate_openai_response(prompt):
-    try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",  # or "gpt-4" if you have access
-            messages=[
-                {"role": "system", "content": "You are a helpful study assistant."},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0.7,
-            max_tokens=250,
-        )
-        return response.choices[0].message.content.strip()
-    except Exception as e:
-        return f"Sorry, I encountered an error: {e}"
+# ✅ Local GPT-2 generation
+def generate_gpt2_response(prompt, max_length=150):
+    inputs = tokenizer.encode(prompt, return_tensors="pt")
+    outputs = model.generate(
+        inputs,
+        max_length=max_length,
+        do_sample=True,
+        top_k=50,
+        top_p=0.95,
+        temperature=0.7,
+        no_repeat_ngram_size=2,
+        num_return_sequences=1
+    )
+    response_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    return response_text[len(prompt):].strip()
 
 def get_bot_reply(user_input):
     intent = detect_intent(user_input)
@@ -185,7 +181,7 @@ def get_bot_reply(user_input):
     elif sentiment == "negative":
         return "I'm sorry you're feeling that way. I'm here if you want to talk. 💙"
 
-    return generate_openai_response(user_input)
+    return generate_gpt2_response(user_input)
 
 with st.form('chat_form', clear_on_submit=True):
     user_input = st.text_input('Write your message…', key='input_field')

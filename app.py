@@ -3,6 +3,10 @@ import random
 import string
 from html import escape
 import datetime
+import re
+import tempfile
+import os
+from gtts import gTTS
 
 # Initialize session state
 def init_session():
@@ -13,6 +17,19 @@ def init_session():
     if "context_topic" not in st.session_state:
         st.session_state.context_topic = None
 init_session()
+
+# Remove emojis helper function
+def remove_emojis(text):
+    emoji_pattern = re.compile(
+        "["
+        "\U0001F600-\U0001F64F"  # emoticons
+        "\U0001F300-\U0001F5FF"  # symbols & pictographs
+        "\U0001F680-\U0001F6FF"  # transport & map symbols
+        "\U0001F1E0-\U0001F1FF"  # flags (iOS)
+        "\U00002700-\U000027BF"  # Dingbats
+        "\U000024C2-\U0001F251"
+        "]+", flags=re.UNICODE)
+    return emoji_pattern.sub(r'', text)
 
 # Page config
 st.set_page_config(
@@ -126,7 +143,8 @@ RESPONSE_DATA = {
         "biology": "🧬 Biology Tips:\n1️⃣ Learn through diagrams (cells, organs, systems).\n2️⃣ Connect terms with real-life examples.\n3️⃣ Summarize topics using mind maps.\n4️⃣ Quiz yourself with apps.\n5️⃣ Talk about biology topics out loud.",
         "english": "📚 Language Tips:\n1️⃣ Read a bit every day (books, articles, stories).\n2️⃣ Speak or write in English regularly.\n3️⃣ Learn 5 new words daily and use them.\n4️⃣ Practice grammar through fun apps.\n5️⃣ Watch English shows with subtitles!",
         "robotics": "🤖 Robotics Tips:\n1️⃣ Start with block coding (like Scratch).\n2️⃣ Move on to Arduino and sensors.\n3️⃣ Join a club or competition.\n4️⃣ Watch tutorials and build projects.\n5️⃣ Learn how to debug and fix errors. Patience is key!",
-        "ai": "🧠 AI Tips:\n1️⃣ Start with Python basics.\n2️⃣ Learn about data types and logic.\n3️⃣ Try building chatbots or mini classifiers.\n4️⃣ Study math behind AI: linear algebra, probability.\n5️⃣ Follow real AI projects online to stay inspired!"
+        "ai": "🧠 AI Tips:\n1️⃣ Start with Python basics.\n2️⃣ Learn about data types and logic.\n3️⃣ Try building chatbots or mini classifiers.\n4️⃣ Study math behind AI: linear algebra, probability.\n5️⃣ Follow real AI projects online to stay inspired!",
+        "geography": "🌍 Geography Tips:\n1️⃣ Study maps regularly.\n2️⃣ Understand physical features and climates.\n3️⃣ Connect human activities with locations.\n4️⃣ Practice with past exam questions.\n5️⃣ Use videos and documentaries for better retention."
     },
     "fallback": [
         "Hmm, I’m not sure how to answer that — but I’ll learn! Maybe ask about a subject or how you feel. 🤔",
@@ -149,7 +167,7 @@ KEYWORDS = {
     "creator_info": ["who is aylin", "who made you", "your developer", "tell me about aylin"],
     "contact_creator": ["how to contact", "reach aylin", "contact you", "talk to aylin", "how can i contact to aylin"],
     "ack_creator": ["aylin is cool", "thank aylin", "credit to aylin"],
-    "subjects": ["math", "physics", "chemistry", "biology", "english", "robotics", "ai"]
+    "subjects": ["math", "physics", "chemistry", "biology", "english", "robotics", "ai", "geography"]
 }
 
 # Clean and normalize input text
@@ -234,6 +252,15 @@ with st.form('chat_form', clear_on_submit=True):
         # Get bot reply
         bot_reply = get_bot_reply(user_input)
         st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
+
+        # Audio output - TTS, clean from emojis
+        clean_reply = remove_emojis(bot_reply)
+        tts = gTTS(clean_reply, lang='en')
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tts_file:
+            tts.save(tts_file.name)
+            audio_bytes = open(tts_file.name, "rb").read()
+        st.audio(audio_bytes, format="audio/mp3")
+        os.unlink(tts_file.name)
 
 # Render chat messages
 st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)

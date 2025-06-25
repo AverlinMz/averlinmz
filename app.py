@@ -29,7 +29,7 @@ def remove_emojis(text):
 
 st.set_page_config(
     page_title="AverlinMz Chatbot",
-    page_icon="https://i.imgur.com/4Fpm1Zr.jpg",
+    page_icon="https://i.imgur.com/rXsLWgO.jpeg",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -62,6 +62,14 @@ st.markdown("""
 }
 </style>
 """, unsafe_allow_html=True)
+
+st.markdown("""
+<div class="title-container">
+  <img src="https://i.imgur.com/rXsLWgO.jpeg" alt="Chatbot Image" style="width:150px;border-radius:20px;margin-bottom:10px;"/>
+  <h1>AverlinMz – Study Chatbot</h1>
+</div>
+""", unsafe_allow_html=True)
+
 
 # Header with image and title
 st.markdown("""

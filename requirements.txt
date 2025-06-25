@@ -1,8 +1,14 @@
 streamlit
+
 torch
+
 sentence-transformers
+
 gtts
+
 pydub
+
 SpeechRecognition
+
 ffmpeg-python
-pip install openai
+openai

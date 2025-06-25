@@ -2,6 +2,7 @@ import streamlit as st
 import random
 import string
 from html import escape
+import datetime
 
 # Initialize session state
 def init_session():
@@ -267,14 +268,21 @@ with st.sidebar:
     st.markdown("### 🧠 Mini AI Assistant Mode")
     st.write("This bot tries to detect your intent and give focused advice or answers.")
 
-# Save chat history button
-if st.button("💾 Save Chat History"):
-    import datetime
-    filename = f"chat_history_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
-    with open(filename, "w", encoding="utf-8") as f:
-        for m in st.session_state.messages:
-            role = m['role']
-            content = m['content']
-            f.write(f"{role.upper()}: {content}\n\n")
-    st.success(f"Chat history saved as {filename}")
+# Save chat history as direct download to browser
+def get_chat_history_text():
+    lines = []
+    for m in st.session_state.messages:
+        role = m['role'].upper()
+        content = m['content']
+        lines.append(f"{role}: {content}\n")
+    return "\n".join(lines)
 
+filename = f"chat_history_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+chat_history_text = get_chat_history_text()
+
+st.download_button(
+    label="💾 Download Chat History",
+    data=chat_history_text,
+    file_name=filename,
+    mime="text/plain"
+)

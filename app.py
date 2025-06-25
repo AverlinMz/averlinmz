@@ -8,7 +8,6 @@ import tempfile
 import os
 from gtts import gTTS
 
-# Initialize session state
 def init_session():
     if "messages" not in st.session_state:
         st.session_state.messages = []
@@ -18,68 +17,33 @@ def init_session():
         st.session_state.context_topic = None
 init_session()
 
-# Remove emojis helper function
 def remove_emojis(text):
-    emoji_pattern = re.compile(
-        "["
-        "\U0001F600-\U0001F64F"  # emoticons
-        "\U0001F300-\U0001F5FF"  # symbols & pictographs
-        "\U0001F680-\U0001F6FF"  # transport & map symbols
-        "\U0001F1E0-\U0001F1FF"  # flags (iOS)
-        "\U00002700-\U000027BF"  # Dingbats
-        "\U000024C2-\U0001F251"
-        "]+", flags=re.UNICODE)
+    emoji_pattern = re.compile("[\U0001F600-\U0001F64F\U0001F300-\U0001F5FF\U0001F680-\U0001F6FF\U0001F1E0-\U0001F1FF\U00002700-\U000027BF\U000024C2-\U0001F251]+", flags=re.UNICODE)
     return emoji_pattern.sub(r'', text)
 
-# Page config
-st.set_page_config(
-    page_title="AverlinMz Chatbot",
-    page_icon="💡",
-    layout="wide",
-    initial_sidebar_state="collapsed"
-)
+st.set_page_config(page_title="AverlinMz Chatbot", page_icon="💡", layout="wide", initial_sidebar_state="collapsed")
 
-# Theme Customizer
 theme = st.sidebar.selectbox("🎨 Choose a theme", ["Default", "Night", "Blue"])
 if theme == "Night":
-    st.markdown("""
-    <style>
-    body, .stApp { background-color: #111111; color: white; }
-    .user { background-color: #333333; color: white; }
-    .bot { background-color: #444444; color: white; }
-    </style>
-    """, unsafe_allow_html=True)
+    st.markdown("""<style>body, .stApp { background:#111; color:#fff; } .user {background:#333;color:#fff;} .bot {background:#444;color:#fff;}</style>""", unsafe_allow_html=True)
 elif theme == "Blue":
-    st.markdown("""
-    <style>
-    body, .stApp { background-color: #e0f7fa; }
-    .user { background-color: #81d4fa; color: #01579b; }
-    .bot { background-color: #b2ebf2; color: #004d40; }
-    </style>
-    """, unsafe_allow_html=True)
+    st.markdown("""<style>body, .stApp { background:#e0f7fa; } .user {background:#81d4fa;color:#01579b;} .bot {background:#b2ebf2;color:#004d40;}</style>""", unsafe_allow_html=True)
 
-# CSS Styling
 st.markdown("""
 <style>
-.chat-container { display: flex; flex-direction: column; max-width: 900px; margin: 0 auto; padding: 20px; }
-.title-container { text-align: center; padding-bottom: 10px; font-family: 'Poppins', sans-serif; font-weight: 600; }
-.title-container h1 { margin: 0; }
-.chat-window { flex-grow: 1; overflow-y: auto; max-height: 60vh; padding: 15px; display: flex; flex-direction: column; gap: 15px; }
-.user, .bot { align-self: center; width: 100%; word-wrap: break-word; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-family: 'Poppins', sans-serif; }
-.user { background-color: #D1F2EB; color: #0B3D2E; padding: 12px 16px; border-radius: 18px 18px 4px 18px; }
-.bot  { background-color: #EFEFEF; color: #333; padding: 12px 16px; border-radius: 18px 18px 18px 4px; animation: typing 1s ease-in-out; }
-.chat-window::-webkit-scrollbar { width: 8px; }
-.chat-window::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-.chat-window::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
-.chat-window::-webkit-scrollbar-thumb:hover { background: #a1a1a1; }
-@keyframes typing { 0% { opacity: 0; } 100% { opacity: 1; } }
+.chat-container {max-width:900px;margin:0 auto;padding:20px;display:flex;flex-direction:column;}
+.title-container{text-align:center;padding-bottom:10px;font-family:'Poppins',sans-serif;font-weight:600;}
+.title-container h1{margin:0;}
+.chat-window{flex-grow:1;max-height:60vh;overflow-y:auto;padding:15px;display:flex;flex-direction:column;gap:15px;}
+.user, .bot {align-self:center;width:100%;word-wrap:break-word;box-shadow:0 2px 4px rgba(0,0,0,0.1);font-family:'Poppins',sans-serif;}
+.user{background:#D1F2EB;color:#0B3D2E;padding:12px 16px;border-radius:18px 18px 4px 18px;}
+.bot{background:#EFEFEF;color:#333;padding:12px 16px;border-radius:18px 18px 18px 4px;animation:typing 1s ease-in-out;}
+@keyframes typing {0%{opacity:0;}100%{opacity:1;}}
 </style>
 """, unsafe_allow_html=True)
 
-# Title
 st.markdown('<div class="title-container"><h1>AverlinMz – Study Chatbot</h1></div>', unsafe_allow_html=True)
 
-# Full Response Data
 RESPONSE_DATA = {
     "greetings": [
         "Hello there! 👋 How’s your day going? Ready to dive into learning today?",
@@ -130,7 +94,9 @@ RESPONSE_DATA = {
     ],
     "contact_creator": [
         "You can contact my creator on GitHub: https://github.com/AverlinMz 📬",
-        "Want to talk to Aylin? Try reaching out via GitHub – she's awesome! 🌟"
+        "Want to talk to Aylin? Try reaching out via GitHub – she's awesome! 🌟",
+        "How to reach out to Aylin?\nI didn’t quite get that, but I’m still here for you. 😊 Try rephrasing or check the help tips.",
+        "Hmm, I’m not sure how to answer that — but I’ll learn! Maybe ask about a subject or how you feel. 🤔"
     ],
     "ack_creator": [
         "Yes, Aylin is super talented! 😄",
@@ -152,7 +118,6 @@ RESPONSE_DATA = {
     ]
 }
 
-# Keywords for intent detection
 KEYWORDS = {
     "greetings": ["hello", "hi", "hey", "salam"],
     "farewell": ["goodbye", "bye", "see you", "talk later", "see ya", "later"],
@@ -165,16 +130,14 @@ KEYWORDS = {
     "capabilities": ["what can you do", "your functions", "features"],
     "introduction": ["introduce", "who are you", "your name", "about you", "creator", "who made you", "introduce yourself"],
     "creator_info": ["who is aylin", "who made you", "your developer", "tell me about aylin"],
-    "contact_creator": ["how to contact", "reach aylin", "contact you", "talk to aylin", "how can i contact to aylin"],
+    "contact_creator": ["how to contact", "reach aylin", "contact you", "talk to aylin", "how can i contact to aylin", "how to reach out to aylin", "how to reach out to her"],
     "ack_creator": ["aylin is cool", "thank aylin", "credit to aylin"],
     "subjects": ["math", "physics", "chemistry", "biology", "english", "robotics", "ai", "geography"]
 }
 
-# Clean and normalize input text
 def clean_text(text):
     return text.lower().translate(str.maketrans('', '', string.punctuation)).strip()
 
-# Mini AI Assistant Mode: Simple intent detection + advice mode
 def detect_intent(text):
     msg = clean_text(text)
     for intent, kws in KEYWORDS.items():
@@ -182,11 +145,9 @@ def detect_intent(text):
             return intent
     return None
 
-# Add goal tracker update
 def update_goals(user_input):
     msg = clean_text(user_input)
     if "goal" in msg or "aim" in msg or "plan" in msg:
-        # Extract simple goals (for demo purposes, just add whole user input)
         if user_input not in st.session_state.goals:
             st.session_state.goals.append(user_input)
             return "Got it! I added that to your goals."
@@ -194,66 +155,49 @@ def update_goals(user_input):
             return "You already mentioned this goal."
     return None
 
-# Simple sentiment check for feedback detection (basic)
 def detect_sentiment(text):
     positive = ["good", "great", "awesome", "love", "happy", "well", "fine"]
     negative = ["bad", "sad", "tired", "depressed", "angry", "upset", "not good"]
     txt = clean_text(text)
-    if any(word in txt for word in positive):
-        return "positive"
-    if any(word in txt for word in negative):
-        return "negative"
+    if any(word in txt for word in positive): return "positive"
+    if any(word in txt for word in negative): return "negative"
     return "neutral"
 
-# Main bot reply logic with added features
 def get_bot_reply(user_input):
     intent = detect_intent(user_input)
     goal_msg = update_goals(user_input)
-
-    # If user added a goal, respond
-    if goal_msg:
-        return goal_msg
+    if goal_msg: return goal_msg
 
     if intent and intent in RESPONSE_DATA:
-        # Use intent reply
-        reply = random.choice(RESPONSE_DATA[intent])
-        # Save context topic (if subject)
         if intent == "subjects":
             for subj in KEYWORDS["subjects"]:
                 if subj in user_input.lower():
                     st.session_state.context_topic = subj
                     break
+            return RESPONSE_DATA["subjects"].get(st.session_state.context_topic, random.choice(RESPONSE_DATA["fallback"]))
         else:
             st.session_state.context_topic = None
-        return reply
+            return random.choice(RESPONSE_DATA[intent])
 
-    # Context memory example - recall last subject discussed
     if st.session_state.context_topic:
         subj = st.session_state.context_topic
-        if subj in RESPONSE_DATA["subjects"]:
-            return RESPONSE_DATA["subjects"][subj] + "\n\n(You asked about this before!)"
+        return RESPONSE_DATA["subjects"].get(subj, random.choice(RESPONSE_DATA["fallback"])) + "\n\n(You asked about this before!)"
 
-    # Sentiment feedback encouragement
     sentiment = detect_sentiment(user_input)
     if sentiment == "positive":
         return "I'm glad you're feeling good! Keep it up! 🎉"
     elif sentiment == "negative":
         return "I'm sorry you're feeling that way. I'm here if you want to talk. 💙"
 
-    # Fallback
     return random.choice(RESPONSE_DATA["fallback"])
 
-# Chat form & display
 with st.form('chat_form', clear_on_submit=True):
     user_input = st.text_input('Write your message…', key='input_field')
     if st.form_submit_button('Send') and user_input.strip():
-        # Save user message
         st.session_state.messages.append({'role': 'user', 'content': user_input})
-        # Get bot reply
         bot_reply = get_bot_reply(user_input)
         st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
 
-        # Audio output - TTS, clean from emojis
         clean_reply = remove_emojis(bot_reply)
         tts = gTTS(clean_reply, lang='en')
         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tts_file:
@@ -262,7 +206,6 @@ with st.form('chat_form', clear_on_submit=True):
         st.audio(audio_bytes, format="audio/mp3")
         os.unlink(tts_file.name)
 
-# Render chat messages
 st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
 msgs = st.session_state.messages
 for i in range(len(msgs) - 2, -1, -2):
@@ -272,7 +215,6 @@ for i in range(len(msgs) - 2, -1, -2):
     st.markdown(f'<div class="bot">{escape(bot_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
 st.markdown('</div></div>', unsafe_allow_html=True)
 
-# Sidebar: Show goals and tips
 with st.sidebar:
     st.markdown("### 🎯 Your Goals")
     if st.session_state.goals:
@@ -282,34 +224,11 @@ with st.sidebar:
         st.write("You haven't set any goals yet. Tell me your goals!")
 
     st.markdown("### 💡 Tips")
-    st.info(
-        "Try asking things like:\n"
-        "- 'Give me study tips'\n"
-        "- 'Tell me about physics'\n"
-        "- 'How do I manage time?'\n"
-        "- 'Motivate me please!'\n"
-        "- 'Who created you?'\n"
-        "- Or just say 'bye' to end the chat!"
-    )
+    st.info("Try asking things like:\n- 'Give me study tips'\n- 'Tell me about physics'\n- 'How do I manage time?'\n- 'Motivate me please!'\n- 'Who created you?'\n- Or just say 'bye' to end the chat!")
 
     st.markdown("### 🧠 Mini AI Assistant Mode")
     st.write("This bot tries to detect your intent and give focused advice or answers.")
 
-# Save chat history as direct download to browser
-def get_chat_history_text():
-    lines = []
-    for m in st.session_state.messages:
-        role = m['role'].upper()
-        content = m['content']
-        lines.append(f"{role}: {content}\n")
-    return "\n".join(lines)
-
 filename = f"chat_history_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
-chat_history_text = get_chat_history_text()
-
-st.download_button(
-    label="💾 Download Chat History",
-    data=chat_history_text,
-    file_name=filename,
-    mime="text/plain"
-)
+chat_history_text = "\n".join([f"{m['role'].upper()}: {m['content']}\n" for m in st.session_state.messages])
+st.download_button(label="💾 Download Chat History", data=chat_history_text, file_name=filename, mime="text/plain")

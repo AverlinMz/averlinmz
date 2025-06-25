@@ -71,15 +71,13 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# --- RESPONSE_DATA, KEYWORDS, and other functions remain unchanged ---
-
 RESPONSE_DATA = {
     "greetings": [
         "Hello there! 👋 How’s your day going? Ready to dive into learning today?",
         "Hey hey! 🌟 Hope you’re feeling inspired today. What’s on your mind?",
         "Hi friend! 😊 I’m here for you — whether you want to study, vent, or just chat."
     ],
-       "thanks": [
+    "thanks": [
         "You’re very welcome! 😊",
         "Glad to help! If you need anything else, just ask.",
         "No problem! Happy to support your studies!",
@@ -100,9 +98,6 @@ RESPONSE_DATA = {
         "That’s amazing to hear! 🎉 Keep riding that good energy!",
         "Awesome! Let’s keep the momentum going! 💪"
     ],
-    "thanks": ["thank you", "thanks", "thx", "thank you very much", "thanks a lot"
-              ],
-    
     "contact_creator": [
         "My creator is Aylin Muzaffarli — a genuine mind passionate about learning, coding, and inspiring others. 🌟",
         "If you'd like to reach out to Aylin, just fill out this contact form — she loves hearing from curious learners like you! 📬\nhttps://docs.google.com/forms/d/e/1FAIpQLSfhKVa6ip8bQ09W1izZNLS5tIk4OSQnxJMSVf9NHgTaRtMgmA/viewform?usp=dialog",
@@ -178,6 +173,7 @@ KEYWORDS = {
         "how to reach out to her"
     ],
     "ack_creator": ["aylin is cool", "thank aylin", "credit to aylin"],
+    "thanks": ["thank you", "thanks", "thx", "thank you very much", "thanks a lot"],
     "subjects": ["math", "physics", "chemistry", "biology", "english", "robotics", "ai", "geography"]
 }
 
@@ -224,7 +220,8 @@ def detect_sentiment(text):
 def get_bot_reply(user_input):
     intent = detect_intent(user_input)
     goal_msg = update_goals(user_input)
-    if goal_msg: return goal_msg
+    if goal_msg: 
+        return goal_msg
 
     if intent and intent in RESPONSE_DATA:
         if intent == "subjects":

@@ -229,8 +229,8 @@ with st.form('chat_form', clear_on_submit=True):
         bot_reply = get_bot_reply(user_input)
 
         # You can choose to also get AI model reply (comment/uncomment below):
-        # ai_reply = query_hf_api(user_input)
-        # bot_reply = ai_reply if ai_reply else bot_reply
+        ai_reply = query_hf_api(user_input)
+        bot_reply = ai_reply if ai_reply else bot_reply
 
         st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
 

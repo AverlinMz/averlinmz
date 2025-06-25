@@ -10,6 +10,7 @@ from gtts import gTTS
 from pydub import AudioSegment
 
 # Initialize session state
+
 def init_session():
     if "messages" not in st.session_state:
         st.session_state.messages = []
@@ -22,12 +23,12 @@ init_session()
 # Remove emojis helper
 def remove_emojis(text):
     emoji_pattern = re.compile("["
-        "\U0001F600-\U0001F64F"  # emoticons
-        "\U0001F300-\U0001F5FF"  # symbols & pictographs
-        "\U0001F680-\U0001F6FF"  # transport & map symbols
-        "\U0001F1E0-\U0001F1FF"  # flags
-        "\U00002702-\U000027B0"
-        "\U000024C2-\U0001F251"
+        "\U0001F600-\U0001F64F"
+        "\U0001F300-\U0001F5FF"
+        "\U0001F680-\U0001F6FF"
+        "\U0001F1E0-\U0001F1FF"
+        "\u2700-\u27BF"
+        "\u24C2-\u1F251"
         "]+", flags=re.UNICODE)
     return emoji_pattern.sub(r'', text)
 
@@ -50,15 +51,18 @@ def play_audio(fp):
     </audio>
     """, unsafe_allow_html=True)
 
-# Page and theme
+# Page setup
+st.set_page_config(page_title="AverlinMz Chatbot", layout="wide")
+# Theme
 theme = st.sidebar.selectbox("Theme", ["Default","Night","Blue"])
-if theme=="Night": st.markdown("<style>body{background:#111;color:#eee;}.user{background:#333;color:#fff;}.bot{background:#444;color:#fff;}</style>",unsafe_allow_html=True)
-elif theme=="Blue": st.markdown("<style>body{background:#e0f7fa}.user{background:#81d4fa;color:#01579b}.bot{background:#b2ebf2;color:#004d40}</style>",unsafe_allow_html=True)
+if theme == "Night":
+    st.markdown("<style>body{background:#111;color:#eee;} .user{background:#333;color:#fff;} .bot{background:#444;color:#fff;}</style>", unsafe_allow_html=True)
+elif theme == "Blue":
+    st.markdown("<style>body{background:#e0f7fa;} .user{background:#81d4fa;color:#01579b;} .bot{background:#b2ebf2;color:#004d40;}</style>", unsafe_allow_html=True)
 
-st.set_page_config(page_title="AverlinMz Chatbot",layout="wide")
 st.markdown("# AverlinMz – Study Chatbot")
 
-# Data
+# Response data
 RESPONSE_DATA = {
     "greetings": [
         "Hello there! 👋 How’s your day going? Ready to dive into learning today?",
@@ -85,11 +89,13 @@ RESPONSE_DATA = {
         "It’s okay to feel this way. Just remember you’re not alone. I'm here with you. 🤗"
     ],
     "exam_prep": [
-        "1️⃣ Start early and create a study plan.
+        """
+1️⃣ Start early and create a study plan.
 2️⃣ Break subjects into small topics.
 3️⃣ Use spaced repetition.
 4️⃣ Teach someone else to reinforce concepts.
-5️⃣ Rest well and stay hydrated. 📘💧",
+5️⃣ Rest well and stay hydrated. 📘💧
+""",
         "Plan 📝 → Study 📚 → Practice 🧠 → Revise 🔁 → Sleep 😴. That's a golden strategy!"
     ],
     "passed_exam": [
@@ -120,136 +126,192 @@ RESPONSE_DATA = {
         "Absolutely! All credit goes to Aylin Muzaffarli! 🌟"
     ],
     "subjects": {
-        "math": "🧮 Math Tips:
+        "math": """
+🧮 Math Tips:
 1️⃣ Practice daily — it's the key to mastery.
 2️⃣ Understand concepts, don't just memorize.
 3️⃣ Use visuals like graphs and number lines.
 4️⃣ Solve real-world problems.
-5️⃣ Review your mistakes and learn from them.",
-        "physics": "🧪 Physics Tips:
+5️⃣ Review your mistakes and learn from them.
+""",
+        "physics": """
+🧪 Physics Tips:
 1️⃣ Master the basics: units, vectors, motion.
 2️⃣ Solve numerical problems to strengthen concepts.
 3️⃣ Create diagrams to visualize problems.
 4️⃣ Memorize core formulas.
-5️⃣ Watch experiments online to connect theory with practice.",
-        "chemistry": "🧫 Chemistry Tips:
+5️⃣ Watch experiments online to connect theory with practice.
+""",
+        "chemistry": """
+🧫 Chemistry Tips:
 1️⃣ Know your periodic table well.
 2️⃣ Understand how and why reactions happen.
 3️⃣ Use flashcards for equations and compounds.
 4️⃣ Practice balancing equations.
-5️⃣ Watch reaction videos to make it fun!",
-        "biology": "🧬 Biology Tips:
+5️⃣ Watch reaction videos to make it fun!
+""",
+        "biology": """
+🧬 Biology Tips:
 1️⃣ Learn through diagrams (cells, organs, systems).
 2️⃣ Connect terms with real-life examples.
 3️⃣ Summarize topics using mind maps.
 4️⃣ Quiz yourself with apps.
-5️⃣ Talk about biology topics out loud.",
-        "english": "📚 Language Tips:
+5️⃣ Talk about biology topics out loud.
+""",
+        "english": """
+📚 Language Tips:
 1️⃣ Read a bit every day (books, articles, stories).
 2️⃣ Speak or write in English regularly.
 3️⃣ Learn 5 new words daily and use them.
 4️⃣ Practice grammar through fun apps.
-5️⃣ Watch English shows with subtitles!",
-        "robotics": "🤖 Robotics Tips:
+5️⃣ Watch English shows with subtitles!
+""",
+        "robotics": """
+🤖 Robotics Tips:
 1️⃣ Start with block coding (like Scratch).
 2️⃣ Move on to Arduino and sensors.
 3️⃣ Join a club or competition.
 4️⃣ Watch tutorials and build projects.
-5️⃣ Learn how to debug and fix errors. Patience is key!",
-        "ai": "🧠 AI Tips:
+5️⃣ Learn how to debug and fix errors. Patience is key!
+""",
+        "ai": """
+🧠 AI Tips:
 1️⃣ Start with Python basics.
 2️⃣ Learn about data types and logic.
 3️⃣ Try building chatbots or mini classifiers.
 4️⃣ Study math behind AI: linear algebra, probability.
-5️⃣ Follow real AI projects online to stay inspired!",
-        "geography": "🌍 Geography Tips:
+5️⃣ Follow real AI projects online to stay inspired!
+""",
+        "geography": """
+🌍 Geography Tips:
 1️⃣ Learn maps and locations frequently.
 2️⃣ Understand climate and environment basics.
 3️⃣ Use visuals like atlases and diagrams.
 4️⃣ Relate geography to current events.
-5️⃣ Practice with quizzes and flashcards."
+5️⃣ Practice with quizzes and flashcards.
+"""
     },
     "fallback": [
         "Hmm, I’m not sure how to answer that — but I’ll learn! Maybe ask about a subject or how you feel. 🤔",
         "I didn’t quite get that, but I’m still here for you. 😊 Try rephrasing or check the help tips."
     ]
 }
-KEYWORDS={ ... }
+
+# Keywords
+KEYWORDS = {
+    "greetings": ["hello", "hi", "hey", "salam"],
+    "farewell": ["goodbye", "bye", "see you", "later"],
+    "how_are_you": ["how are you", "how's it going", "how do you feel"],
+    "user_feeling_good": ["i'm fine", "i'm good", "great", "happy", "excellent"],
+    "user_feeling_bad": ["i'm sad", "not good", "tired", "depressed"],
+    "love": ["i love you", "you are cute", "like you"],
+    "exam_prep": ["exam tips", "how to prepare", "study for test"],
+    "passed_exam": ["i passed", "got good mark", "i won"],
+    "capabilities": ["what can you do", "features"],
+    "introduction": ["introduce", "who are you", "about you"],
+    "creator_info": ["who is aylin", "your developer"],
+    "contact_creator": ["how to contact", "reach aylin"],
+    "ack_creator": ["thank aylin", "credit to aylin"],
+    "subjects": ["math","physics","chemistry","biology","english","robotics","ai","geography"]
+}
 
 # Helpers
-def clean_text(text): return text.lower().translate(str.maketrans('','',string.punctuation)).strip()
+
+def clean_text(text):
+    return text.lower().translate(str.maketrans('','',string.punctuation)).strip()
+
 def detect_intent(text):
-    msg=clean_text(text)
-    for intent,kws in KEYWORDS.items():
-        if any(kw in msg for kw in kws): return intent
+    msg = clean_text(text)
+    for intent, kws in KEYWORDS.items():
+        if any(kw in msg for kw in kws):
+            return intent
     return None
+
 
 def update_goals(user_input):
-    msg=clean_text(user_input)
-    if any(w in msg for w in ["goal","aim","plan"]):
+    msg = clean_text(user_input)
+    if any(w in msg for w in ["goal","plan","aim"]):
         if user_input not in st.session_state.goals:
-            st.session_state.goals.append(user_input); return "Added to goals!"
-        else: return "Goal exists."
+            st.session_state.goals.append(user_input)
+            return "Got it, added to goals!"
+        else:
+            return "You already have that goal."
     return None
 
+
 def detect_sentiment(text):
-    pos=["good","great","awesome","happy","fine"]
-    neg=["sad","bad","tired","depressed"]
-    t=clean_text(text)
+    pos = ["good","great","awesome","love","happy"]
+    neg = ["bad","sad","tired","depressed"]
+    t = clean_text(text)
     if any(w in t for w in pos): return "positive"
     if any(w in t for w in neg): return "negative"
     return "neutral"
 
+
 def get_bot_reply(user_input):
-    if (gm:=update_goals(user_input)): return gm
-    intent=detect_intent(user_input)
-    if intent in RESPONSE_DATA: reply=random.choice(RESPONSE_DATA[intent]);
+    if (gm := update_goals(user_input)):
+        return gm
+    intent = detect_intent(user_input)
+    if intent in RESPONSE_DATA:
+        reply = random.choice(RESPONSE_DATA[intent])
     elif st.session_state.context_topic:
-        reply=RESPONSE_DATA['subjects'].get(st.session_state.context_topic,random.choice(RESPONSE_DATA['fallback']))+"\n(continued...)"
-    else: reply=random.choice(RESPONSE_DATA['fallback'])
-    # track context
-    if intent=='subjects':
-        for sub in KEYWORDS['subjects']:
-            if sub in user_input.lower(): st.session_state.context_topic=sub; break
+        reply = RESPONSE_DATA['subjects'].get(st.session_state.context_topic, random.choice(RESPONSE_DATA['fallback']))
+    else:
+        reply = random.choice(RESPONSE_DATA['fallback'])
+    if intent == 'subjects':
+        st.session_state.context_topic = detect_intent(user_input)
     return reply
 
 # Audio input via upload
-st.sidebar.markdown("### Audio Input (upload .wav/.mp3)")
-audio_file=st.sidebar.file_uploader("Upload audio",type=["wav","mp3"])
+st.sidebar.markdown("### Audio Input (upload wav/mp3)")
+audio_file = st.sidebar.file_uploader("Upload audio", type=["wav","mp3"])
 if audio_file:
     import speech_recognition as sr
-    r=sr.Recognizer()
+    recognizer = sr.Recognizer()
     with sr.AudioFile(audio_file) as src:
-        data=r.record(src)
-        try: txt=r.recognize_google(data); st.sidebar.success(f"You said: {txt}")
-        except: txt=None
+        data = recognizer.record(src)
+        try:
+            txt = recognizer.recognize_google(data)
+            st.sidebar.success(f"You said: {txt}")
+        except:
+            txt = None
     if txt:
         st.session_state.messages.append({'role':'user','content':txt})
-        bot=get_bot_reply(txt); st.session_state.messages.append({'role':'bot','content':bot})
-
-# Chat form
-with st.form('cf',clear_on_submit=True):
-    ui=st.text_input('Your message')
-    if st.form_submit_button('Send') and ui:
-        st.session_state.messages.append({'role':'user','content':ui})
-        bot=get_bot_reply(ui)
+        bot = get_bot_reply(txt)
         st.session_state.messages.append({'role':'bot','content':bot})
 
+# Chat input form
+with st.form('chat_form', clear_on_submit=True):
+    user_input = st.text_input('Write your message…')
+    if st.form_submit_button('Send') and user_input.strip():
+        st.session_state.messages.append({'role':'user','content':user_input})
+        bot_reply = get_bot_reply(user_input)
+        st.session_state.messages.append({'role':'bot','content':bot_reply})
+
 # Display chat
-for i,m in enumerate(st.session_state.messages):
-    if m['role']=='user': st.markdown(f"**You:** {escape(m['content'])}")
+for i, m in enumerate(st.session_state.messages):
+    if m['role'] == 'user':
+        st.markdown(f"**You:** {escape(m['content'])}")
     else:
         st.markdown(f"**Bot:** {escape(m['content'])}")
-        if st.button(f"🔊 Read aloud #{i}",key=i):
-            fp=tts_audio(m['content']); play_audio(fp)
+        if st.button(f"🔊 Read aloud #{i}", key=f"tts{i}"):
+            fp = tts_audio(m['content'])
+            play_audio(fp)
 
-# Goals
+# Show goals
 if st.session_state.goals:
-    st.markdown("### Goals:")
-    for g in st.session_state.goals: st.write(f"- {g}")
+    st.markdown("### Your Goals")
+    for g in st.session_state.goals:
+        st.write(f"- {g}")
 
-# Download history
-def hist(): return '\n'.join(f"{m['role'].upper()}: {m['content']}" for m in st.session_state.messages)
-st.download_button("Download Chat",data=hist(),file_name=f"chat_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt")
+# Download chat history
 
-# Note: Replace RESPONSE_DATA and KEYWORDS placeholders with full dicts from above.
+def get_chat_history_text():
+    return '\n'.join(f"{m['role'].upper()}: {m['content']}" for m in st.session_state.messages)
+
+st.download_button(
+    label="💾 Download Chat History",
+    data=get_chat_history_text(),
+    file_name=f"chat_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
+    mime="text/plain"
+)

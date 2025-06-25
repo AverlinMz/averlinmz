@@ -27,7 +27,12 @@ def remove_emojis(text):
                                flags=re.UNICODE)
     return emoji_pattern.sub(r'', text)
 
-st.set_page_config(page_title="AverlinMz Chatbot", page_icon="💡", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(
+    page_title="AverlinMz Chatbot",
+    page_icon="https://i.imgur.com/LdAzudO.jpeg",
+    layout="wide",
+    initial_sidebar_state="collapsed"
+)
 
 theme = st.sidebar.selectbox("🎨 Choose a theme", ["Default", "Night", "Blue"])
 if theme == "Night":
@@ -58,7 +63,15 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="title-container"><h1>AverlinMz – Study Chatbot</h1></div>', unsafe_allow_html=True)
+# Header with image and title
+st.markdown("""
+<div class="title-container">
+  <img src="https://i.imgur.com/LdAzudO.jpeg" alt="Chatbot Image" style="width:150px;border-radius:20px;margin-bottom:10px;"/>
+  <h1>AverlinMz – Study Chatbot</h1>
+</div>
+""", unsafe_allow_html=True)
+
+# --- RESPONSE_DATA, KEYWORDS, and other functions remain unchanged ---
 
 RESPONSE_DATA = {
     "greetings": [

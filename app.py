@@ -3,6 +3,10 @@ import random
 import string
 from html import escape
 import datetime
+from gtts import gTTS
+import tempfile
+import os
+import speech_recognition as sr
 
 # Initialize session state
 def init_session():
@@ -62,7 +66,7 @@ st.markdown("""
 # Title
 st.markdown('<div class="title-container"><h1>AverlinMz – Study Chatbot</h1></div>', unsafe_allow_html=True)
 
-# Full Response Data
+# Response data and keywords (exactly your data)
 RESPONSE_DATA = {
     "greetings": [
         "Hello there! 👋 How’s your day going? Ready to dive into learning today?",
@@ -134,7 +138,6 @@ RESPONSE_DATA = {
     ]
 }
 
-# Keywords for intent detection
 KEYWORDS = {
     "greetings": ["hello", "hi", "hey", "salam"],
     "farewell": ["goodbye", "bye", "see you", "talk later", "see ya", "later"],
@@ -152,11 +155,9 @@ KEYWORDS = {
     "subjects": ["math", "physics", "chemistry", "biology", "english", "robotics", "ai"]
 }
 
-# Clean and normalize input text
 def clean_text(text):
     return text.lower().translate(str.maketrans('', '', string.punctuation)).strip()
 
-# Mini AI Assistant Mode: Simple intent detection + advice mode
 def detect_intent(text):
     msg = clean_text(text)
     for intent, kws in KEYWORDS.items():
@@ -164,11 +165,9 @@ def detect_intent(text):
             return intent
     return None
 
-# Add goal tracker update
 def update_goals(user_input):
     msg = clean_text(user_input)
     if "goal" in msg or "aim" in msg or "plan" in msg:
-        # Extract simple goals (for demo purposes, just add whole user input)
         if user_input not in st.session_state.goals:
             st.session_state.goals.append(user_input)
             return "Got it! I added that to your goals."
@@ -176,7 +175,6 @@ def update_goals(user_input):
             return "You already mentioned this goal."
     return None
 
-# Simple sentiment check for feedback detection (basic)
 def detect_sentiment(text):
     positive = ["good", "great", "awesome", "love", "happy", "well", "fine"]
     negative = ["bad", "sad", "tired", "depressed", "angry", "upset", "not good"]
@@ -187,19 +185,15 @@ def detect_sentiment(text):
         return "negative"
     return "neutral"
 
-# Main bot reply logic with added features
 def get_bot_reply(user_input):
     intent = detect_intent(user_input)
     goal_msg = update_goals(user_input)
 
-    # If user added a goal, respond
     if goal_msg:
         return goal_msg
 
     if intent and intent in RESPONSE_DATA:
-        # Use intent reply
         reply = random.choice(RESPONSE_DATA[intent])
-        # Save context topic (if subject)
         if intent == "subjects":
             for subj in KEYWORDS["subjects"]:
                 if subj in user_input.lower():
@@ -209,31 +203,61 @@ def get_bot_reply(user_input):
             st.session_state.context_topic = None
         return reply
 
-    # Context memory example - recall last subject discussed
     if st.session_state.context_topic:
         subj = st.session_state.context_topic
         if subj in RESPONSE_DATA["subjects"]:
             return RESPONSE_DATA["subjects"][subj] + "\n\n(You asked about this before!)"
 
-    # Sentiment feedback encouragement
     sentiment = detect_sentiment(user_input)
     if sentiment == "positive":
         return "I'm glad you're feeling good! Keep it up! 🎉"
     elif sentiment == "negative":
         return "I'm sorry you're feeling that way. I'm here if you want to talk. 💙"
 
-    # Fallback
     return random.choice(RESPONSE_DATA["fallback"])
+
+# --- AUDIO INPUT: Upload audio and transcribe ---
+st.sidebar.markdown("### 🎤 Audio Input (Upload .wav/.mp3)")
+audio_file = st.sidebar.file_uploader("Upload audio message", type=["wav", "mp3"])
+
+user_input_audio = None
+if audio_file is not None:
+    with tempfile.NamedTemporaryFile(delete=False) as temp_audio_file:
+        temp_audio_file.write(audio_file.read())
+        temp_audio_path = temp_audio_file.name
+
+    r = sr.Recognizer()
+    with sr.AudioFile(temp_audio_path) as source:
+        audio_data = r.record(source)
+        try:
+            user_input_audio = r.recognize_google(audio_data)
+            st.sidebar.success(f"Transcribed text: {user_input_audio}")
+        except Exception as e:
+            st.sidebar.error(f"Could not transcribe audio: {e}")
+
+    os.unlink(temp_audio_path)
 
 # Chat form & display
 with st.form('chat_form', clear_on_submit=True):
-    user_input = st.text_input('Write your message…', key='input_field')
-    if st.form_submit_button('Send') and user_input.strip():
-        # Save user message
-        st.session_state.messages.append({'role': 'user', 'content': user_input})
-        # Get bot reply
-        bot_reply = get_bot_reply(user_input)
+    # Priority: audio input transcription if present, else text input
+    input_text = user_input_audio if user_input_audio else ''
+    if not input_text:
+        input_text = st.text_input('Write your message…', key='input_field')
+
+    submitted = st.form_submit_button('Send') or bool(user_input_audio)
+
+    if submitted and input_text.strip():
+        st.session_state.messages.append({'role': 'user', 'content': input_text})
+        bot_reply = get_bot_reply(input_text)
         st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
+
+        # Audio output - TTS
+        tts = gTTS(bot_reply, lang='en')
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tts_file:
+            tts.save(tts_file.name)
+            audio_bytes = open(tts_file.name, "rb").read()
+        st.audio(audio_bytes, format="audio/mp3")
+        os.unlink(tts_file.name)
 
 # Render chat messages
 st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
@@ -268,7 +292,7 @@ with st.sidebar:
     st.markdown("### 🧠 Mini AI Assistant Mode")
     st.write("This bot tries to detect your intent and give focused advice or answers.")
 
-# Save chat history as direct download to browser
+# Save chat history as text file download
 def get_chat_history_text():
     lines = []
     for m in st.session_state.messages:

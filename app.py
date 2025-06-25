@@ -76,9 +76,11 @@ RESPONSE_DATA = {
         "Awesome! Let’s keep the momentum going! 💪"
     ],
     "contact_creator": [
-    "You can contact my creator on GitHub: https://github.com/AverlinMz 📬",
-    "Want to talk to Aylin? Try reaching out via GitHub – she's awesome! 🌟",
-],
+        "You can contact my creator on GitHub: https://github.com/AverlinMz 📬",
+        "Want to talk to Aylin? Try reaching out via GitHub – she's awesome! 🌟",
+        "How to reach out to Aylin?\nI didn’t quite get that, but I’m still here for you. 😊 Try rephrasing or check the help tips.",
+        "Hmm, I’m not sure how to answer that — but I’ll learn! Maybe ask about a subject or how you feel. 🤔"
+    ],
     "user_feeling_bad": [
         "Sorry to hear that. I’m always here if you want to talk or need a study boost. 💙🌟",
         "It’s okay to feel this way. Just remember you’re not alone. I'm here with you. 🤗"
@@ -105,12 +107,6 @@ RESPONSE_DATA = {
     "creator_info": [
         "I was created by Aylin Muzaffarli — a passionate student from Azerbaijan who codes, studies physics and AI, and inspires others! 💡",
         "My developer is Aylin Muzaffarli, born in 2011. She built me to support learners like you!"
-    ],
-    "contact_creator": [
-        "You can contact my creator on GitHub: https://github.com/AverlinMz 📬",
-        "Want to talk to Aylin? Try reaching out via GitHub – she's awesome! 🌟",
-        "How to reach out to Aylin?\nI didn’t quite get that, but I’m still here for you. 😊 Try rephrasing or check the help tips.",
-        "Hmm, I’m not sure how to answer that — but I’ll learn! Maybe ask about a subject or how you feel. 🤔"
     ],
     "ack_creator": [
         "Yes, Aylin is super talented! 😄",

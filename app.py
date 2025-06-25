@@ -75,6 +75,10 @@ RESPONSE_DATA = {
         "That’s amazing to hear! 🎉 Keep riding that good energy!",
         "Awesome! Let’s keep the momentum going! 💪"
     ],
+    "contact_creator": [
+    "You can contact my creator on GitHub: https://github.com/AverlinMz 📬",
+    "Want to talk to Aylin? Try reaching out via GitHub – she's awesome! 🌟",
+],
     "user_feeling_bad": [
         "Sorry to hear that. I’m always here if you want to talk or need a study boost. 💙🌟",
         "It’s okay to feel this way. Just remember you’re not alone. I'm here with you. 🤗"

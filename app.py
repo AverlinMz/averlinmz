@@ -3,15 +3,17 @@ import random
 import string
 from html import escape
 import datetime
-import speech_recognition as sr
-from gtts import gTTS
-from io import BytesIO
-from pydub import AudioSegment
-from pydub.playback import play
-import threading
 import re
+import io
+import base64
 
-# Initialize session state
+from gtts import gTTS
+
+from streamlit_webrtc import webrtc_streamer
+import av
+import speech_recognition as sr
+
+# -------- Initialize session state --------
 def init_session():
     if "messages" not in st.session_state:
         st.session_state.messages = []
@@ -19,73 +21,43 @@ def init_session():
         st.session_state.goals = []
     if "context_topic" not in st.session_state:
         st.session_state.context_topic = None
+    if "recognized_text" not in st.session_state:
+        st.session_state.recognized_text = ""
 init_session()
 
-# Page config
-st.set_page_config(
-    page_title="AverlinMz Chatbot",
-    page_icon="💡",
-    layout="wide",
-    initial_sidebar_state="collapsed"
-)
+# -------- Remove emojis for TTS --------
+def remove_emojis(text):
+    emoji_pattern = re.compile("["
+        u"\U0001F600-\U0001F64F"  # emoticons
+        u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+        u"\U0001F680-\U0001F6FF"  # transport & map symbols
+        u"\U0001F1E0-\U0001F1FF"  # flags
+        u"\U00002702-\U000027B0"
+        u"\U000024C2-\U0001F251"
+        "]+", flags=re.UNICODE)
+    return emoji_pattern.sub(r'', text)
 
-# Theme Customizer
-theme = st.sidebar.selectbox("🎨 Choose a theme", ["Default", "Night", "Blue"])
-if theme == "Night":
-    st.markdown("""
-    <style>
-    body, .stApp { background-color: #111111; color: white; }
-    .user { background-color: #333333; color: white; }
-    .bot { background-color: #444444; color: white; }
-    </style>
-    """, unsafe_allow_html=True)
-elif theme == "Blue":
-    st.markdown("""
-    <style>
-    body, .stApp { background-color: #e0f7fa; }
-    .user { background-color: #81d4fa; color: #01579b; }
-    .bot { background-color: #b2ebf2; color: #004d40; }
-    </style>
-    """, unsafe_allow_html=True)
+# -------- Text to Speech (TTS) --------
+def tts_audio(text):
+    text_clean = remove_emojis(text)
+    tts = gTTS(text=text_clean, lang='en')
+    mp3_fp = io.BytesIO()
+    tts.write_to_fp(mp3_fp)
+    mp3_fp.seek(0)
+    return mp3_fp
 
-# Animated bottom-to-top title CSS
-st.markdown("""
-<style>
-@keyframes riseUp {
-  0% {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.title-container {
-  text-align: center;
-  font-family: 'Poppins', sans-serif;
-  font-weight: 600;
-  animation: riseUp 1.5s ease forwards;
-  margin-bottom: 20px;
-  font-size: 2.2rem;
-}
-.chat-container { display: flex; flex-direction: column; max-width: 900px; margin: 0 auto; padding: 20px; }
-.chat-window { flex-grow: 1; overflow-y: auto; max-height: 60vh; padding: 15px; display: flex; flex-direction: column; gap: 15px; }
-.user, .bot { align-self: center; width: 100%; word-wrap: break-word; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-family: 'Poppins', sans-serif; }
-.user { background-color: #D1F2EB; color: #0B3D2E; padding: 12px 16px; border-radius: 18px 18px 4px 18px; }
-.bot  { background-color: #EFEFEF; color: #333; padding: 12px 16px; border-radius: 18px 18px 18px 4px; animation: typing 1s ease-in-out; }
-.chat-window::-webkit-scrollbar { width: 8px; }
-.chat-window::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-.chat-window::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
-.chat-window::-webkit-scrollbar-thumb:hover { background: #a1a1a1; }
-@keyframes typing { 0% { opacity: 0; } 100% { opacity: 1; } }
-</style>
-""", unsafe_allow_html=True)
+def play_audio(audio_bytes):
+    audio_bytes.seek(0)
+    audio_b64 = base64.b64encode(audio_bytes.read()).decode()
+    audio_html = f"""
+    <audio autoplay controls>
+    <source src="data:audio/mp3;base64,{audio_b64}" type="audio/mp3">
+    Your browser does not support the audio element.
+    </audio>
+    """
+    st.markdown(audio_html, unsafe_allow_html=True)
 
-# Title
-st.markdown('<div class="title-container">AverlinMz – Study Chatbot</div>', unsafe_allow_html=True)
-
-# Full Response Data with geography tips
+# -------- Data --------
 RESPONSE_DATA = {
     "greetings": [
         "Hello there! 👋 How’s your day going? Ready to dive into learning today?",
@@ -176,11 +148,11 @@ KEYWORDS = {
     "subjects": ["math", "physics", "chemistry", "biology", "english", "robotics", "ai", "geography"]
 }
 
-# Clean and normalize input text
+# -------- Clean and normalize input text --------
 def clean_text(text):
     return text.lower().translate(str.maketrans('', '', string.punctuation)).strip()
 
-# Mini AI Assistant Mode: Simple intent detection + advice mode
+# -------- Detect intent --------
 def detect_intent(text):
     msg = clean_text(text)
     for intent, kws in KEYWORDS.items():
@@ -188,11 +160,10 @@ def detect_intent(text):
             return intent
     return None
 
-# Add goal tracker update
+# -------- Update goals --------
 def update_goals(user_input):
     msg = clean_text(user_input)
     if "goal" in msg or "aim" in msg or "plan" in msg:
-        # Extract simple goals (for demo purposes, just add whole user input)
         if user_input not in st.session_state.goals:
             st.session_state.goals.append(user_input)
             return "Got it! I added that to your goals."
@@ -200,7 +171,7 @@ def update_goals(user_input):
             return "You already mentioned this goal."
     return None
 
-# Simple sentiment check for feedback detection (basic)
+# -------- Detect simple sentiment --------
 def detect_sentiment(text):
     positive = ["good", "great", "awesome", "love", "happy", "well", "fine"]
     negative = ["bad", "sad", "tired", "depressed", "angry", "upset", "not good"]
@@ -211,43 +182,17 @@ def detect_sentiment(text):
         return "negative"
     return "neutral"
 
-# Remove emojis from text for TTS
-def remove_emojis(text):
-    emoji_pattern = re.compile("["
-                           u"\U0001F600-\U0001F64F"  # emoticons
-                           u"\U0001F300-\U0001F5FF"  # symbols & pictographs
-                           u"\U0001F680-\U0001F6FF"  # transport & map symbols
-                           u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
-                           "]+", flags=re.UNICODE)
-    return emoji_pattern.sub(r'', text)
-
-# Text to speech - non-blocking playback in background thread
-def speak(text):
-    def _play_audio(audio_bytes):
-        sound = AudioSegment.from_file(BytesIO(audio_bytes), format="mp3")
-        play(sound)
-    # Remove emojis before TTS
-    clean_text_for_tts = remove_emojis(text)
-    tts = gTTS(clean_text_for_tts, lang='en')
-    audio_fp = BytesIO()
-    tts.write_to_fp(audio_fp)
-    audio_bytes = audio_fp.getvalue()
-    thread = threading.Thread(target=_play_audio, args=(audio_bytes,), daemon=True)
-    thread.start()
-
-# Main bot reply logic with added features
+# -------- Bot reply logic --------
 def get_bot_reply(user_input):
     intent = detect_intent(user_input)
     goal_msg = update_goals(user_input)
 
-    # If user added a goal, respond
     if goal_msg:
         return goal_msg
 
     if intent and intent in RESPONSE_DATA:
-        # Use intent reply
         reply = random.choice(RESPONSE_DATA[intent])
-        # Save context topic (if subject)
+        # Save context topic if subject
         if intent == "subjects":
             for subj in KEYWORDS["subjects"]:
                 if subj in user_input.lower():
@@ -257,112 +202,91 @@ def get_bot_reply(user_input):
             st.session_state.context_topic = None
         return reply
 
-    # Context memory example - recall last subject discussed
+    # Use context topic if no direct intent match
     if st.session_state.context_topic:
         subj = st.session_state.context_topic
         if subj in RESPONSE_DATA["subjects"]:
             return RESPONSE_DATA["subjects"][subj] + "\n\n(You asked about this before!)"
 
-    # Sentiment feedback encouragement
     sentiment = detect_sentiment(user_input)
     if sentiment == "positive":
         return "I'm glad you're feeling good! Keep it up! 🎉"
     elif sentiment == "negative":
         return "I'm sorry you're feeling that way. I'm here if you want to talk. 💙"
 
-    # Fallback
     return random.choice(RESPONSE_DATA["fallback"])
 
-# Voice input (speech to text) function
-def recognize_speech_from_mic():
-    r = sr.Recognizer()
-    mic = sr.Microphone()
-    with mic as source:
-        st.info("🎙️ Listening... Please speak now.")
-        r.adjust_for_ambient_noise(source)
-        audio = r.listen(source, phrase_time_limit=5)
-    try:
-        text = r.recognize_google(audio)
-        return text
-    except sr.UnknownValueError:
-        return None
-    except sr.RequestError:
-        return None
+# -------- UI --------
+st.title("AverlinMz – Study Chatbot")
 
-# --- UI ---
+# Sidebar voice input toggle
+voice_input = st.sidebar.checkbox("🎤 Enable Voice Input")
 
-# Voice input button
-voice_input = st.sidebar.button("🎤 Speak (Voice Input)")
-
+# Voice input processing with streamlit-webrtc
 if voice_input:
-    recognized_text = recognize_speech_from_mic()
-    if recognized_text:
-        st.session_state.messages.append({'role': 'user', 'content': recognized_text})
-        bot_reply = get_bot_reply(recognized_text)
-        st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
-        speak(bot_reply)
+    recognizer = sr.Recognizer()
+
+    def audio_frame_callback(frame: av.AudioFrame):
+        audio = frame.to_ndarray(format="s16", layout="mono")
+        audio_data = sr.AudioData(audio.tobytes(), 16000, 2)
+        try:
+            text = recognizer.recognize_google(audio_data, language="en-US")
+            st.session_state.recognized_text = text
+        except sr.UnknownValueError:
+            pass
+        except Exception:
+            pass
+        return frame
+
+    webrtc_streamer(key="speech-input", audio_frame_callback=audio_frame_callback)
+
+    if st.session_state.recognized_text:
+        st.text_area("Recognized Speech Text:", st.session_state.recognized_text, height=100)
+        if st.button("Send Voice Input"):
+            user_input = st.session_state.recognized_text
+            st.session_state.messages.append({'role': 'user', 'content': user_input})
+            bot_reply = get_bot_reply(user_input)
+            st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
+            st.session_state.recognized_text = ""
+
+else:
+    with st.form("chat_form", clear_on_submit=True):
+        user_input = st.text_input("Write your message…", key="input_text")
+        if st.form_submit_button("Send") and user_input.strip():
+            st.session_state.messages.append({'role': 'user', 'content': user_input})
+            bot_reply = get_bot_reply(user_input)
+            st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
+
+# Show chat messages with read aloud button for bots only
+for i, msg in enumerate(st.session_state.messages):
+    role = msg['role']
+    content = msg['content']
+    if role == 'user':
+        st.markdown(f"**You:** {escape(content)}")
     else:
-        st.warning("Sorry, I couldn't understand your voice. Please try again.")
+        st.markdown(f"**Bot:** {escape(content)}")
+        # Read aloud button
+        if st.button(f"🔊 Read aloud (message #{i})", key=f"tts_button_{i}"):
+            audio_fp = tts_audio(content)
+            play_audio(audio_fp)
 
-# Chat form & display
-with st.form('chat_form', clear_on_submit=True):
-    user_input = st.text_input('Write your message…', key='input_field')
-    if st.form_submit_button('Send') and user_input.strip():
-        # Save user message
-        st.session_state.messages.append({'role': 'user', 'content': user_input})
-        # Get bot reply
-        bot_reply = get_bot_reply(user_input)
-        st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
-        speak(bot_reply)
+# Show goals
+if st.session_state.goals:
+    st.markdown("### Your Goals:")
+    for g in st.session_state.goals:
+        st.write(f"- {g}")
 
-# Render chat messages
-st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
-msgs = st.session_state.messages
-for i in range(len(msgs) - 2, -1, -2):
-    user_msg = msgs[i]['content']
-    bot_msg = msgs[i+1]['content'] if i+1 < len(msgs) else ''
-    st.markdown(f'<div class="user">{escape(user_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
-    st.markdown(f'<div class="bot">{escape(bot_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
-st.markdown('</div></div>', unsafe_allow_html=True)
-
-# Sidebar: Show goals and tips
-with st.sidebar:
-    st.markdown("### 🎯 Your Goals")
-    if st.session_state.goals:
-        for g in st.session_state.goals:
-            st.write("- " + g)
-    else:
-        st.write("You haven't set any goals yet. Tell me your goals!")
-
-    st.markdown("### 💡 Tips")
-    st.info(
-        "Try asking things like:\n"
-        "- 'Give me study tips'\n"
-        "- 'Tell me about physics'\n"
-        "- 'How do I manage time?'\n"
-        "- 'Motivate me please!'\n"
-        "- 'Who created you?'\n"
-        "- Or just say 'bye' to end the chat!"
-    )
-
-    st.markdown("### 🧠 Mini AI Assistant Mode")
-    st.write("This bot tries to detect your intent and give focused advice or answers.")
-
-# Save chat history as direct download to browser
+# Download chat history
 def get_chat_history_text():
     lines = []
     for m in st.session_state.messages:
-        role = m['role'].upper()
-        content = m['content']
-        lines.append(f"{role}: {content}\n")
+        lines.append(f"{m['role'].upper()}: {m['content']}")
     return "\n".join(lines)
 
 filename = f"chat_history_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
-chat_history_text = get_chat_history_text()
-
 st.download_button(
     label="💾 Download Chat History",
-    data=chat_history_text,
+    data=get_chat_history_text(),
     file_name=filename,
     mime="text/plain"
 )

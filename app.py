@@ -7,6 +7,7 @@ import re
 import tempfile
 import os
 from gtts import gTTS
+import requests
 
 def init_session():
     if "messages" not in st.session_state:
@@ -199,10 +200,32 @@ def detect_sentiment(text):
     if any(word in txt for word in negative): return "negative"
     return "neutral"
 
+# --- Hugging Face API settings ---
+API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
+API_TOKEN = "your_actual_hf_token_here"  # Replace this with your actual Hugging Face API token
+
+headers = {"Authorization": f"Bearer {API_TOKEN}"}
+
+def query_hf_api(prompt):
+    payload = {"inputs": prompt}
+    try:
+        response = requests.post(API_URL, headers=headers, json=payload, timeout=30)
+        if response.status_code == 200:
+            data = response.json()
+            if isinstance(data, list) and "generated_text" in data[0]:
+                return data[0]["generated_text"]
+            else:
+                return "Hmm, the model gave an unexpected response."
+        else:
+            return f"Error from API: {response.status_code}"
+    except Exception as e:
+        return f"API request failed: {str(e)}"
+
 def get_bot_reply(user_input):
     intent = detect_intent(user_input)
     goal_msg = update_goals(user_input)
-    if goal_msg: return goal_msg
+    if goal_msg:
+        return goal_msg
 
     if intent and intent in RESPONSE_DATA:
         if intent == "subjects":
@@ -225,7 +248,9 @@ def get_bot_reply(user_input):
     elif sentiment == "negative":
         return "I'm sorry you're feeling that way. I'm here if you want to talk. 💙"
 
-    return random.choice(RESPONSE_DATA["fallback"])
+    # Use Hugging Face AI if no intent matched
+    hf_reply = query_hf_api(user_input)
+    return hf_reply
 
 with st.form('chat_form', clear_on_submit=True):
     user_input = st.text_input('Write your message…', key='input_field')

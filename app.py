@@ -79,6 +79,12 @@ RESPONSE_DATA = {
         "Hey hey! 🌟 Hope you’re feeling inspired today. What’s on your mind?",
         "Hi friend! 😊 I’m here for you — whether you want to study, vent, or just chat."
     ],
+       "thanks": [
+        "You’re very welcome! 😊",
+        "Glad to help! If you need anything else, just ask.",
+        "No problem! Happy to support your studies!",
+        "Anytime! Keep up the great work!"
+    ],
     "farewell": [
         "Goodbye! 👋 Come back soon for more study tips!",
         "See you later! Keep up the great work! 📘",
@@ -94,6 +100,9 @@ RESPONSE_DATA = {
         "That’s amazing to hear! 🎉 Keep riding that good energy!",
         "Awesome! Let’s keep the momentum going! 💪"
     ],
+    "thanks": ["thank you", "thanks", "thx", "thank you very much", "thanks a lot"
+              ],
+    
     "contact_creator": [
         "My creator is Aylin Muzaffarli — a genuine mind passionate about learning, coding, and inspiring others. 🌟",
         "If you'd like to reach out to Aylin, just fill out this contact form — she loves hearing from curious learners like you! 📬\nhttps://docs.google.com/forms/d/e/1FAIpQLSfhKVa6ip8bQ09W1izZNLS5tIk4OSQnxJMSVf9NHgTaRtMgmA/viewform?usp=dialog",

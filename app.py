@@ -1,4 +1,4 @@
-import streamlit as st
+
 import random
 import string
 from html import escape
@@ -29,7 +29,7 @@ def remove_emojis(text):
 
 st.set_page_config(
     page_title="AverlinMz Chatbot",
-    page_icon="st.image("https://i.imgur.com/rXsLWgO.jpeg", width=150)",
+    page_icon="https://i.imgur.com/LdAzudO.jpeg",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -63,9 +63,10 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# Header with image and title
 st.markdown("""
 <div class="title-container">
-  <img src="https://i.imgur.com/rXsLWgO.jpeg" alt="Chatbot Image" style="width:150px;border-radius:20px;margin-bottom:10px;"/>
+  <img src="https://i.imgur.com/LdAzudO.jpeg" alt="Chatbot Image" style="width:150px;border-radius:20px;margin-bottom:10px;"/>
   <h1>AverlinMz – Study Chatbot</h1>
 </div>
 """, unsafe_allow_html=True)
@@ -99,7 +100,9 @@ RESPONSE_DATA = {
     ],
     "contact_creator": [
         "My creator is Aylin Muzaffarli — a genuine mind passionate about learning, coding, and inspiring others. 🌟",
-        "If you'd like to reach out to Aylin, just fill out this contact form — she loves hearing from curious learners like you! 📬\nhttps://docs.google.com/forms/d/e/1FAIpQLSfhKVa6ip8bQ09W1izZNLS5tIk4OSQnxJMSVf9NHgTaRtMgmA/viewform?usp=dialog"
+        "If you'd like to reach out to Aylin, just fill out this contact form — she loves hearing from curious learners like you! 📬\nhttps://docs.google.com/forms/d/e/1FAIpQLSfhKVa6ip8bQ09W1izZNLS5tIk4OSQnxJMSVf9NHgTaRtMgmA/viewform?usp=dialog",
+        "Want to connect with Aylin? Here's a quick way: fill out her contact form, and she'll get back to you as soon as she can! 🚀\nhttps://docs.google.com/forms/d/e/1FAIpQLSfhKVa6ip8bQ09W1izZNLS5tIk4OSQnxJMSVf9NHgTaRtMgmA/viewform?usp=dialog",
+        "Aylin is the bright mind behind me — curious, hardworking, and always eager to help. Feel free to reach out through this form:\nhttps://docs.google.com/forms/d/e/1FAIpQLSfhKVa6ip8bQ09W1izZNLS5tIk4OSQnxJMSVf9NHgTaRtMgmA/viewform?usp=dialog"
     ],
     "user_feeling_bad": [
         "Sorry to hear that. I’m always here if you want to talk or need a study boost. 💙🌟",
@@ -281,7 +284,6 @@ with st.sidebar:
     st.markdown("### 🧠 Mini AI Assistant Mode")
     st.write("This bot tries to detect your intent and give focused advice or answers.")
 
-    # Add chat history download button
-    filename = f"chat_history_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
-    chat_history_text = "\n".join([f"{m['role']}: {m['content']}" for m in st.session_state.messages])
-    st.download_button("Download Chat History", data=chat_history_text, file_name=filename, mime="text/plain")
+filename = f"chat_history_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+chat_history_text = "\n".join([f"{m['role'].upper()}: {m['content']}\n" for m in st.session_state.messages])
+st.download_button(label="💾 Download Chat History", data=chat_history_text, file_name=filename, mime="text/plain")

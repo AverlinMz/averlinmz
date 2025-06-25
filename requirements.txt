@@ -5,3 +5,4 @@ gtts
 pydub
 SpeechRecognition
 ffmpeg-python
+pip install openai

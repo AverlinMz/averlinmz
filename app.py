@@ -3,7 +3,13 @@ import random
 import string
 from html import escape
 import datetime
-import time
+import speech_recognition as sr
+from gtts import gTTS
+from io import BytesIO
+from pydub import AudioSegment
+from pydub.playback import play
+import threading
+import re
 
 # Initialize session state
 def init_session():
@@ -42,62 +48,32 @@ elif theme == "Blue":
     </style>
     """, unsafe_allow_html=True)
 
-# CSS Styling + animation for bottom-to-top title
+# Animated bottom-to-top title CSS
 st.markdown("""
 <style>
-.chat-container { display: flex; flex-direction: column; max-width: 900px; margin: 0 auto; padding: 20px; }
-.title-container {
-    text-align: center;
-    padding-bottom: 10px;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 2.8rem;
-    position: fixed;
-    bottom: 20px;
-    width: 100%;
-    animation: slideUp 2s ease forwards;
+@keyframes riseUp {
+  0% {
     opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-@keyframes slideUp {
-    from {
-        transform: translateY(50px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+.title-container {
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  animation: riseUp 1.5s ease forwards;
+  margin-bottom: 20px;
+  font-size: 2.2rem;
 }
-.chat-window { 
-    flex-grow: 1; 
-    overflow-y: auto; 
-    max-height: 60vh; 
-    padding: 15px; 
-    display: flex; 
-    flex-direction: column; 
-    gap: 15px; 
-    margin-top: 80px; /* leave space for fixed title */
-}
-.user, .bot { 
-    align-self: center; 
-    width: 100%; 
-    word-wrap: break-word; 
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
-    font-family: 'Poppins', sans-serif; 
-}
-.user { 
-    background-color: #D1F2EB; 
-    color: #0B3D2E; 
-    padding: 12px 16px; 
-    border-radius: 18px 18px 4px 18px; 
-}
-.bot  { 
-    background-color: #EFEFEF; 
-    color: #333; 
-    padding: 12px 16px; 
-    border-radius: 18px 18px 18px 4px; 
-    animation: typing 1s ease-in-out; 
-}
+.chat-container { display: flex; flex-direction: column; max-width: 900px; margin: 0 auto; padding: 20px; }
+.chat-window { flex-grow: 1; overflow-y: auto; max-height: 60vh; padding: 15px; display: flex; flex-direction: column; gap: 15px; }
+.user, .bot { align-self: center; width: 100%; word-wrap: break-word; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-family: 'Poppins', sans-serif; }
+.user { background-color: #D1F2EB; color: #0B3D2E; padding: 12px 16px; border-radius: 18px 18px 4px 18px; }
+.bot  { background-color: #EFEFEF; color: #333; padding: 12px 16px; border-radius: 18px 18px 18px 4px; animation: typing 1s ease-in-out; }
 .chat-window::-webkit-scrollbar { width: 8px; }
 .chat-window::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
 .chat-window::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
@@ -106,11 +82,10 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Animated title container
+# Title
 st.markdown('<div class="title-container">AverlinMz – Study Chatbot</div>', unsafe_allow_html=True)
 
-# --- RESPONSE DATA and KEYWORDS (Add geography tips, emojis ignored in voice will be separate) ---
-
+# Full Response Data with geography tips
 RESPONSE_DATA = {
     "greetings": [
         "Hello there! 👋 How’s your day going? Ready to dive into learning today?",
@@ -175,7 +150,7 @@ RESPONSE_DATA = {
         "english": "📚 Language Tips:\n1️⃣ Read a bit every day (books, articles, stories).\n2️⃣ Speak or write in English regularly.\n3️⃣ Learn 5 new words daily and use them.\n4️⃣ Practice grammar through fun apps.\n5️⃣ Watch English shows with subtitles!",
         "robotics": "🤖 Robotics Tips:\n1️⃣ Start with block coding (like Scratch).\n2️⃣ Move on to Arduino and sensors.\n3️⃣ Join a club or competition.\n4️⃣ Watch tutorials and build projects.\n5️⃣ Learn how to debug and fix errors. Patience is key!",
         "ai": "🧠 AI Tips:\n1️⃣ Start with Python basics.\n2️⃣ Learn about data types and logic.\n3️⃣ Try building chatbots or mini classifiers.\n4️⃣ Study math behind AI: linear algebra, probability.\n5️⃣ Follow real AI projects online to stay inspired!",
-        "geography": "🌍 Geography Tips:\n1️⃣ Use maps to visualize regions and countries.\n2️⃣ Learn capitals, rivers, mountains with flashcards.\n3️⃣ Understand climate zones and ecosystems.\n4️⃣ Watch documentaries to connect facts with visuals.\n5️⃣ Relate geographic info to current events."
+        "geography": "🌍 Geography Tips:\n1️⃣ Learn maps and locations frequently.\n2️⃣ Understand climate and environment basics.\n3️⃣ Use visuals like atlases and diagrams.\n4️⃣ Relate geography to current events.\n5️⃣ Practice with quizzes and flashcards."
     },
     "fallback": [
         "Hmm, I’m not sure how to answer that — but I’ll learn! Maybe ask about a subject or how you feel. 🤔",
@@ -183,6 +158,7 @@ RESPONSE_DATA = {
     ]
 }
 
+# Keywords for intent detection
 KEYWORDS = {
     "greetings": ["hello", "hi", "hey", "salam"],
     "farewell": ["goodbye", "bye", "see you", "talk later", "see ya", "later"],
@@ -204,6 +180,7 @@ KEYWORDS = {
 def clean_text(text):
     return text.lower().translate(str.maketrans('', '', string.punctuation)).strip()
 
+# Mini AI Assistant Mode: Simple intent detection + advice mode
 def detect_intent(text):
     msg = clean_text(text)
     for intent, kws in KEYWORDS.items():
@@ -211,9 +188,11 @@ def detect_intent(text):
             return intent
     return None
 
+# Add goal tracker update
 def update_goals(user_input):
     msg = clean_text(user_input)
     if "goal" in msg or "aim" in msg or "plan" in msg:
+        # Extract simple goals (for demo purposes, just add whole user input)
         if user_input not in st.session_state.goals:
             st.session_state.goals.append(user_input)
             return "Got it! I added that to your goals."
@@ -221,6 +200,7 @@ def update_goals(user_input):
             return "You already mentioned this goal."
     return None
 
+# Simple sentiment check for feedback detection (basic)
 def detect_sentiment(text):
     positive = ["good", "great", "awesome", "love", "happy", "well", "fine"]
     negative = ["bad", "sad", "tired", "depressed", "angry", "upset", "not good"]
@@ -231,15 +211,43 @@ def detect_sentiment(text):
         return "negative"
     return "neutral"
 
+# Remove emojis from text for TTS
+def remove_emojis(text):
+    emoji_pattern = re.compile("["
+                           u"\U0001F600-\U0001F64F"  # emoticons
+                           u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+                           u"\U0001F680-\U0001F6FF"  # transport & map symbols
+                           u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                           "]+", flags=re.UNICODE)
+    return emoji_pattern.sub(r'', text)
+
+# Text to speech - non-blocking playback in background thread
+def speak(text):
+    def _play_audio(audio_bytes):
+        sound = AudioSegment.from_file(BytesIO(audio_bytes), format="mp3")
+        play(sound)
+    # Remove emojis before TTS
+    clean_text_for_tts = remove_emojis(text)
+    tts = gTTS(clean_text_for_tts, lang='en')
+    audio_fp = BytesIO()
+    tts.write_to_fp(audio_fp)
+    audio_bytes = audio_fp.getvalue()
+    thread = threading.Thread(target=_play_audio, args=(audio_bytes,), daemon=True)
+    thread.start()
+
+# Main bot reply logic with added features
 def get_bot_reply(user_input):
     intent = detect_intent(user_input)
     goal_msg = update_goals(user_input)
 
+    # If user added a goal, respond
     if goal_msg:
         return goal_msg
 
     if intent and intent in RESPONSE_DATA:
+        # Use intent reply
         reply = random.choice(RESPONSE_DATA[intent])
+        # Save context topic (if subject)
         if intent == "subjects":
             for subj in KEYWORDS["subjects"]:
                 if subj in user_input.lower():
@@ -249,28 +257,65 @@ def get_bot_reply(user_input):
             st.session_state.context_topic = None
         return reply
 
+    # Context memory example - recall last subject discussed
     if st.session_state.context_topic:
         subj = st.session_state.context_topic
         if subj in RESPONSE_DATA["subjects"]:
             return RESPONSE_DATA["subjects"][subj] + "\n\n(You asked about this before!)"
 
+    # Sentiment feedback encouragement
     sentiment = detect_sentiment(user_input)
     if sentiment == "positive":
         return "I'm glad you're feeling good! Keep it up! 🎉"
     elif sentiment == "negative":
         return "I'm sorry you're feeling that way. I'm here if you want to talk. 💙"
 
+    # Fallback
     return random.choice(RESPONSE_DATA["fallback"])
 
-# Chat input form
+# Voice input (speech to text) function
+def recognize_speech_from_mic():
+    r = sr.Recognizer()
+    mic = sr.Microphone()
+    with mic as source:
+        st.info("🎙️ Listening... Please speak now.")
+        r.adjust_for_ambient_noise(source)
+        audio = r.listen(source, phrase_time_limit=5)
+    try:
+        text = r.recognize_google(audio)
+        return text
+    except sr.UnknownValueError:
+        return None
+    except sr.RequestError:
+        return None
+
+# --- UI ---
+
+# Voice input button
+voice_input = st.sidebar.button("🎤 Speak (Voice Input)")
+
+if voice_input:
+    recognized_text = recognize_speech_from_mic()
+    if recognized_text:
+        st.session_state.messages.append({'role': 'user', 'content': recognized_text})
+        bot_reply = get_bot_reply(recognized_text)
+        st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
+        speak(bot_reply)
+    else:
+        st.warning("Sorry, I couldn't understand your voice. Please try again.")
+
+# Chat form & display
 with st.form('chat_form', clear_on_submit=True):
     user_input = st.text_input('Write your message…', key='input_field')
     if st.form_submit_button('Send') and user_input.strip():
+        # Save user message
         st.session_state.messages.append({'role': 'user', 'content': user_input})
+        # Get bot reply
         bot_reply = get_bot_reply(user_input)
         st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
+        speak(bot_reply)
 
-# Display chat messages
+# Render chat messages
 st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
 msgs = st.session_state.messages
 for i in range(len(msgs) - 2, -1, -2):
@@ -303,7 +348,7 @@ with st.sidebar:
     st.markdown("### 🧠 Mini AI Assistant Mode")
     st.write("This bot tries to detect your intent and give focused advice or answers.")
 
-# Save chat history
+# Save chat history as direct download to browser
 def get_chat_history_text():
     lines = []
     for m in st.session_state.messages:

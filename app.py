@@ -82,8 +82,10 @@ RESPONSE_DATA = {
         "Awesome! Let’s keep the momentum going! 💪"
     ],
     "contact_creator": [
-        "You can contact my creator on GitHub: https://github.com/aylinmuzaffarli 📬",
-        "Want to talk to Aylin? Try reaching out via GitHub – she's awesome! 🌟"
+        "My creator is Aylin Muzaffarli — a genuine mind passionate about learning, coding, and inspiring others. 🌟",
+        "If you'd like to reach out to Aylin, just fill out this contact form — she loves hearing from curious learners like you! 📬\nhttps://docs.google.com/forms/d/e/1FAIpQLSfhKVa6ip8bQ09W1izZNLS5tIk4OSQnxJMSVf9NHgTaRtMgmA/viewform?usp=dialog",
+        "Want to connect with Aylin? Here's a quick way: fill out her contact form, and she'll get back to you as soon as she can! 🚀\nhttps://docs.google.com/forms/d/e/1FAIpQLSfhKVa6ip8bQ09W1izZNLS5tIk4OSQnxJMSVf9NHgTaRtMgmA/viewform?usp=dialog",
+        "Aylin is the bright mind behind me — curious, hardworking, and always eager to help. Feel free to reach out through this form:\nhttps://docs.google.com/forms/d/e/1FAIpQLSfhKVa6ip8bQ09W1izZNLS5tIk4OSQnxJMSVf9NHgTaRtMgmA/viewform?usp=dialog"
     ],
     "user_feeling_bad": [
         "Sorry to hear that. I’m always here if you want to talk or need a study boost. 💙🌟",
@@ -132,7 +134,6 @@ RESPONSE_DATA = {
     ]
 }
 
-# Original keywords
 KEYWORDS = {
     "greetings": ["hello", "hi", "hey", "salam"],
     "farewell": ["goodbye", "bye", "see you", "talk later", "see ya", "later"],
@@ -158,7 +159,6 @@ KEYWORDS = {
     "subjects": ["math", "physics", "chemistry", "biology", "english", "robotics", "ai", "geography"]
 }
 
-# Clean keywords once at startup
 def clean_keyword_list(keywords_dict):
     cleaned = {}
     for intent, phrases in keywords_dict.items():

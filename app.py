@@ -29,7 +29,7 @@ def remove_emojis(text):
 
 st.set_page_config(
     page_title="AverlinMz Chatbot",
-    page_icon="https://i.imgur.com/LdAzudO.jpeg",
+    page_icon="https://i.imgur.com/4Fpm1Zr.jpg",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -66,7 +66,7 @@ st.markdown("""
 # Header with image and title
 st.markdown("""
 <div class="title-container">
-  <img src="https://i.imgur.com/LdAzudO.jpeg" alt="Chatbot Image" style="width:150px;border-radius:20px;margin-bottom:10px;"/>
+  <img src="https://i.imgur.com/4Fpm1Zr.jpg" alt="Chatbot Image" style="width:150px;border-radius:20px;margin-bottom:10px;"/>
   <h1>AverlinMz – Study Chatbot</h1>
 </div>
 """, unsafe_allow_html=True)
@@ -285,5 +285,4 @@ with st.sidebar:
     st.write("This bot tries to detect your intent and give focused advice or answers.")
 
 filename = f"chat_history_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
-chat_history_text = "\n".join([f"{m['role'].upper()}: {m['content']}\n" for m in st.session_state.messages])
-st.download_button(label="💾 Download Chat History", data=chat_history_text, file_name=filename, mime="text/plain")
+chat_history_text = "\n".join([f"{m['role'].

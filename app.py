@@ -32,13 +32,23 @@ elif theme == "Blue":
 st.markdown("""
 <style>
 .chat-container {max-width:900px;margin:0 auto;padding:20px;display:flex;flex-direction:column;}
-.title-container{text-align:center;padding-bottom:10px;font-family:'Poppins',sans-serif;font-weight:600;}
-.title-container h1{margin:0;}
+.title-container {
+  text-align:center;
+  padding-bottom:10px;
+  font-family:'Poppins',sans-serif;
+  font-weight:600;
+  animation: slideUpFadeIn 1s ease forwards;
+}
+.title-container h1 {margin:0;}
 .chat-window{flex-grow:1;max-height:60vh;overflow-y:auto;padding:15px;display:flex;flex-direction:column;gap:15px;}
 .user, .bot {align-self:center;width:100%;word-wrap:break-word;box-shadow:0 2px 4px rgba(0,0,0,0.1);font-family:'Poppins',sans-serif;}
 .user{background:#D1F2EB;color:#0B3D2E;padding:12px 16px;border-radius:18px 18px 4px 18px;}
 .bot{background:#EFEFEF;color:#333;padding:12px 16px;border-radius:18px 18px 18px 4px;animation:typing 1s ease-in-out;}
 @keyframes typing {0%{opacity:0;}100%{opacity:1;}}
+@keyframes slideUpFadeIn {
+  0% {opacity:0; transform: translateY(30px);}
+  100% {opacity:1; transform: translateY(0);}
+}
 </style>
 """, unsafe_allow_html=True)
 

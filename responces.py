@@ -1,3 +1,5 @@
+# responses.py
+
 RESPONSE_DATA = {
     "greetings": [
         "Hello there! 👋 How’s your day going? Ready to dive into learning today?",

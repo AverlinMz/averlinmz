@@ -12,13 +12,6 @@ RESPONSE_DATA = {
         "That’s amazing to hear! 🎉 Keep riding that good energy!",
         "Awesome! Let’s keep the momentum going! 💪"
     ],
-    "farewell" : [
-        "Goodbye! 👋 Come back soon for more study tips!",
-    "See you later! Keep up the great work! 📘",
-    "Bye for now! You’ve got this! 💪",
-    "Take care! Don’t forget to smile and stay curious! 😊",
-    "Catch you next time! Keep learning and dreaming big! ✨"
-],
     "user_feeling_bad": [
         "Sorry to hear that. I’m always here if you want to talk or need a study boost. 💙🌟",
         "It’s okay to feel this way. Just remember you’re not alone. I'm here with you. 🤗"
@@ -29,7 +22,7 @@ RESPONSE_DATA = {
     ],
     "passed_exam": [
         "🎉 CONGRATULATIONS! That’s amazing news! I knew you could do it.",
-        "Woohoo! So proud of you! 🥳 "
+        "Woohoo! So proud of you! 🥳 What’s next on your journey?"
     ],
     "love": [
         "Aww 💖 That's sweet! I'm just code, but I support you 100%!",
@@ -40,7 +33,7 @@ RESPONSE_DATA = {
         "I'm designed to help students stay focused and positive. Ask me anything about learning! 💬"
     ],
     "introduction": [
-        "I'm AverlinMz, your study chatbot 🌱. My creator is Aylin Muzaffarli (b.2011, Azerbaijan). She loves music, programming, robotics, AI, physics, and more."
+        "I'm AverlinMz, your study chatbot 🌱. My creator is Aylin Muzaffarli (b.2011, Azerbaijan). She loves music, programming, robotics, AI, physics, and more. Reach her at https://github.com/AverlinMz!"
     ],
     "creator_info": [
         "I was created by Aylin Muzaffarli — a passionate student from Azerbaijan who codes, studies physics and AI, and inspires others! 💡",
@@ -57,7 +50,9 @@ RESPONSE_DATA = {
     "farewell": [
         "Goodbye! 👋 Come back soon for more study tips!",
         "See you later! Keep up the great work! 📘",
-        "Bye for now! You’ve got this! 💪"
+        "Bye for now! You’ve got this! 💪",
+        "Take care! Don’t forget to smile and stay curious! 😊",
+        "Catch you next time! Keep learning and dreaming big! ✨"
     ],
     "subjects": {
         "math": "🧮 Math Tips:\n1️⃣ Practice daily — it's the key to mastery.\n2️⃣ Understand concepts, don't just memorize.\n3️⃣ Use visuals like graphs and number lines.\n4️⃣ Solve real-world problems.\n5️⃣ Review your mistakes and learn from them.",
@@ -75,7 +70,6 @@ RESPONSE_DATA = {
 }
 
 KEYWORDS = {
-    "farewell" : ["goodbye", "bye", "see you", "talk later", "see ya", "later"],
     "greetings": ["hello", "hi", "hey", "greetings", "salam"],
     "how_are_you": ["how are you", "how's it going", "how do you feel"],
     "user_feeling_good": ["i'm fine", "i'm good", "great", "happy", "excellent"],
@@ -88,6 +82,6 @@ KEYWORDS = {
     "creator_info": ["who is aylin", "who made you", "your developer", "tell me about aylin"],
     "contact_creator": ["how to contact", "reach aylin", "contact you", "talk to aylin", "how can i contact to aylin"],
     "ack_creator": ["aylin is cool", "thank aylin", "credit to aylin"],
-    "farewell": ["goodbye", "bye", "see you", "talk later"],
+    "farewell": ["goodbye", "bye", "see you", "talk later", "see ya", "later"],
     "subjects": ["math", "physics", "chemistry", "biology", "english", "robotics", "ai"]
 }

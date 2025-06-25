@@ -7,8 +7,9 @@ import re
 import tempfile
 import os
 from gtts import gTTS
+import requests
 
-# Initialize session state variables
+# --- Initialize session state ---
 def init_session():
     if "messages" not in st.session_state:
         st.session_state.messages = []
@@ -18,6 +19,7 @@ def init_session():
         st.session_state.context_topic = None
 init_session()
 
+# --- Helper to remove emojis from TTS input ---
 def remove_emojis(text):
     emoji_pattern = re.compile("[\U0001F600-\U0001F64F"
                                "\U0001F300-\U0001F5FF"
@@ -28,15 +30,17 @@ def remove_emojis(text):
                                flags=re.UNICODE)
     return emoji_pattern.sub(r'', text)
 
-# Streamlit page config and theme
+# --- Page config ---
 st.set_page_config(page_title="AverlinMz Chatbot", page_icon="💡", layout="wide", initial_sidebar_state="collapsed")
 
+# --- Theme selector ---
 theme = st.sidebar.selectbox("🎨 Choose a theme", ["Default", "Night", "Blue"])
 if theme == "Night":
     st.markdown("""<style>body, .stApp { background:#111; color:#fff; } .user {background:#333;color:#fff;} .bot {background:#444;color:#fff;}</style>""", unsafe_allow_html=True)
 elif theme == "Blue":
     st.markdown("""<style>body, .stApp { background:#e0f7fa; } .user {background:#81d4fa;color:#01579b;} .bot {background:#b2ebf2;color:#004d40;}</style>""", unsafe_allow_html=True)
 
+# --- Styling ---
 st.markdown("""
 <style>
 .chat-container {max-width:900px;margin:0 auto;padding:20px;display:flex;flex-direction:column;}
@@ -60,9 +64,10 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# --- Title ---
 st.markdown('<div class="title-container"><h1>AverlinMz – Study Chatbot</h1></div>', unsafe_allow_html=True)
 
-# Your canned responses
+# --- Predefined responses ---
 RESPONSE_DATA = {
     "greetings": [
         "Hello there! 👋 How’s your day going? Ready to dive into learning today?",
@@ -135,7 +140,7 @@ RESPONSE_DATA = {
     ]
 }
 
-# Keywords to detect intents
+# --- Keywords for intent detection ---
 KEYWORDS = {
     "greetings": ["hello", "hi", "hey", "salam"],
     "farewell": ["goodbye", "bye", "see you", "talk later", "see ya", "later"],
@@ -161,7 +166,6 @@ KEYWORDS = {
     "subjects": ["math", "physics", "chemistry", "biology", "english", "robotics", "ai", "geography"]
 }
 
-# Clean keywords (remove punctuation and lowercase)
 def clean_keyword_list(keywords_dict):
     cleaned = {}
     for intent, phrases in keywords_dict.items():
@@ -177,15 +181,15 @@ KEYWORDS_CLEANED = clean_keyword_list(KEYWORDS)
 def clean_text(text):
     return text.lower().translate(str.maketrans('', '', string.punctuation)).strip()
 
-# Detect user intent based on keywords
 def detect_intent(text):
     msg = clean_text(text)
     for intent, kws in KEYWORDS_CLEANED.items():
-        if any(kw in msg for kw in kws):
-            return intent
+        # Match exact phrase or substring carefully
+        for kw in kws:
+            if kw in msg:
+                return intent
     return None
 
-# Update goals list if user mentions goals
 def update_goals(user_input):
     msg = clean_text(user_input)
     if "goal" in msg or "aim" in msg or "plan" in msg:
@@ -196,7 +200,6 @@ def update_goals(user_input):
             return "You already mentioned this goal."
     return None
 
-# Basic sentiment detection
 def detect_sentiment(text):
     positive = ["good", "great", "awesome", "love", "happy", "well", "fine"]
     negative = ["bad", "sad", "tired", "depressed", "angry", "upset", "not good"]
@@ -205,48 +208,70 @@ def detect_sentiment(text):
     if any(word in txt for word in negative): return "negative"
     return "neutral"
 
-# Placeholder for actual Hugging Face Mistral 7B API call
-def query_hf_api(user_input):
-    # You must implement the actual API call here
-    # For now, return None to fall back on canned responses
-    return None
+# --- Hugging Face Mistral 7B API call ---
+API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct"
+API_TOKEN = "YOUR_HUGGINGFACE_API_TOKEN"  # Replace with your Hugging Face token
 
-# Main bot reply logic
+headers = {"Authorization": f"Bearer {API_TOKEN}"}
+
+def query_hf_api(prompt):
+    payload = {
+        "inputs": prompt,
+        "parameters": {"max_new_tokens": 150, "temperature": 0.7, "top_p": 0.9},
+    }
+    try:
+        response = requests.post(API_URL, headers=headers, json=payload, timeout=30)
+        response.raise_for_status()
+        data = response.json()
+        if isinstance(data, dict) and data.get("error"):
+            return "Sorry, I couldn't generate a response right now."
+        # API returns list of dict with generated_text
+        if isinstance(data, list) and "generated_text" in data[0]:
+            return data[0]["generated_text"].strip()
+        else:
+            return "Sorry, I didn't understand that."
+    except Exception as e:
+        return f"Error contacting AI API: {str(e)}"
+
+# --- Main bot reply function ---
 def get_bot_reply(user_input):
-    intent = detect_intent(user_input)
+    # Update goals first
     goal_msg = update_goals(user_input)
     if goal_msg:
         return goal_msg
 
-    # Subject detection: if user asks about a subject, reply with static tips
-    if intent == "subjects":
-        for subj in KEYWORDS["subjects"]:
-            if subj in user_input.lower():
-                st.session_state.context_topic = subj
-                return RESPONSE_DATA["subjects"].get(subj, "Sorry, I don't have tips for that subject yet.")
-        return "Which subject do you want tips for? Try: math, physics, biology, chemistry..."
+    # Detect intent
+    intent = detect_intent(user_input)
 
-    if intent and intent in RESPONSE_DATA:
-        st.session_state.context_topic = None
-        return random.choice(RESPONSE_DATA[intent])
+    if intent:
+        # If subject intent, return subject-specific tips
+        if intent == "subjects":
+            for subj in KEYWORDS["subjects"]:
+                if subj in user_input.lower():
+                    st.session_state.context_topic = subj
+                    break
+            return RESPONSE_DATA["subjects"].get(st.session_state.context_topic, random.choice(RESPONSE_DATA["fallback"]))
 
-    # Try AI dynamic reply if no canned response found
-    ai_reply = query_hf_api(user_input)
-    if ai_reply:
-        return ai_reply
+        # For other canned intents
+        if intent in RESPONSE_DATA:
+            return random.choice(RESPONSE_DATA[intent])
 
-    # Sentiment-based fallback responses
+    # If context topic already set, return subject tips again
+    if st.session_state.context_topic:
+        subj = st.session_state.context_topic
+        return RESPONSE_DATA["subjects"].get(subj, random.choice(RESPONSE_DATA["fallback"])) + "\n\n(You asked about this before!)"
+
+    # Detect sentiment for empathy
     sentiment = detect_sentiment(user_input)
     if sentiment == "positive":
         return "I'm glad you're feeling good! Keep it up! 🎉"
     elif sentiment == "negative":
         return "I'm sorry you're feeling that way. I'm here if you want to talk. 💙"
 
-    # Default fallback
-    return random.choice(RESPONSE_DATA["fallback"])
+    # Otherwise, fallback: call AI model for dynamic answer
+    return query_hf_api(user_input)
 
-
-# Chat input form
+# --- UI form and message handling ---
 with st.form('chat_form', clear_on_submit=True):
     user_input = st.text_input('Write your message…', key='input_field')
     if st.form_submit_button('Send') and user_input.strip():
@@ -254,7 +279,7 @@ with st.form('chat_form', clear_on_submit=True):
         bot_reply = get_bot_reply(user_input)
         st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
 
-        # Text to speech without emojis
+        # TTS of bot reply without emojis
         clean_reply = remove_emojis(bot_reply)
         tts = gTTS(clean_reply, lang='en')
         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tts_file:
@@ -263,7 +288,7 @@ with st.form('chat_form', clear_on_submit=True):
         st.audio(audio_bytes, format="audio/mp3")
         os.unlink(tts_file.name)
 
-# Display chat messages
+# --- Chat display ---
 st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
 msgs = st.session_state.messages
 for i in range(len(msgs) - 2, -1, -2):
@@ -273,7 +298,7 @@ for i in range(len(msgs) - 2, -1, -2):
     st.markdown(f'<div class="bot">{escape(bot_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
 st.markdown('</div></div>', unsafe_allow_html=True)
 
-# Sidebar with goals, tips, and info
+# --- Sidebar ---
 with st.sidebar:
     st.markdown("### 🎯 Your Goals")
     if st.session_state.goals:
@@ -288,7 +313,7 @@ with st.sidebar:
     st.markdown("### 🧠 Mini AI Assistant Mode")
     st.write("This bot tries to detect your intent and give focused advice or answers.")
 
-# Download chat history button
+# --- Download chat history ---
 filename = f"chat_history_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
 chat_history_text = "\n".join([f"{m['role'].upper()}: {m['content']}\n" for m in st.session_state.messages])
 st.download_button(label="💾 Download Chat History", data=chat_history_text, file_name=filename, mime="text/plain")

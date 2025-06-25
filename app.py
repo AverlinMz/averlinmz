@@ -4,14 +4,15 @@ import string
 import os
 from html import escape
 import datetime
-import openai
+from openai import OpenAI  # updated import
 
 # Load API key from environment
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 if OPENAI_API_KEY is None:
     st.error("Error: OPENAI_API_KEY environment variable not set.")
     st.stop()
-openai.api_key = OPENAI_API_KEY
+
+client = OpenAI(api_key=OPENAI_API_KEY)  # create OpenAI client instance
 
 # Initialize session state
 def init_session():
@@ -75,15 +76,14 @@ st.markdown("""
 # Title with animation class
 st.markdown('<div class="title-container"><h1>AverlinMz – Study Chatbot</h1></div>', unsafe_allow_html=True)
 
-# Your RESPONSE_DATA & KEYWORDS (keep this as you wrote it)
+# Your RESPONSE_DATA & KEYWORDS (paste your full dict here exactly as before)
 RESPONSE_DATA = {
-    # (Paste your full RESPONSE_DATA dict here — the same as you provided)
     "greetings": [
         "Hello there! 👋 How’s your day going? Ready to dive into learning today?",
         "Hey hey! 🌟 Hope you’re feeling inspired today. What’s on your mind?",
         "Hi friend! 😊 I’m here for you — whether you want to study, vent, or just chat."
     ],
-    # ... keep the full dictionary from before ...
+    # ... your full RESPONSE_DATA goes here ...
     "farewell": [
         "Goodbye! 👋 Come back soon for more study tips!",
         "See you later! Keep up the great work! 📘",
@@ -91,11 +91,9 @@ RESPONSE_DATA = {
         "Take care! Don’t forget to smile and stay curious! 😊",
         "Catch you next time! Keep learning and dreaming big! ✨"
     ],
-    # (rest of your RESPONSE_DATA, exactly as before, including subjects, fallback etc.)
 }
 
 KEYWORDS = {
-    # (Your full keywords dict as before)
     "greetings": ["hello", "hi", "hey", "salam"],
     "farewell": ["goodbye", "bye", "see you", "talk later", "see ya", "later"],
     "how_are_you": ["how are you", "how's it going", "how do you feel"],
@@ -112,11 +110,9 @@ KEYWORDS = {
     "subjects": ["math", "physics", "chemistry", "biology", "english", "robotics", "ai"]
 }
 
-# Clean and normalize input text
 def clean_text(text):
     return text.lower().translate(str.maketrans('', '', string.punctuation)).strip()
 
-# Intent detection (simple keyword-based)
 def detect_intent(text):
     msg = clean_text(text)
     for intent, kws in KEYWORDS.items():
@@ -124,7 +120,6 @@ def detect_intent(text):
             return intent
     return None
 
-# Update goals if user mentions goals
 def update_goals(user_input):
     msg = clean_text(user_input)
     if "goal" in msg or "aim" in msg or "plan" in msg:
@@ -135,7 +130,6 @@ def update_goals(user_input):
             return "You already mentioned this goal."
     return None
 
-# Sentiment detection (basic)
 def detect_sentiment(text):
     positive = ["good", "great", "awesome", "love", "happy", "well", "fine"]
     negative = ["bad", "sad", "tired", "depressed", "angry", "upset", "not good"]
@@ -146,10 +140,10 @@ def detect_sentiment(text):
         return "negative"
     return "neutral"
 
-# Use OpenAI GPT to generate response for unmatched intents
+# NEW OpenAI call compatible with openai>=1.0.0
 def generate_openai_response(prompt):
     try:
-        completion = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-4o-mini",  # or "gpt-4" if you have access
             messages=[
                 {"role": "system", "content": "You are a helpful study assistant."},
@@ -157,14 +151,11 @@ def generate_openai_response(prompt):
             ],
             temperature=0.7,
             max_tokens=250,
-            n=1,
-            stop=None,
         )
-        return completion.choices[0].message.content.strip()
+        return response.choices[0].message.content.strip()
     except Exception as e:
         return f"Sorry, I encountered an error: {e}"
 
-# Main reply function, combining rules + AI fallback
 def get_bot_reply(user_input):
     intent = detect_intent(user_input)
     goal_msg = update_goals(user_input)
@@ -194,10 +185,8 @@ def get_bot_reply(user_input):
     elif sentiment == "negative":
         return "I'm sorry you're feeling that way. I'm here if you want to talk. 💙"
 
-    # Fallback to OpenAI GPT for unanswered questions
     return generate_openai_response(user_input)
 
-# Chat input form
 with st.form('chat_form', clear_on_submit=True):
     user_input = st.text_input('Write your message…', key='input_field')
     if st.form_submit_button('Send') and user_input.strip():
@@ -205,7 +194,6 @@ with st.form('chat_form', clear_on_submit=True):
         bot_reply = get_bot_reply(user_input)
         st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
 
-# Display chat messages
 st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
 msgs = st.session_state.messages
 for i in range(len(msgs) - 2, -1, -2):
@@ -215,7 +203,6 @@ for i in range(len(msgs) - 2, -1, -2):
     st.markdown(f'<div class="bot">{escape(bot_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
 st.markdown('</div></div>', unsafe_allow_html=True)
 
-# Sidebar for goals and tips
 with st.sidebar:
     st.markdown("### 🎯 Your Goals")
     if st.session_state.goals:
@@ -238,7 +225,6 @@ with st.sidebar:
     st.markdown("### 🧠 Mini AI Assistant Mode")
     st.write("This bot tries to detect your intent and give focused advice or answers.")
 
-# Save chat history download button
 def get_chat_history_text():
     lines = []
     for m in st.session_state.messages:

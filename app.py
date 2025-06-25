@@ -29,7 +29,7 @@ def remove_emojis(text):
 
 st.set_page_config(
     page_title="AverlinMz Chatbot",
-    page_icon="https://i.imgur.com/rXsLWgO.jpeg",
+    page_icon="st.image("https://i.imgur.com/rXsLWgO.jpeg", width=150)",
     layout="wide",
     initial_sidebar_state="collapsed"
 )

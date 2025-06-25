@@ -4,13 +4,11 @@ import string
 from html import escape
 from responses import RESPONSE_DATA, KEYWORDS
 
-# Initialize session state
 def init_session():
     if "messages" not in st.session_state:
         st.session_state.messages = []
 init_session()
 
-# Page config
 st.set_page_config(
     page_title="AverlinMz Chatbot",
     page_icon="💡",
@@ -18,7 +16,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# CSS styling
+# CSS Styling
 st.markdown("""
 <style>
 .stApp { padding: 0 !important; margin: 0 !important; }
@@ -36,14 +34,12 @@ header, footer { display: none !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# Title
 st.markdown('<div class="title-container"><h1>AverlinMz – Study Chatbot</h1></div>', unsafe_allow_html=True)
 
-# Text cleaner
+# Helper functions
 def clean_text(text):
     return text.lower().translate(str.maketrans('', '', string.punctuation)).strip()
 
-# Bot reply logic
 def get_bot_reply(user_input):
     msg = clean_text(user_input)
     cleaned = {cat: [clean_text(kw) for kw in kws] for cat, kws in KEYWORDS.items()}
@@ -60,23 +56,21 @@ def get_bot_reply(user_input):
 
     return random.choice(RESPONSE_DATA["fallback"])
 
-# Chat input
-with st.form('chat_form', clear_on_submit=True):
-    user_input = st.text_input('Write your message…', key='input_field')
-    if st.form_submit_button('Send') and user_input.strip():
-        st.session_state.messages.append({'role': 'user', 'content': user_input})
-        st.session_state.messages.append({'role': 'bot', 'content': get_bot_reply(user_input)})
+# Chat logic
+with st.form("chat_form", clear_on_submit=True):
+    user_input = st.text_input("Write your message…", key="input_field")
+    if st.form_submit_button("Send") and user_input.strip():
+        st.session_state.messages.append({"role": "user", "content": user_input})
+        st.session_state.messages.append({"role": "bot", "content": get_bot_reply(user_input)})
 
-# Render chat
 st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
 for i in range(len(st.session_state.messages) - 2, -1, -2):
-    user_msg = st.session_state.messages[i]['content']
-    bot_msg = st.session_state.messages[i+1]['content'] if i+1 < len(st.session_state.messages) else ''
+    user_msg = st.session_state.messages[i]["content"]
+    bot_msg = st.session_state.messages[i + 1]["content"] if i + 1 < len(st.session_state.messages) else ""
     st.markdown(f'<div class="user">{escape(user_msg)}</div>', unsafe_allow_html=True)
     st.markdown(f'<div class="bot">{escape(bot_msg)}</div>', unsafe_allow_html=True)
 st.markdown('</div></div>', unsafe_allow_html=True)
 
-# Sidebar
 with st.sidebar:
     st.markdown("### 💡 Tips")
-    st.info("You can ask things like:\n- 'Give me study tips'\n- 'Tell me about physics'\n- 'How do I manage time?'\n- 'Motivate me please!'\n- 'Who created you?'")
+    st.info("You can ask things like:\n- 'Give me study tips'\n- 'Tell me about physics'\n- 'Who created you?'\n- 'I passed my exam'\n- 'Goodbye'")

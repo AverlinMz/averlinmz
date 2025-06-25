@@ -1,4 +1,4 @@
-
+import streamlit as st
 import random
 import string
 from html import escape
@@ -29,7 +29,7 @@ def remove_emojis(text):
 
 st.set_page_config(
     page_title="AverlinMz Chatbot",
-    page_icon="https://i.imgur.com/LdAzudO.jpeg",
+    page_icon="https://i.imgur.com/RRJpDim.jpeg",  # Updated image icon URL
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -63,10 +63,10 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Header with image and title
+# Header with new image
 st.markdown("""
 <div class="title-container">
-  <img src="https://i.imgur.com/LdAzudO.jpeg" alt="Chatbot Image" style="width:150px;border-radius:20px;margin-bottom:10px;"/>
+  <img src="https://i.imgur.com/RRJpDim.jpeg" alt="Chatbot Image" style="width:150px;border-radius:20px;margin-bottom:10px;"/>
   <h1>AverlinMz – Study Chatbot</h1>
 </div>
 """, unsafe_allow_html=True)
@@ -286,4 +286,5 @@ with st.sidebar:
 
 filename = f"chat_history_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
 chat_history_text = "\n".join([f"{m['role'].upper()}: {m['content']}\n" for m in st.session_state.messages])
-st.download_button(label="💾 Download Chat History", data=chat_history_text, file_name=filename, mime="text/plain")
+st.download_button("📥 Download Chat History", chat_history_text, file_name=filename)
+

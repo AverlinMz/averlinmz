@@ -3,10 +3,10 @@ import random
 import string
 from html import escape
 import datetime
-from gtts import gTTS
+import re
 import tempfile
 import os
-import speech_recognition as sr
+from gtts import gTTS
 
 # Initialize session state
 def init_session():
@@ -17,6 +17,19 @@ def init_session():
     if "context_topic" not in st.session_state:
         st.session_state.context_topic = None
 init_session()
+
+# Remove emojis helper function
+def remove_emojis(text):
+    emoji_pattern = re.compile(
+        "["
+        "\U0001F600-\U0001F64F"  # emoticons
+        "\U0001F300-\U0001F5FF"  # symbols & pictographs
+        "\U0001F680-\U0001F6FF"  # transport & map symbols
+        "\U0001F1E0-\U0001F1FF"  # flags (iOS)
+        "\U00002700-\U000027BF"  # Dingbats
+        "\U000024C2-\U0001F251"
+        "]+", flags=re.UNICODE)
+    return emoji_pattern.sub(r'', text)
 
 # Page config
 st.set_page_config(
@@ -66,7 +79,7 @@ st.markdown("""
 # Title
 st.markdown('<div class="title-container"><h1>AverlinMz – Study Chatbot</h1></div>', unsafe_allow_html=True)
 
-# Response data and keywords (exactly your data)
+# Full Response Data
 RESPONSE_DATA = {
     "greetings": [
         "Hello there! 👋 How’s your day going? Ready to dive into learning today?",
@@ -130,7 +143,8 @@ RESPONSE_DATA = {
         "biology": "🧬 Biology Tips:\n1️⃣ Learn through diagrams (cells, organs, systems).\n2️⃣ Connect terms with real-life examples.\n3️⃣ Summarize topics using mind maps.\n4️⃣ Quiz yourself with apps.\n5️⃣ Talk about biology topics out loud.",
         "english": "📚 Language Tips:\n1️⃣ Read a bit every day (books, articles, stories).\n2️⃣ Speak or write in English regularly.\n3️⃣ Learn 5 new words daily and use them.\n4️⃣ Practice grammar through fun apps.\n5️⃣ Watch English shows with subtitles!",
         "robotics": "🤖 Robotics Tips:\n1️⃣ Start with block coding (like Scratch).\n2️⃣ Move on to Arduino and sensors.\n3️⃣ Join a club or competition.\n4️⃣ Watch tutorials and build projects.\n5️⃣ Learn how to debug and fix errors. Patience is key!",
-        "ai": "🧠 AI Tips:\n1️⃣ Start with Python basics.\n2️⃣ Learn about data types and logic.\n3️⃣ Try building chatbots or mini classifiers.\n4️⃣ Study math behind AI: linear algebra, probability.\n5️⃣ Follow real AI projects online to stay inspired!"
+        "ai": "🧠 AI Tips:\n1️⃣ Start with Python basics.\n2️⃣ Learn about data types and logic.\n3️⃣ Try building chatbots or mini classifiers.\n4️⃣ Study math behind AI: linear algebra, probability.\n5️⃣ Follow real AI projects online to stay inspired!",
+        "geography": "🌍 Geography Tips:\n1️⃣ Study maps regularly.\n2️⃣ Understand physical features and climates.\n3️⃣ Connect human activities with locations.\n4️⃣ Practice with past exam questions.\n5️⃣ Use videos and documentaries for better retention."
     },
     "fallback": [
         "Hmm, I’m not sure how to answer that — but I’ll learn! Maybe ask about a subject or how you feel. 🤔",
@@ -138,6 +152,7 @@ RESPONSE_DATA = {
     ]
 }
 
+# Keywords for intent detection
 KEYWORDS = {
     "greetings": ["hello", "hi", "hey", "salam"],
     "farewell": ["goodbye", "bye", "see you", "talk later", "see ya", "later"],
@@ -152,12 +167,14 @@ KEYWORDS = {
     "creator_info": ["who is aylin", "who made you", "your developer", "tell me about aylin"],
     "contact_creator": ["how to contact", "reach aylin", "contact you", "talk to aylin", "how can i contact to aylin"],
     "ack_creator": ["aylin is cool", "thank aylin", "credit to aylin"],
-    "subjects": ["math", "physics", "chemistry", "biology", "english", "robotics", "ai"]
+    "subjects": ["math", "physics", "chemistry", "biology", "english", "robotics", "ai", "geography"]
 }
 
+# Clean and normalize input text
 def clean_text(text):
     return text.lower().translate(str.maketrans('', '', string.punctuation)).strip()
 
+# Mini AI Assistant Mode: Simple intent detection + advice mode
 def detect_intent(text):
     msg = clean_text(text)
     for intent, kws in KEYWORDS.items():
@@ -165,9 +182,11 @@ def detect_intent(text):
             return intent
     return None
 
+# Add goal tracker update
 def update_goals(user_input):
     msg = clean_text(user_input)
     if "goal" in msg or "aim" in msg or "plan" in msg:
+        # Extract simple goals (for demo purposes, just add whole user input)
         if user_input not in st.session_state.goals:
             st.session_state.goals.append(user_input)
             return "Got it! I added that to your goals."
@@ -175,6 +194,7 @@ def update_goals(user_input):
             return "You already mentioned this goal."
     return None
 
+# Simple sentiment check for feedback detection (basic)
 def detect_sentiment(text):
     positive = ["good", "great", "awesome", "love", "happy", "well", "fine"]
     negative = ["bad", "sad", "tired", "depressed", "angry", "upset", "not good"]
@@ -185,15 +205,19 @@ def detect_sentiment(text):
         return "negative"
     return "neutral"
 
+# Main bot reply logic with added features
 def get_bot_reply(user_input):
     intent = detect_intent(user_input)
     goal_msg = update_goals(user_input)
 
+    # If user added a goal, respond
     if goal_msg:
         return goal_msg
 
     if intent and intent in RESPONSE_DATA:
+        # Use intent reply
         reply = random.choice(RESPONSE_DATA[intent])
+        # Save context topic (if subject)
         if intent == "subjects":
             for subj in KEYWORDS["subjects"]:
                 if subj in user_input.lower():
@@ -203,56 +227,35 @@ def get_bot_reply(user_input):
             st.session_state.context_topic = None
         return reply
 
+    # Context memory example - recall last subject discussed
     if st.session_state.context_topic:
         subj = st.session_state.context_topic
         if subj in RESPONSE_DATA["subjects"]:
             return RESPONSE_DATA["subjects"][subj] + "\n\n(You asked about this before!)"
 
+    # Sentiment feedback encouragement
     sentiment = detect_sentiment(user_input)
     if sentiment == "positive":
         return "I'm glad you're feeling good! Keep it up! 🎉"
     elif sentiment == "negative":
         return "I'm sorry you're feeling that way. I'm here if you want to talk. 💙"
 
+    # Fallback
     return random.choice(RESPONSE_DATA["fallback"])
-
-# --- AUDIO INPUT: Upload audio and transcribe ---
-st.sidebar.markdown("### 🎤 Audio Input (Upload .wav/.mp3)")
-audio_file = st.sidebar.file_uploader("Upload audio message", type=["wav", "mp3"])
-
-user_input_audio = None
-if audio_file is not None:
-    with tempfile.NamedTemporaryFile(delete=False) as temp_audio_file:
-        temp_audio_file.write(audio_file.read())
-        temp_audio_path = temp_audio_file.name
-
-    r = sr.Recognizer()
-    with sr.AudioFile(temp_audio_path) as source:
-        audio_data = r.record(source)
-        try:
-            user_input_audio = r.recognize_google(audio_data)
-            st.sidebar.success(f"Transcribed text: {user_input_audio}")
-        except Exception as e:
-            st.sidebar.error(f"Could not transcribe audio: {e}")
-
-    os.unlink(temp_audio_path)
 
 # Chat form & display
 with st.form('chat_form', clear_on_submit=True):
-    # Priority: audio input transcription if present, else text input
-    input_text = user_input_audio if user_input_audio else ''
-    if not input_text:
-        input_text = st.text_input('Write your message…', key='input_field')
-
-    submitted = st.form_submit_button('Send') or bool(user_input_audio)
-
-    if submitted and input_text.strip():
-        st.session_state.messages.append({'role': 'user', 'content': input_text})
-        bot_reply = get_bot_reply(input_text)
+    user_input = st.text_input('Write your message…', key='input_field')
+    if st.form_submit_button('Send') and user_input.strip():
+        # Save user message
+        st.session_state.messages.append({'role': 'user', 'content': user_input})
+        # Get bot reply
+        bot_reply = get_bot_reply(user_input)
         st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
 
-        # Audio output - TTS
-        tts = gTTS(bot_reply, lang='en')
+        # Audio output - TTS, clean from emojis
+        clean_reply = remove_emojis(bot_reply)
+        tts = gTTS(clean_reply, lang='en')
         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tts_file:
             tts.save(tts_file.name)
             audio_bytes = open(tts_file.name, "rb").read()
@@ -292,7 +295,7 @@ with st.sidebar:
     st.markdown("### 🧠 Mini AI Assistant Mode")
     st.write("This bot tries to detect your intent and give focused advice or answers.")
 
-# Save chat history as text file download
+# Save chat history as direct download to browser
 def get_chat_history_text():
     lines = []
     for m in st.session_state.messages:

@@ -18,7 +18,13 @@ def init_session():
 init_session()
 
 def remove_emojis(text):
-    emoji_pattern = re.compile("[\U0001F600-\U0001F64F\U0001F300-\U0001F5FF\U0001F680-\U0001F6FF\U0001F1E0-\U0001F1FF\U00002700-\U000027BF\U000024C2-\U0001F251]+", flags=re.UNICODE)
+    emoji_pattern = re.compile("[\U0001F600-\U0001F64F"
+                               "\U0001F300-\U0001F5FF"
+                               "\U0001F680-\U0001F6FF"
+                               "\U0001F1E0-\U0001F1FF"
+                               "\U00002700-\U000027BF"
+                               "\U000024C2-\U0001F251]+",
+                               flags=re.UNICODE)
     return emoji_pattern.sub(r'', text)
 
 st.set_page_config(page_title="AverlinMz Chatbot", page_icon="💡", layout="wide", initial_sidebar_state="collapsed")
@@ -76,10 +82,8 @@ RESPONSE_DATA = {
         "Awesome! Let’s keep the momentum going! 💪"
     ],
     "contact_creator": [
-        "You can contact my creator on GitHub: https://github.com/AverlinMz 📬",
-        "Want to talk to Aylin? Try reaching out via GitHub – she's awesome! 🌟",
-        "How to reach out to Aylin?\nI didn’t quite get that, but I’m still here for you. 😊 Try rephrasing or check the help tips.",
-        "Hmm, I’m not sure how to answer that — but I’ll learn! Maybe ask about a subject or how you feel. 🤔"
+        "You can contact my creator on GitHub: https://github.com/aylinmuzaffarli 📬",
+        "Want to talk to Aylin? Try reaching out via GitHub – she's awesome! 🌟"
     ],
     "user_feeling_bad": [
         "Sorry to hear that. I’m always here if you want to talk or need a study boost. 💙🌟",
@@ -128,29 +132,51 @@ RESPONSE_DATA = {
     ]
 }
 
+# Original keywords
 KEYWORDS = {
     "greetings": ["hello", "hi", "hey", "salam"],
     "farewell": ["goodbye", "bye", "see you", "talk later", "see ya", "later"],
     "how_are_you": ["how are you", "how's it going", "how do you feel"],
     "user_feeling_good": ["i'm fine", "i'm good", "great", "happy", "excellent"],
-    "user_feeling_bad": ["i'm sad", "not good", "tired", "depressed", "bad", "feeling sad", "i'm feeling sad", "i feel bad"],
+    "user_feeling_bad": ["i'm sad", "not good", "tired", "depressed", "angry", "upset", "feeling sad", "i feel bad"],
     "love": ["i love you", "you are cute", "like you"],
     "exam_prep": ["exam tips", "how to prepare", "study for test", "exam help", "give me advice for exam prep", "tips for exam"],
     "passed_exam": ["i passed", "got good mark", "i won"],
     "capabilities": ["what can you do", "your functions", "features"],
     "introduction": ["introduce", "who are you", "your name", "about you", "creator", "who made you", "introduce yourself"],
     "creator_info": ["who is aylin", "who made you", "your developer", "tell me about aylin"],
-    "contact_creator": ["how to contact", "reach aylin", "contact you", "talk to aylin", "how can i contact to aylin", "how to reach out to aylin", "how to reach out to her"],
+    "contact_creator": [
+        "how to contact",
+        "reach aylin",
+        "contact you",
+        "talk to aylin",
+        "how can i contact aylin",
+        "how to reach out to aylin",
+        "how to reach out to her"
+    ],
     "ack_creator": ["aylin is cool", "thank aylin", "credit to aylin"],
     "subjects": ["math", "physics", "chemistry", "biology", "english", "robotics", "ai", "geography"]
 }
+
+# Clean keywords once at startup
+def clean_keyword_list(keywords_dict):
+    cleaned = {}
+    for intent, phrases in keywords_dict.items():
+        cleaned_phrases = []
+        for phrase in phrases:
+            p = phrase.lower().translate(str.maketrans('', '', string.punctuation)).strip()
+            cleaned_phrases.append(p)
+        cleaned[intent] = cleaned_phrases
+    return cleaned
+
+KEYWORDS_CLEANED = clean_keyword_list(KEYWORDS)
 
 def clean_text(text):
     return text.lower().translate(str.maketrans('', '', string.punctuation)).strip()
 
 def detect_intent(text):
     msg = clean_text(text)
-    for intent, kws in KEYWORDS.items():
+    for intent, kws in KEYWORDS_CLEANED.items():
         if any(kw in msg for kw in kws):
             return intent
     return None

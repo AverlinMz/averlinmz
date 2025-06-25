@@ -136,16 +136,16 @@ def detect_sentiment(text):
         return "negative"
     return "neutral"
 
-# ✅ Local GPT-2 generation
-def generate_gpt2_response(prompt, max_length=150):
+# ✅ Faster Local GPT-2 generation
+def generate_gpt2_response(prompt, max_length=80):
     inputs = tokenizer.encode(prompt, return_tensors="pt")
     outputs = model.generate(
         inputs,
         max_length=max_length,
         do_sample=True,
-        top_k=50,
-        top_p=0.95,
-        temperature=0.7,
+        top_k=20,
+        top_p=0.9,
+        temperature=0.6,
         no_repeat_ngram_size=2,
         num_return_sequences=1
     )

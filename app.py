@@ -315,29 +315,31 @@ def get_bot_reply(user_input):
 
     if intent and intent in RESPONSE_DATA:
         if intent == "subjects":
-            for subj in KEYWORDS["subjects"]:
+            for subj in RESPONSE_DATA["subjects"].keys():
                 if subj in user_input.lower():
                     st.session_state.context_topic = subj
                     break
-            return RESPONSE_DATA["subjects"].get(st.session_state.context_topic, random.choice(RESPONSE_DATA["fallback"]))
+            return RESPONSE_DATA["subjects"].get(st.session_state.context_topic, random.choice(FALLBACK_RESPONSES))
         else:
             st.session_state.context_topic = None
             return random.choice(RESPONSE_DATA[intent])
 
     if st.session_state.context_topic:
         subj = st.session_state.context_topic
-        return RESPONSE_DATA["subjects"].get(subj, random.choice(RESPONSE_DATA["fallback"])) + "\n\n(You asked about this before!)"
+        return RESPONSE_DATA["subjects"].get(subj, random.choice(FALLBACK_RESPONSES)) + "\n\n(You asked about this before!)"
+
+    # Fix here: use RESPONSE_DATA["subjects"].keys() to get valid subjects list
+    possible_subjects = [subj for subj in RESPONSE_DATA["subjects"].keys() if subj in user_input.lower()]
+    if possible_subjects:
+        return f"I see you mentioned {possible_subjects[0]}. Here are some tips:\n\n{RESPONSE_DATA['subjects'].get(possible_subjects[0], '')}"
 
     if sentiment == "positive":
         return "Glad to hear you're feeling good! Keep it up! 🎉"
     elif sentiment == "negative":
         return "I noticed you're feeling down. If you want, I can share some tips or just listen. 💙"
 
-    possible_subjects = [subj for subj in KEYWORDS["subjects"] if subj in user_input.lower()]
-    if possible_subjects:
-        return f"I see you mentioned {possible_subjects[0]}. Here are some tips:\n\n{RESPONSE_DATA['subjects'].get(possible_subjects[0], '')}"
+    return random.choice(FALLBACK_RESPONSES)
 
-    return random.choice(RESPONSE_DATA["fallback"])
 
 # ---- CHAT FORM ----
 with st.form('chat_form', clear_on_submit=True):

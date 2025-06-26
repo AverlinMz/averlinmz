@@ -154,11 +154,11 @@ RESPONSE_DATA = {
         "Aylin’s hard work made this possible. 👏🚀"
     ],
     "contact_creator": [
-    "You can contact Aylin by filling out this [Google Form](https://docs.google.com/forms/d/1hYk968UCuX0iqsJujVNFGVkBaJUIhA67SXJKe0xWeuM/edit) 📋✨",
-    "Reach out to Aylin anytime via this [Google Form](https://docs.google.com/forms/d/1hYk968UCuX0iqsJujVNFGVkBaJUIhA67SXJKe0xWeuM/edit) 📨🌟",
-    "Feel free to send your feedback or questions through this [Google Form](https://docs.google.com/forms/d/1hYk968UCuX0iqsJujVNFGVkBaJUIhA67SXJKe0xWeuM/edit) 💬😊",
-    "Aylin welcomes your messages! Use this [Google Form](https://docs.google.com/forms/d/1hYk968UCuX0iqsJujVNFGVkBaJUIhA67SXJKe0xWeuM/edit) 📬🤗"
-],
+        "You can contact Aylin by filling out this <a href='https://docs.google.com/forms/d/1hYk968UCuX0iqsJujVNFGVkBaJUIhA67SXJKe0xWeuM/edit' target='_blank'>Google Form</a> 📋✨",
+        "Reach out to Aylin anytime via this <a href='https://docs.google.com/forms/d/1hYk968UCuX0iqsJujVNFGVkBaJUIhA67SXJKe0xWeuM/edit' target='_blank'>Google Form</a> 📨🌟",
+        "Feel free to send your feedback or questions through this <a href='https://docs.google.com/forms/d/1hYk968UCuX0iqsJujVNFGVkBaJUIhA67SXJKe0xWeuM/edit' target='_blank'>Google Form</a> 💬😊",
+        "Aylin welcomes your messages! Use this <a href='https://docs.google.com/forms/d/1hYk968UCuX0iqsJujVNFGVkBaJUIhA67SXJKe0xWeuM/edit' target='_blank'>Google Form</a> 📬🤗"
+    ],
 
     "subjects": {
         "math": "🧮 Math Tips: Practice regularly, focus on concepts, and solve diverse problems. 🔢📝",
@@ -172,7 +172,6 @@ RESPONSE_DATA = {
         "Oops, I didn’t get that. Let’s try another question! 💬"
     ]
 }
-
 
 KEYWORDS = {
     "greetings": ["hello", "hi", "hey", "hiya", "greetings"],
@@ -266,7 +265,7 @@ with st.form('chat_form', clear_on_submit=True):
         st.session_state.messages.append({'role': 'user', 'content': user_input})
         bot_reply = get_bot_reply(user_input)
         st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
-        
+
         # Remove emojis before TTS so audio is clean
         clean_reply = remove_emojis(bot_reply)
         tts = gTTS(clean_reply, lang='en')
@@ -282,8 +281,9 @@ msgs = st.session_state.messages
 for i in range(len(msgs) - 2, -1, -2):
     user_msg = msgs[i]['content']
     bot_msg = msgs[i+1]['content'] if i+1 < len(msgs) else ''
+    # Use markdown with unsafe_allow_html=True so links work
     st.markdown(f'<div class="user">{escape(user_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
-    st.markdown(f'<div class="bot">{escape(bot_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="bot">{bot_msg.replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
 st.markdown('</div></div>', unsafe_allow_html=True)
 
 with st.sidebar:

@@ -7,6 +7,10 @@ import re
 import tempfile
 import os
 from gtts import gTTS
+import streamlit as st
+
+hf_token = st.secrets["HF_API_TOKEN"]
+
 
 # Initialize session state
 def init_session():

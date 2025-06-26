@@ -2,13 +2,23 @@ import streamlit as st
 import random
 import string
 from html import escape
+import datetime
 import re
-from gtts import gTTS
 import tempfile
 import os
-import difflib
+from gtts import gTTS
+import difflib  # <-- Added for smarter intent matching
 
-# Initialize session state to store chat history and context
+# Hugging Face Inference Client
+from huggingface_hub import InferenceClient
+
+# Load your Hugging Face API token from Streamlit secrets
+hf_token = st.secrets["HF_API_TOKEN"]
+
+# Initialize Hugging Face client
+client = InferenceClient(token=hf_token)
+
+# Initialize session state
 def init_session():
     if "messages" not in st.session_state:
         st.session_state.messages = []
@@ -20,7 +30,6 @@ def init_session():
         st.session_state.last_sentiment = None
 init_session()
 
-# Function to remove emojis from user input for easier matching
 def remove_emojis(text):
     emoji_pattern = re.compile("[\U0001F600-\U0001F64F"
                                "\U0001F300-\U0001F5FF"
@@ -31,7 +40,6 @@ def remove_emojis(text):
                                flags=re.UNICODE)
     return emoji_pattern.sub(r'', text)
 
-# Set page config and title/icon
 st.set_page_config(
     page_title="AverlinMz Chatbot",
     page_icon="https://i.imgur.com/mJ1X49g_d.webp",
@@ -39,14 +47,12 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Theme selector with styles
 theme = st.sidebar.selectbox("🎨 Choose a theme", ["Default", "Night", "Blue"])
 if theme == "Night":
     st.markdown("""<style>body, .stApp { background:#111; color:#fff; } .user {background:#333;color:#fff;} .bot {background:#444;color:#fff;}</style>""", unsafe_allow_html=True)
 elif theme == "Blue":
     st.markdown("""<style>body, .stApp { background:#e0f7fa; } .user {background:#81d4fa;color:#01579b;} .bot {background:#b2ebf2;color:#004d40;}</style>""", unsafe_allow_html=True)
 
-# CSS for chat layout and styling
 st.markdown("""
 <style>
 .chat-container {max-width:900px;margin:0 auto;padding:20px;display:flex;flex-direction:column;}
@@ -70,7 +76,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Title and logo
 st.markdown("""
 <div class="title-container">
   <img src="https://i.imgur.com/mJ1X49g_d.webp" alt="Chatbot Image" style="width:150px;border-radius:20px;margin-bottom:10px;"/>
@@ -78,229 +83,179 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Response data for intents and subjects
 RESPONSE_DATA = {
-    "greetings": [
-        "Hello there! 👋 How’s your day going?",
-        "Hi! 😊 Ready to crush some study goals?",
-        "Hey hey! What shall we dive into today?",
-        "Welcome! 🎒 Let’s learn something new!",
-    ],
-    "thanks": [
-        "You’re very welcome! 😊",
-        "No problem at all! Always here to help!",
-        "Happy to help anytime! 🌟",
-    ],
-    "farewell": [
-        "Goodbye! 👋 Come back soon for more study tips!",
-        "Take care! 📚 Stay curious!",
-        "See you next time! Keep going strong!",
-    ],
-    "how_are_you": [
-        "I'm doing well, thanks for asking! 💬 How are you feeling today?",
-        "Feeling energetic and ready to help! How are you?",
-        "Buzzing with knowledge! 😄 You?",
-    ],
-    "user_feeling_good": [
-        "That’s amazing to hear! 🎉 Keep riding that good energy!",
-        "Glad to hear you’re feeling great! Let’s keep it up!",
-        "Awesome! Positive vibes make learning easier!",
-    ],
-    "user_feeling_bad": [
-        "Sorry to hear that. I’m here if you need support. 💙",
-        "Tough days happen. Want to try a small productivity win?",
-        "Sending you good vibes 💫 Let’s find one thing to feel proud of today.",
-    ],
-    "contact_creator": [
-        "You can contact Aylin by filling this form: https://docs.google.com/forms/d/1hYk968UCuX0iqsJujVNFGVkBaJUIhA67SXJKe0xWeuM/edit",
-    ],
-    "exam_prep": [
-        "Start early, revise often, rest well. You've got this! 💪",
-        "Break topics into small parts, use spaced repetition, stay hydrated!",
-        "Practice past questions, and don’t forget breaks. 🧠💧",
-    ],
-    "passed_exam": [
-        "🎉 CONGRATULATIONS! That’s amazing news!",
-        "Proud of you! You worked hard and it paid off!",
-        "Knew you could do it! What’s next on your learning journey?",
-    ],
-    "love": [
-        "Aww 💖 That's sweet! I’m just a bot, but I support you fully!",
-        "Virtual hug incoming! 🤗",
-        "You’re the best! Thanks for making my code smile! 😄",
-    ],
-    "capabilities": [
-        "I give study tips, answer questions, track goals, and keep you motivated! 💪",
-        "I’m your learning buddy! Ask about subjects, exams, moods, or set goals!",
-        "I help with study hacks, reminders, advice, and cheerful support!",
-    ],
-    "introduction": [
-        "I'm AverlinMz, your study chatbot! Built by Aylin Muzaffarli to help students shine. ✨",
-        "I’m your AI sidekick in the learning world, powered by Aylin’s vision. 🌍",
-    ],
-    "creator_info": [
-        "Created by Aylin — student, coder, physicist in training, and all-around knowledge adventurer! 🌟",
-        "Aylin Muzaffarli built me to help students love learning and grow smarter every day.",
-    ],
-    "ack_creator": [
-        "Aylin deserves all the credit! 👏👏",
-        "Absolutely — she’s brilliant and dedicated. 🧠❤️",
-    ],
+    "greetings": ["Hello there! 👋 How’s your day going? Ready to dive into learning today?"],
+    "thanks": ["You’re very welcome! 😊"],
+    "farewell": ["Goodbye! 👋 Come back soon for more study tips!"],
+    "how_are_you": ["I'm doing well, thanks for asking! 💬 How are you feeling today?"],
+    "user_feeling_good": ["That’s amazing to hear! 🎉 Keep riding that good energy!"],
+    "contact_creator": ["You can contact Aylin Muzaffarli via email: aylin@example.com or through GitHub: https://github.com/aylinmuzaffarli"],
+    "user_feeling_bad": ["Sorry to hear that. I’m always here if you want to talk or need a study boost. 💙🌟"],
+    "exam_prep": ["Start early, revise often, rest well, and stay calm. You've got this! 💪"],
+    "passed_exam": ["🎉 CONGRATULATIONS! That’s amazing news! I knew you could do it."],
+    "love": ["Aww 💖 That's sweet! I'm just code, but I support you 100%!"],
+    "capabilities": ["I give study tips, answer questions, track your goals, and cheer you on!"],
+    "introduction": ["I'm AverlinMz, your study chatbot. My creator is Aylin Muzaffarli (2011, Azerbaijan)."],
+    "creator_info": ["Created by Aylin — a student passionate about tech, science, and inspiring others."],
+    "ack_creator": ["Absolutely! All credit goes to Aylin Muzaffarli! 🌟"],
     "subjects": {
         "math": "🧮 Math Tips: Practice daily. Understand concepts. Use visuals. Solve real problems. Review mistakes.",
-        "math_more": "Try solving with peers, teach someone else, and focus on weak topics. Use Khan Academy or AoPS too!",
         "physics": "🧪 Physics Tips: Learn the basics. Draw diagrams. Practice problems. Watch experiments. Memorize formulas.",
-        "physics_more": "Use simulations, revise past questions, and understand units and real-world applications.",
-        "chemistry": "⚗️ Chemistry Tips: Balance equations. Understand reactions. Memorize key formulas. Use flashcards.",
-        "chemistry_more": "Use mind maps, mnemonic devices for groups, and do visual experiments online.",
-        "biology": "🧬 Biology Tips: Learn diagrams. Understand processes. Use mnemonics. Relate to real life.",
-        "biology_more": "Quiz yourself regularly, make storylines out of biological cycles, and practice with diagrams.",
-        "computer science": "💻 CS Tips: Practice coding daily. Understand algorithms. Solve problems. Learn data structures.",
-        "computer science_more": "Try small projects, join code clubs, and study from real open-source repos!",
-        "english": "📚 English Tips: Read daily. Practice writing. Expand vocabulary. Listen to native speakers.",
-        "english_more": "Use grammar tools, write a journal, and discuss books or podcasts.",
     },
-    "fallback": [
-        "Hmm, I’m not sure how to answer that — but I’ll learn! 😊 Try rephrasing?",
-        "Sorry, I didn’t catch that. Can you ask it another way?",
-        "Interesting... but I don’t know what to say! Maybe ask about a subject?",
-    ]
+    "fallback": ["Hmm, I’m not sure how to answer that — but I’ll learn! Try rephrasing. 😊"]
 }
 
-# Keywords to detect intent
 KEYWORDS = {
-    "greetings": ["hello", "hi", "hey", "yo", "greetings", "good morning", "good evening"],
-    "farewell": ["goodbye", "bye", "see you", "later", "farewell"],
-    "how_are_you": ["how are you", "how do you feel", "you okay"],
-    "user_feeling_good": ["i'm good", "i'm great", "i feel amazing", "i’m happy"],
-    "user_feeling_bad": ["i'm sad", "i’m tired", "not good", "i feel bad", "i’m stressed"],
-    "love": ["i love you", "love you bot", "you’re cute"],
-    "exam_prep": ["exam tips", "how to study", "help with test", "study advice"],
-    "passed_exam": ["i passed", "i succeeded", "i got good grades"],
-    "capabilities": ["what can you do", "how can you help", "what do you do"],
-    "introduction": ["introduce yourself", "who are you", "what’s your name"],
-    "creator_info": ["who is aylin", "who made you", "creator of this bot"],
-    "contact_creator": ["how can i contact aylin", "contact aylin", "how to reach aylin"],
-    "ack_creator": ["thank aylin", "credit aylin", "who deserves thanks"],
-    "thanks": ["thank you", "thanks a lot", "appreciate it"],
-    "subjects": ["math", "physics", "chemistry", "biology", "computer science", "english", "science", "cs", "bio", "chem"],
-    "more_request": ["more", "give more", "additional", "more advice", "tell me more"]
+    "greetings": ["hello", "hi", "hey"],
+    "farewell": ["goodbye", "bye"],
+    "how_are_you": ["how are you"],
+    "user_feeling_good": ["i'm good", "great", "happy"],
+    "user_feeling_bad": ["i'm sad", "not good", "tired"],
+    "love": ["i love you"],
+    "exam_prep": ["exam tips", "study for test"],
+    "passed_exam": ["i passed"],
+    "capabilities": ["what can you do"],
+    "introduction": ["introduce", "who are you"],
+    "creator_info": ["who is aylin"],
+    "contact_creator": ["how can i contact aylin", "contact aylin", "how to contact"],
+    "ack_creator": ["thank aylin"],
+    "thanks": ["thank you"],
+    "subjects": ["math", "physics"]
 }
 
-# Find user intent from input text using keywords
-def find_intent(user_text):
-    user_text_lower = user_text.lower()
-    for intent, keywords in KEYWORDS.items():
-        for keyword in keywords:
-            if keyword in user_text_lower:
-                return intent
+def clean_keyword_list(keywords_dict):
+    cleaned = {}
+    for intent, phrases in keywords_dict.items():
+        cleaned[intent] = [p.lower().translate(str.maketrans('', '', string.punctuation)).strip() for p in phrases]
+    return cleaned
+
+KEYWORDS_CLEANED = clean_keyword_list(KEYWORDS)
+
+def clean_text(text):
+    return text.lower().translate(str.maketrans('', '', string.punctuation)).strip()
+
+# Smarter intent detection with difflib for fuzzy matching
+def detect_intent(text):
+    msg = clean_text(text)
+    all_phrases = []
+    phrase_to_intent = {}
+
+    for intent, phrases in KEYWORDS_CLEANED.items():
+        for phrase in phrases:
+            all_phrases.append(phrase)
+            phrase_to_intent[phrase] = intent
+
+    closest = difflib.get_close_matches(msg, all_phrases, n=1, cutoff=0.4)
+    if closest:
+        return phrase_to_intent[closest[0]]
     return None
 
-# Find best matching subject using fuzzy matching
-def get_best_subject_match(user_text):
-    subjects = RESPONSE_DATA["subjects"].keys()
-    user_text_lower = user_text.lower()
-    best_match = None
-    highest_ratio = 0
-    for subject in subjects:
-        ratio = difflib.SequenceMatcher(None, subject, user_text_lower).ratio()
-        if ratio > highest_ratio:
-            highest_ratio = ratio
-            best_match = subject
-    if highest_ratio > 0.6:
-        return best_match
-    return None
-
-# Generate chatbot response based on user input and context
-def generate_response(user_text):
-    text = remove_emojis(user_text).lower().strip()
-
-    # If user asks for more info
-    if any(phrase in text for phrase in KEYWORDS["more_request"]):
-        topic = st.session_state.context_topic
-        if topic and topic + "_more" in RESPONSE_DATA["subjects"]:
-            return RESPONSE_DATA["subjects"][topic + "_more"]
+def update_goals(user_input):
+    msg = clean_text(user_input)
+    if "goal" in msg or "aim" in msg or "plan" in msg:
+        if user_input not in st.session_state.goals:
+            st.session_state.goals.append(user_input)
+            return "Got it! I added that to your goals."
         else:
-            return "Could you please specify the subject you want more info on? For example, type 'math', 'physics', or 'chemistry'."
+            return "You already mentioned this goal."
+    return None
 
-    intent = find_intent(text)
+def detect_sentiment(text):
+    positive = ["good", "great", "awesome", "love", "happy"]
+    negative = ["bad", "sad", "tired", "depressed"]
+    txt = clean_text(text)
+    if any(word in txt for word in positive): return "positive"
+    if any(word in txt for word in negative): return "negative"
+    return "neutral"
 
-    # If intent is about subjects
-    if intent == "subjects" or text in KEYWORDS["subjects"]:
-        subj = None
-        for s in KEYWORDS["subjects"]:
-            if s in text:
-                subj = s
-                break
-        if subj:
-            st.session_state.context_topic = subj
-            return RESPONSE_DATA["subjects"].get(subj, "Sorry, I don't have tips for that subject yet.")
+# Hugging Face AI call function
+def get_ai_response(user_input):
+    response = client.text_generation(
+        model="mistralai/Mistral-Small-3.2-24B-Instruct-2506",
+        inputs=user_input,
+        parameters={"max_new_tokens": 100, "temperature": 0.7}
+    )
+    # The response format may vary, so check both options
+    if hasattr(response, "generated_text"):
+        return response.generated_text
+    elif isinstance(response, list) and "generated_text" in response[0]:
+        return response[0]["generated_text"]
+    else:
+        return "Sorry, I couldn't generate a response right now."
 
-    # For other intents
+def get_bot_reply(user_input):
+    intent = detect_intent(user_input)
+    goal_msg = update_goals(user_input)
+    if goal_msg:
+        return goal_msg
+
+    sentiment = detect_sentiment(user_input)
+    st.session_state.last_sentiment = sentiment
+
     if intent and intent in RESPONSE_DATA:
-        # Save context if subject
         if intent == "subjects":
-            st.session_state.context_topic = text
-        return random.choice(RESPONSE_DATA[intent])
+            for subj in KEYWORDS["subjects"]:
+                if subj in user_input.lower():
+                    st.session_state.context_topic = subj
+                    break
+            return RESPONSE_DATA["subjects"].get(st.session_state.context_topic, random.choice(RESPONSE_DATA["fallback"]))
+        else:
+            st.session_state.context_topic = None
+            return random.choice(RESPONSE_DATA[intent])
 
-    # Try fuzzy subject match if no intent found
-    subj = get_best_subject_match(text)
-    if subj:
-        st.session_state.context_topic = subj
-        return RESPONSE_DATA["subjects"][subj]
+    if st.session_state.context_topic:
+        subj = st.session_state.context_topic
+        return RESPONSE_DATA["subjects"].get(subj, random.choice(RESPONSE_DATA["fallback"])) + "\n\n(You asked about this before!)"
 
-    # Default fallback responses
-    return random.choice(RESPONSE_DATA["fallback"])
+    if sentiment == "positive":
+        return "I'm glad you're feeling good! Keep it up! 🎉"
+    elif sentiment == "negative":
+        return "You mentioned you're feeling down earlier. Want a tip to boost your mood or focus better? 💙"
 
-# Generate speech audio from text using gTTS
-def synthesize_speech(text):
-    try:
-        tts = gTTS(text=text, lang='en')
-        tmp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
-        tts.save(tmp_file.name)
-        return tmp_file.name
-    except Exception as e:
-        print(f"Error generating speech: {e}")
-        return None
+    # Fallback to AI-generated reply when no intent matched
+    return get_ai_response(user_input)
 
-# Display chat messages on the screen
-def display_chat():
-    st.markdown('<div class="chat-window">', unsafe_allow_html=True)
-    for message in st.session_state.messages:
-        role = message["role"]
-        content = escape(message["content"])
-        css_class = "user" if role == "user" else "bot"
-        st.markdown(f'<div class="{css_class}">{content}</div>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+# Streamlit UI form for chat input and submission
+with st.form('chat_form', clear_on_submit=True):
+    user_input = st.text_input('Write your message…', key='input_field')
+    if st.form_submit_button('Send') and user_input.strip():
+        st.session_state.messages.append({'role': 'user', 'content': user_input})
+        bot_reply = get_bot_reply(user_input)
+        st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
+        clean_reply = remove_emojis(bot_reply)
+        tts = gTTS(clean_reply, lang='en')
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tts_file:
+            tts.save(tts_file.name)
+            audio_bytes = open(tts_file.name, "rb").read()
+        st.audio(audio_bytes, format="audio/mp3")
+        os.unlink(tts_file.name)
 
-def main():
-    st.title("AverlinMz Chatbot")
+# Display chat history in chat window
+st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
+msgs = st.session_state.messages
+for i in range(len(msgs) - 2, -1, -2):
+    user_msg = msgs[i]['content']
+    bot_msg = msgs[i+1]['content'] if i+1 < len(msgs) else ''
+    st.markdown(f'<div class="user">{escape(user_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="bot">{escape(bot_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
+st.markdown('</div></div>', unsafe_allow_html=True)
 
-    # Display previous messages only once at the start
-    display_chat()
+# Sidebar with goals, tips, and explanation
+with st.sidebar:
+    st.markdown("### 🎯 Your Goals")
+    if st.session_state.goals:
+        for g in st.session_state.goals:
+            st.write("- " + g)
+    else:
+        st.write("You haven't set any goals yet. Tell me your goals!")
 
-    # Use a form with text input and send button
-    with st.form(key='chat_form', clear_on_submit=True):
-        user_input = st.text_input("Your message:")
-        submitted = st.form_submit_button("Send")
+    st.markdown("### 💡 Tips")
+    st.info("Try asking things like:\n- 'Give me study tips'\n- 'Tell me about physics'\n- 'How do I manage time?'\n- Or just say 'bye' to end the chat!")
 
-        if submitted and user_input.strip():
-            # Add user's message
-            st.session_state.messages.append({"role": "user", "content": user_input})
+    st.markdown("### 🧠 Mini AI Assistant Mode")
+    st.write("This bot tries to detect your intent and give focused advice or answers.")
 
-            # Generate bot response
-            response = generate_response(user_input)
-            st.session_state.messages.append({"role": "bot", "content": response})
-
-            # Display updated chat (only once after new messages)
-            display_chat()
-
-            # Generate and play audio
-            audio_file = synthesize_speech(response)
-            if audio_file:
-                audio_bytes = open(audio_file, "rb").read()
-                st.audio(audio_bytes, format="audio/mp3")
-                os.remove(audio_file)
-
-if __name__ == "__main__":
-    main()
+# Download chat history button
+filename = f"chat_history_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+chat_history_text = "\n".join([f"{m['role'].upper()}: {m['content']}\n" for m in st.session_state.messages])
+st.download_button("📥 Download Chat History", chat_history_text, file_name=filename)

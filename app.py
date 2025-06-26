@@ -166,77 +166,6 @@ RESPONSE_DATA = {
         ),
     },
 
-
-    "stress_relief": [
-        "Feeling stressed? Take a moment to breathe deeply — try inhaling for 4 seconds, holding for 7, and exhaling for 8. It calms your mind and resets your focus. 🧘‍♀️✨",
-        "Short mindfulness breaks help: close your eyes, focus on your breath, and gently return your attention when distracted. 🌸💆‍♂️",
-        "Regular breaks recharge your brain. Stretch or walk for 5 minutes to boost concentration. 🎶🚶‍♀️",
-        "Ground yourself by naming things you see, feel, and hear to stay present and calm. 🌿🕊️"
-    ],
-
-    "time_management": [
-        "Build a daily routine focusing on 3 main tasks — achievable goals sustain motivation. ⏰📋",
-        "Use Pomodoro technique: 25-50 minutes work blocks with short breaks. 🍅✅",
-        "Prioritize important tasks first, avoid multitasking — focus increases quality. 🎯📅",
-        "Track time spent to identify distractions and improve focus. ⏳📊"
-    ],
-
-    "fun_facts": [
-        "The human brain processes info faster than a Formula 1 car! 🧠💨",
-        "Euler's number 'e' appears in growth, decay, and compound interest. 📈🔢",
-        "Quantum entanglement: particles affect each other instantly, regardless of distance. 👻⚛️",
-        "The first industrial robot revolutionized manufacturing in 1961. 🤖🏭"
-    ],
-
-    "goal_setting": [
-        "Set clear, achievable goals and break them into small steps. Celebrate progress! 🎯🎉",
-        "Regularly review and adjust goals to stay on track without burning out. 🔄📊",
-        "Use charts or journals to visualize progress and boost motivation. 📈📝",
-        "Accept setbacks as learning steps. Reflect, learn, and push forward! 🚀💪"
-    ],
-
-    "study_tips": [
-        "Use active recall by testing yourself, not just rereading. 🧠",
-        "Create mind maps to visualize complex topics. 🗺️",
-        "Teach concepts to someone else to reinforce understanding. 📢",
-        "Switch subjects regularly to keep your mind fresh. 🔄",
-        "Summarize study sessions with bullet points. 📝",
-        "Use spaced repetition for long-term retention. ⏳",
-        "Handwrite notes to improve memory. ✍️"
-    ],
-
-    "health": [
-        "Stay hydrated; water boosts brain function. 💧🧠",
-        "Exercise regularly; even short walks help memory and thinking. 🚶‍♂️⚡",
-        "Sleep 7-9 hours for memory consolidation. 🛌🌙",
-        "Balance screen time with breaks to reduce eye strain. 👀🛑"
-    ],
-
-    "resources": [
-        "‘The Art of Problem Solving’ books are excellent for math prep. 📚",
-        "Khan Academy and Coursera offer free quality courses. 🎓",
-        "Try ‘MinutePhysics’ on YouTube for physics concepts. ⚛️",
-        "Ask me for study app recommendations anytime!",
-        "'Automate the Boring Stuff with Python' is great for beginner programming. 💻",
-        "'fast.ai' courses offer practical AI learning. 🤖"
-    ],
-
-    "emotional_support": [
-        "It's okay to feel overwhelmed. You're not alone. 💙",
-        "Self-care is vital for your best performance. 🌸",
-        "Allow your feelings, then gently refocus. 🧘‍♂️",
-        "Progress isn't linear; be kind to yourself. ❤️"
-    ],
-
-    # Fallback answers when the bot doesn't understand a query
-    "fallback": [
-        "I’m not sure about that. You might want to try ChatGPT for detailed answers: https://chat.openai.com/",
-        "That’s beyond my current knowledge. DeepSeek might help you: https://deepseek.ai/",
-        "Try asking ChatGPT or DeepSeek for more info. I’m here to assist with Olympiad prep!",
-        "Sorry, I don’t have an answer right now. These tools can help: ChatGPT (https://chat.openai.com/), DeepSeek (https://deepseek.ai/)."
-    ],
-
-
     "motivation": [
         "Aylin, your creator, has devoted herself to mastering math, physics, robotics, and AI — balancing all these challenging fields with passion and dedication. You too can manage your interests with focus and heart! 💪🌟",
         "Remember, Aylin started just like you — curious and driven, exploring many fields like robotics, AI, and physics. Your diverse passions are your strength! Keep nurturing them. 🚀❤️",
@@ -289,15 +218,6 @@ RESPONSE_DATA = {
         "Balance screen time with breaks to reduce eye strain. 👀🛑"
     ],
 
-    "resources": [
-        "‘The Art of Problem Solving’ books are excellent for math prep. 📚",
-        "Khan Academy and Coursera offer free quality courses. 🎓",
-        "Try ‘MinutePhysics’ on YouTube for physics concepts. ⚛️",
-        "Ask me for study app recommendations anytime!",
-        "'Automate the Boring Stuff with Python' is great for beginner programming. 💻",
-        "'fast.ai' courses offer practical AI learning. 🤖"
-    ],
-
     "emotional_support": [
         "It's okay to feel overwhelmed. You're not alone. 💙",
         "Self-care is vital for your best performance. 🌸",
@@ -305,6 +225,16 @@ RESPONSE_DATA = {
         "Progress isn't linear; be kind to yourself. ❤️"
     ],
 }
+
+# Your polished fallback responses with “I’m still learning”
+FALLBACK_RESPONSES = [
+    "I’m still learning and don’t know the answer right now. Maybe try rephrasing your question or searching online.",
+    "Sorry, I’m still learning and can’t answer that at the moment. You might find better info by checking other resources.",
+    "I don’t know the answer right now because I’m still learning. Try searching the web or asking other platforms.",
+    "I’m still learning, so I don’t have an answer right now. You might want to explore other chats or do a quick internet search.",
+    "That’s beyond my current knowledge as I’m still learning. Trying other places or searching online might help.",
+    "I’m still learning and can’t help with that now. Maybe rephrase your question or use a search engine for more info."
+]
 
 KEYWORDS = {
     "math": ["math", "algebra", "geometry", "number theory", "combinatorics", "inequality", "proof"],
@@ -325,12 +255,6 @@ KEYWORDS = {
     "emotional_support": ["feelings", "emotions", "support", "overwhelmed", "kindness"],
 }
 
-EXTERNAL_HELP = {
-    "ChatGPT": "https://chat.openai.com/",
-    "DeepSeek": "https://deepseek.ai/",
-    "WolframAlpha": "https://www.wolframalpha.com/"
-}
-
 def detect_intent(user_text):
     user_text_lower = user_text.lower()
     for intent, keywords in KEYWORDS.items():
@@ -348,11 +272,7 @@ def detect_intent(user_text):
 def generate_response(user_text):
     intent = detect_intent(user_text)
     if intent is None:
-        return (
-            "Sorry, I’m not sure how to answer that right now. "
-            "You might try rephrasing your question, checking reliable sources online, "
-            "or asking in another chat platform. I’m still learning every day!"
-        )
+        return random.choice(FALLBACK_RESPONSES)
 
     if intent in RESPONSE_DATA.get("subjects", {}):
         return RESPONSE_DATA["subjects"][intent]
@@ -362,17 +282,7 @@ def generate_response(user_text):
         if isinstance(responses, list):
             return random.choice(responses)
 
-    return "I'm not sure how to help with that right now. Try rephrasing or ask about Olympiad topics!"
-
-
-
-    if intent in RESPONSE_DATA.get("subjects", {}):
-        return RESPONSE_DATA["subjects"].get(intent)
-    if intent in RESPONSE_DATA:
-        responses = RESPONSE_DATA[intent]
-        if isinstance(responses, list):
-            return random.choice(responses)
-    return "I'm not sure how to help with that right now. Try rephrasing or ask about Olympiad topics!"
+    return random.choice(FALLBACK_RESPONSES)
 
 def render_message(user_text, bot_response):
     st.markdown(f'<div class="user">{escape(user_text)}</div>', unsafe_allow_html=True)
@@ -398,8 +308,8 @@ def main():
         user_text = user_input.strip()
         bot_response = generate_response(user_text)
         st.session_state.messages.append({"user": user_text, "bot": bot_response})
-        if "input" in st.session_state:
-            st.session_state.input = ""  # Safe clear
+        # Clear input safely using session_state update
+        st.session_state.input = ""
         st.experimental_rerun()
 
     st.markdown('</div>', unsafe_allow_html=True)

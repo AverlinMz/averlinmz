@@ -1,64 +1,14 @@
 import streamlit as st
 import random
 import string
+from html import escape
 import datetime
 import re
 import tempfile
 import os
-from html import escape
 from gtts import gTTS
-from hashlib import sha256
 
-# --------------- AUTHENTICATION ----------------
-def hash_password(password):
-    return sha256(password.encode()).hexdigest()
-
-# Simple in-memory user DB (not persistent)
-USER_DB = {"aylin": hash_password("password123")}
-
-if "authenticated" not in st.session_state:
-    st.session_state.authenticated = False
-    st.session_state.username = None
-    st.session_state.auth_error = None
-
-def login_ui():
-    st.sidebar.title("🔐 Login / Sign Up")
-    mode = st.sidebar.radio("Mode", ["Login", "Sign Up"])
-    user = st.sidebar.text_input("Username", key="auth_user")
-    pwd = st.sidebar.text_input("Password", type="password", key="auth_pass")
-    if st.sidebar.button("Submit"):
-        hashed = hash_password(pwd)
-        if mode == "Login":
-            if user in USER_DB and USER_DB[user] == hashed:
-                st.session_state.authenticated = True
-                st.session_state.username = user
-                st.session_state.auth_error = None
-                st.experimental_rerun()
-            else:
-                st.session_state.auth_error = "❌ Invalid credentials"
-        else:
-            if not user or not pwd:
-                st.session_state.auth_error = "⚠️ Enter username & password!"
-            elif user in USER_DB:
-                st.session_state.auth_error = "❌ Username exists"
-            else:
-                USER_DB[user] = hashed
-                st.session_state.auth_error = "✅ Account created! Now log in."
-
-if not st.session_state.authenticated:
-    login_ui()
-    if st.session_state.auth_error:
-        st.sidebar.error(st.session_state.auth_error)
-    st.stop()
-
-# --------------- USER INFO & LOGOUT ----------------
-st.sidebar.write(f"✅ Logged in as **{st.session_state.username}**")
-if st.sidebar.button("🚪 Logout"):
-    st.session_state.authenticated = False
-    st.session_state.username = None
-    st.experimental_rerun()
-
-# --------------- SESSION STATE ----------------
+# Initialize session state
 def init_session():
     if "messages" not in st.session_state:
         st.session_state.messages = []
@@ -71,42 +21,58 @@ def init_session():
 init_session()
 
 def remove_emojis(text):
-    pat = re.compile(r"[\U0001F600-\U0001F64F"
-                     r"\U0001F300-\U0001F5FF"
-                     r"\U0001F680-\U0001F6FF"
-                     r"\U0001F1E0-\U0001F1FF"
-                     r"\U00002700-\U000027BF"
-                     r"\U000024C2-\U0001F251]+", flags=re.UNICODE)
-    return pat.sub(r"", text)
+    emoji_pattern = re.compile("[\U0001F600-\U0001F64F"
+                               "\U0001F300-\U0001F5FF"
+                               "\U0001F680-\U0001F6FF"
+                               "\U0001F1E0-\U0001F1FF"
+                               "\U00002700-\U000027BF"
+                               "\U000024C2-\U0001F251]+",
+                               flags=re.UNICODE)
+    return emoji_pattern.sub(r'', text)
 
-# --------------- CONFIG & STYLE ----------------
-st.set_page_config(page_title="AverlinMz Chatbot", layout="wide")
-theme = st.sidebar.selectbox("🎨 Theme", ["Default", "Night", "Blue"])
+st.set_page_config(
+    page_title="AverlinMz Chatbot",
+    page_icon="https://i.imgur.com/mJ1X49g_d.webp",
+    layout="wide",
+    initial_sidebar_state="collapsed"
+)
+
+theme = st.sidebar.selectbox("🎨 Choose a theme", ["Default", "Night", "Blue"])
 if theme == "Night":
-    st.markdown("<style>body {background:#111;color:#fff;} .user{background:#333;color:#fff;} .bot{background:#444;color:#fff;}</style>", unsafe_allow_html=True)
+    st.markdown("""<style>body, .stApp { background:#111; color:#fff; } .user {background:#333;color:#fff;} .bot {background:#444;color:#fff;}</style>""", unsafe_allow_html=True)
 elif theme == "Blue":
-    st.markdown("<style>body {background:#e0f7fa;} .user{background:#81d4fa;color:#01579b;} .bot{background:#b2ebf2;color:#004d40;}</style>", unsafe_allow_html=True)
+    st.markdown("""<style>body, .stApp { background:#e0f7fa; } .user {background:#81d4fa;color:#01579b;} .bot {background:#b2ebf2;color:#004d40;}</style>""", unsafe_allow_html=True)
 
 st.markdown("""
 <style>
 .chat-container {max-width:900px;margin:0 auto;padding:20px;display:flex;flex-direction:column;}
-.title-container {text-align:center;padding-bottom:10px;font-family:'Poppins';animation:slideUpFadeIn 1s;}
-.chat-window {flex-grow:1;max-height:60vh;overflow-y:auto;padding:15px;display:flex;flex-direction:column;gap:15px;}
-.user, .bot {width:100%;padding:12px 16px;border-radius:18px;word-wrap:break-word;}
-.user{background:#D1F2EB;color:#0B3D2E;}
-.bot{background:#EFEFEF;color:#333;animation:typing 1s;}
-@keyframes typing {from {opacity:0;} to {opacity:1;}}
+.title-container {
+  text-align:center;
+  padding-bottom:10px;
+  font-family:'Poppins',sans-serif;
+  font-weight:600;
+  animation: slideUpFadeIn 1s ease forwards;
+}
+.title-container h1 {margin:0;}
+.chat-window{flex-grow:1;max-height:60vh;overflow-y:auto;padding:15px;display:flex;flex-direction:column;gap:15px;}
+.user, .bot {align-self:center;width:100%;word-wrap:break-word;box-shadow:0 2px 4px rgba(0,0,0,0.1);font-family:'Poppins',sans-serif;}
+.user{background:#D1F2EB;color:#0B3D2E;padding:12px 16px;border-radius:18px 18px 4px 18px;}
+.bot{background:#EFEFEF;color:#333;padding:12px 16px;border-radius:18px 18px 18px 4px;animation:typing 1s ease-in-out;}
+@keyframes typing {0%{opacity:0;}100%{opacity:1;}}
+@keyframes slideUpFadeIn {
+  0% {opacity:0; transform: translateY(30px);}
+  100% {opacity:1; transform: translateY(0);}
+}
 </style>
 """, unsafe_allow_html=True)
 
 st.markdown("""
 <div class="title-container">
-  <img src="https://i.imgur.com/mJ1X49g_d.webp" width="120" style="border-radius:20px;" />
+  <img src="https://i.imgur.com/mJ1X49g_d.webp" alt="Chatbot Image" style="width:150px;border-radius:20px;margin-bottom:10px;"/>
   <h1>AverlinMz – Study Chatbot</h1>
 </div>
 """, unsafe_allow_html=True)
 
-# --------------- RESPONSE DATA & LOGIC ----------------
 RESPONSE_DATA = {
     "greetings": [
         "Hey! 👋 How’s your day shaping up? Ready to tackle some study questions? 📚",
@@ -170,11 +136,11 @@ RESPONSE_DATA = {
         "Think of me as your personal study assistant. 🧑‍💻🤓"
     ],
     "introduction": [
-        "I’m AverlinMz, your study chatbot, created by Aylin Muzaffarli from Azerbaijan. 🇦🇿🤖 Learn more: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>official website</a> 🌐",
-        "Hello! I’m here to support your study journey. 🎓✨ Visit my site: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>AverlinMz Website</a> 💻",
-        "Created by Aylin, I help with study tips and motivation. 💡❤️ Check this out: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Learn more</a> 📖",
-        "Nice to meet you! Let’s learn and grow together. 🌱📘 Want to know more? <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Click here</a> 🚀"
-    ],
+    "I’m AverlinMz, your study chatbot, created by Aylin Muzaffarli from Azerbaijan. 🇦🇿🤖 Learn more: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>official website</a> 🌐",
+    "Hello! I’m here to support your study journey. 🎓✨ Visit my site: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>AverlinMz Website</a> 💻",
+    "Created by Aylin, I help with study tips and motivation. 💡❤️ Check this out: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Learn more</a> 📖",
+    "Nice to meet you! Let’s learn and grow together. 🌱📘 Want to know more? <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Click here</a> 🚀"
+],
     "creator_info": [
         "Created by Aylin — passionate about science, tech, and helping others learn. 🔬💻",
         "Aylin’s dedication makes this chatbot your study buddy. 🎯✨",
@@ -197,7 +163,6 @@ RESPONSE_DATA = {
     "subjects": {
         "math": "🧮 Math Tips: Practice regularly, focus on concepts, and solve diverse problems. 🔢📝",
         "physics": "🧪 Physics Tips: Understand fundamentals, draw diagrams, and apply formulas in problems. ⚛️📊",
-        # add more subjects here if you want
     },
     "fallback": [
         "I’m not sure I understood that — could you try rephrasing? 🤔😊",
@@ -226,12 +191,16 @@ KEYWORDS = {
     "subjects": ["math", "physics"]
 }
 
-def clean_keyword_list(kws):
-    return {intent: [p.lower().translate(str.maketrans("", "", string.punctuation)).strip() for p in phrases] for intent, phrases in kws.items()}
+def clean_keyword_list(keywords_dict):
+    cleaned = {}
+    for intent, phrases in keywords_dict.items():
+        cleaned[intent] = [p.lower().translate(str.maketrans('', '', string.punctuation)).strip() for p in phrases]
+    return cleaned
+
 KEYWORDS_CLEANED = clean_keyword_list(KEYWORDS)
 
-def clean_text(t): 
-    return t.lower().translate(str.maketrans("", "", string.punctuation)).strip()
+def clean_text(text):
+    return text.lower().translate(str.maketrans('', '', string.punctuation)).strip()
 
 def detect_intent(text):
     msg = clean_text(text)
@@ -240,94 +209,98 @@ def detect_intent(text):
             return intent
     return None
 
-def update_goals(inp):
-    m = clean_text(inp)
-    if any(w in m for w in ["goal", "aim", "plan"]):
-        if inp not in st.session_state.goals:
-            st.session_state.goals.append(inp)
+def update_goals(user_input):
+    msg = clean_text(user_input)
+    if "goal" in msg or "aim" in msg or "plan" in msg:
+        if user_input not in st.session_state.goals:
+            st.session_state.goals.append(user_input)
             return "Got it! I've added that to your study goals."
         else:
             return "You already mentioned this goal."
     return None
 
-def detect_sentiment(txt):
-    pos = ["good", "great", "awesome", "love", "happy", "fine", "well"]
-    neg = ["bad", "sad", "tired", "depressed", "down", "exhausted"]
-    t = clean_text(txt)
-    if any(w in t for w in pos): 
-        return "positive"
-    if any(w in t for w in neg): 
-        return "negative"
+def detect_sentiment(text):
+    positive = ["good", "great", "awesome", "love", "happy", "fine", "well"]
+    negative = ["bad", "sad", "tired", "depressed", "down", "exhausted"]
+    txt = clean_text(text)
+    if any(word in txt for word in positive): return "positive"
+    if any(word in txt for word in negative): return "negative"
     return "neutral"
 
-def get_bot_reply(inp):
-    intent = detect_intent(inp)
-    gmsg = update_goals(inp)
-    if gmsg:
-        return gmsg
-    sen = detect_sentiment(inp)
-    st.session_state.last_sentiment = sen
+def get_bot_reply(user_input):
+    intent = detect_intent(user_input)
+    goal_msg = update_goals(user_input)
+    if goal_msg:
+        return goal_msg
+
+    sentiment = detect_sentiment(user_input)
+    st.session_state.last_sentiment = sentiment
+
     if intent and intent in RESPONSE_DATA:
         if intent == "subjects":
-            for s in KEYWORDS["subjects"]:
-                if s in inp.lower():
-                    st.session_state.context_topic = s
+            # detect specific subject mentioned
+            for subj in KEYWORDS["subjects"]:
+                if subj in user_input.lower():
+                    st.session_state.context_topic = subj
                     break
             return RESPONSE_DATA["subjects"].get(st.session_state.context_topic, random.choice(RESPONSE_DATA["fallback"]))
-        st.session_state.context_topic = None
-        return random.choice(RESPONSE_DATA[intent])
+        else:
+            st.session_state.context_topic = None
+            return random.choice(RESPONSE_DATA[intent])
+
     if st.session_state.context_topic:
-        return RESPONSE_DATA["subjects"].get(st.session_state.context_topic, random.choice(RESPONSE_DATA["fallback"])) + "\n\n(You asked about this before!)"
-    if sen == "positive":
-        return "Glad you're feeling good! 🎉"
-    if sen == "negative":
-        return "I’m here to help if you need me. 💙"
+        subj = st.session_state.context_topic
+        return RESPONSE_DATA["subjects"].get(subj, random.choice(RESPONSE_DATA["fallback"])) + "\n\n(You asked about this before!)"
+
+    if sentiment == "positive":
+        return "Glad to hear you’re feeling good! Keep it up! 🎉"
+    elif sentiment == "negative":
+        return "I noticed you’re feeling down. If you want, I can share some tips or just listen. 💙"
+
     return random.choice(RESPONSE_DATA["fallback"])
 
-def play_tts(text):
-    clean = remove_emojis(text)
-    tts = gTTS(clean, lang="en")
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as f:
-        tts.save(f.name)
-        data = open(f.name, "rb").read()
-    st.audio(data)
-    os.unlink(f.name)
+with st.form('chat_form', clear_on_submit=True):
+    user_input = st.text_input('Write your message…', key='input_field')
+    if st.form_submit_button('Send') and user_input.strip():
+        st.session_state.messages.append({'role': 'user', 'content': user_input})
+        bot_reply = get_bot_reply(user_input)
+        st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
 
-# --------------- CHAT UI ----------------
-with st.form("chat_form", clear_on_submit=True):
-    user_input = st.text_input("Write your message…", key="input_field")
-    submitted = st.form_submit_button("Send")
-    if submitted:
-        if user_input.strip():
-            st.session_state.messages.append({"role":"user","content":user_input})
-            resp = get_bot_reply(user_input)
-            st.session_state.messages.append({"role":"bot","content":resp})
-            play_tts(resp)
+        # Remove emojis before TTS so audio is clean
+        clean_reply = remove_emojis(bot_reply)
+        tts = gTTS(clean_reply, lang='en')
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tts_file:
+            tts.save(tts_file.name)
+            audio_bytes = open(tts_file.name, "rb").read()
+        st.audio(audio_bytes, format="audio/mp3")
+        os.unlink(tts_file.name)
 
 st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
-for msg in st.session_state.messages:
-    cls = "user" if msg["role"]=="user" else "bot"
-    st.markdown(f'<div class="{cls}">{escape(msg["content"]).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
+msgs = st.session_state.messages
+# Display chat messages in reverse chronological order (newest at bottom)
+for i in range(len(msgs) - 2, -1, -2):
+    user_msg = msgs[i]['content']
+    bot_msg = msgs[i+1]['content'] if i+1 < len(msgs) else ''
+    # Use markdown with unsafe_allow_html=True so links work
+    st.markdown(f'<div class="user">{escape(user_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="bot">{bot_msg.replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
 st.markdown('</div></div>', unsafe_allow_html=True)
 
-# --------------- SIDEBAR & HISTORY ----------------
 with st.sidebar:
     st.markdown("### 🎯 Your Goals")
     if st.session_state.goals:
         for g in st.session_state.goals:
-            st.write(f"- {g}")
+            st.write("- " + g)
     else:
-        st.write("No goals yet. Add one by typing it in chat!")
+        st.write("You haven't set any goals yet. Tell me your goals!")
 
-    st.markdown("### 💡 Example Prompts")
-    st.info("\n".join([
-        "- Give me study tips",
-        "- Tell me about physics",
-        "- How do I manage time?",
-        "- Or just say 'bye' to end the chat!"
-    ]))
+    st.markdown("### 💡 Tips")
+    st.info("Try asking things like:\n- 'Give me study tips'\n- 'Tell me about physics'\n- 'How do I manage time?'\n- Or just say 'bye' to end the chat!")
 
-# Download history
-fn = f"chat_{datetime.datetime.now():%Y%m%d_%H%M%S}.txt"
-hist = "\n".join([f"{m['role'].upper()}: {m['content']}" for m in st.session_state.messages])
-st.download_button("📥 Download Chat History", hist, file_name=fn)
+    st.markdown("### 🧠 Mini AI Assistant Mode")
+    st.write("This bot tries to detect your intent and give focused advice or answers.")
+
+filename = f"chat_history_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+chat_history_text = "\n".join([f"{m['role'].upper()}: {m['content']}\n" for m in st.session_state.messages])
+st.download_button("📥 Download Chat History", chat_history_text, file_name=filename)
+

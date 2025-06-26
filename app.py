@@ -1,11 +1,13 @@
 import streamlit as st
 import random
 import string
+from html import escape
 import datetime
 import re
 import tempfile
 import os
 from gtts import gTTS
+from difflib import get_close_matches
 
 # Initialize session state
 def init_session():
@@ -17,11 +19,6 @@ def init_session():
         st.session_state.context_topic = None
     if "last_sentiment" not in st.session_state:
         st.session_state.last_sentiment = None
-    if "last_intent" not in st.session_state:
-        st.session_state.last_intent = None
-    if "last_reply" not in st.session_state:
-        st.session_state.last_reply = None
-
 init_session()
 
 def remove_emojis(text):
@@ -35,20 +32,18 @@ def remove_emojis(text):
     return emoji_pattern.sub(r'', text)
 
 st.set_page_config(
-    page_title="AverlinMz Chatbot",
+    page_title="AverlinMz Olympiad Chatbot",
     page_icon="https://i.imgur.com/mJ1X49g_d.webp",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# Theme selector with simple CSS injection
 theme = st.sidebar.selectbox("🎨 Choose a theme", ["Default", "Night", "Blue"])
 if theme == "Night":
     st.markdown("""<style>body, .stApp { background:#111; color:#fff; } .user {background:#333;color:#fff;} .bot {background:#444;color:#fff;}</style>""", unsafe_allow_html=True)
 elif theme == "Blue":
     st.markdown("""<style>body, .stApp { background:#e0f7fa; } .user {background:#81d4fa;color:#01579b;} .bot {background:#b2ebf2;color:#004d40;}</style>""", unsafe_allow_html=True)
 
-# Basic chat styling
 st.markdown("""
 <style>
 .chat-container {max-width:900px;margin:0 auto;padding:20px;display:flex;flex-direction:column;}
@@ -64,6 +59,8 @@ st.markdown("""
 .user, .bot {align-self:center;width:100%;word-wrap:break-word;box-shadow:0 2px 4px rgba(0,0,0,0.1);font-family:'Poppins',sans-serif;}
 .user{background:#D1F2EB;color:#0B3D2E;padding:12px 16px;border-radius:18px 18px 4px 18px;}
 .bot{background:#EFEFEF;color:#333;padding:12px 16px;border-radius:18px 18px 18px 4px;animation:typing 1s ease-in-out;}
+a {color:#1a73e8; text-decoration:none;}
+a:hover {text-decoration:underline;}
 @keyframes typing {0%{opacity:0;}100%{opacity:1;}}
 @keyframes slideUpFadeIn {
   0% {opacity:0; transform: translateY(30px);}
@@ -72,16 +69,15 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Header with image and title
-st.markdown("""
+st.markdown(f"""
 <div class="title-container">
   <img src="https://i.imgur.com/mJ1X49g_d.webp" alt="Chatbot Image" style="width:150px;border-radius:20px;margin-bottom:10px;"/>
-  <h1>AverlinMz – Study Chatbot</h1>
+  <h1>AverlinMz – Olympiad Study Chatbot</h1>
 </div>
 """, unsafe_allow_html=True)
 
-# ---------------- RESPONSE DATA ----------------
-RESPONSE_DATA = {
+
+RESPONSE_DATA = {{
     "greetings": [
         "Hey! 👋 Ready to push your limits with some Olympiad-level challenges? 💪📚",
         "Hello! 😊 Which Olympiad subject shall we dive into today?",
@@ -107,69 +103,68 @@ RESPONSE_DATA = {
         "Doing well! What topic shall we tackle today? 🌈"
     ],
 
-    # ---- Olympiad-level Subject-Specific Tips ----
-    "subjects": {
+    "subjects": {{
         "math": (
-            "🧮 Olympiad Math Tips:\n"
-            "- Master problem-solving frameworks: invariants, extremal principles, and pigeonhole principle.\n"
-            "- Focus on combinatorics and number theory; learn modular arithmetic deeply.\n"
-            "- Practice proofs rigorously: be comfortable with induction, contradiction, and construction.\n"
-            "- Analyze classical problems from IMO shortlist and past papers.\n"
-            "- Develop intuition by exploring geometric transformations and inequalities (AM-GM, Cauchy-Schwarz).\n"
-            "- Regularly write full solutions; clarity and precision are as important as correctness.\n"
+            "🧮 Olympiad Math Tips:\\n"
+            "- Master problem-solving frameworks: invariants, extremal principles, and pigeonhole principle.\\n"
+            "- Focus on combinatorics and number theory; learn modular arithmetic deeply.\\n"
+            "- Practice proofs rigorously: be comfortable with induction, contradiction, and construction.\\n"
+            "- Analyze classical problems from IMO shortlist and past papers.\\n"
+            "- Develop intuition by exploring geometric transformations and inequalities (AM-GM, Cauchy-Schwarz).\\n"
+            "- Regularly write full solutions; clarity and precision are as important as correctness.\\n"
             "- Study advanced topics like functional equations and algebraic inequalities with examples."
         ),
         "physics": (
-            "🧪 Olympiad Physics Tips:\n"
-            "- Thoroughly understand fundamental concepts: mechanics, electromagnetism, thermodynamics, optics.\n"
-            "- Develop skills in applying conservation laws creatively in non-standard problems.\n"
-            "- Master vector calculus and kinematics in multiple dimensions.\n"
-            "- Practice solving problems involving rotational motion and oscillations.\n"
-            "- Analyze experimental setups and learn to estimate uncertainties.\n"
-            "- Study past IPhO problems, focusing on derivations and multi-step reasoning.\n"
+            "🧪 Olympiad Physics Tips:\\n"
+            "- Thoroughly understand fundamental concepts: mechanics, electromagnetism, thermodynamics, optics.\\n"
+            "- Develop skills in applying conservation laws creatively in non-standard problems.\\n"
+            "- Master vector calculus and kinematics in multiple dimensions.\\n"
+            "- Practice solving problems involving rotational motion and oscillations.\\n"
+            "- Analyze experimental setups and learn to estimate uncertainties.\\n"
+            "- Study past IPhO problems, focusing on derivations and multi-step reasoning.\\n"
             "- Build your own physical intuition by linking theory to real-world phenomena."
         ),
         "chemistry": (
-            "⚗️ Olympiad Chemistry Tips:\n"
-            "- Understand the underlying principles of atomic structure, chemical bonding, and molecular geometry.\n"
-            "- Dive deep into reaction mechanisms, especially organic synthesis pathways.\n"
-            "- Practice balancing complex redox and equilibrium reactions.\n"
-            "- Master thermodynamics and kinetics with quantitative problem-solving.\n"
-            "- Perform thought experiments on titration and volumetric analysis problems.\n"
-            "- Study spectroscopy basics and its applications in structure determination.\n"
+            "⚗️ Olympiad Chemistry Tips:\\n"
+            "- Understand the underlying principles of atomic structure, chemical bonding, and molecular geometry.\\n"
+            "- Dive deep into reaction mechanisms, especially organic synthesis pathways.\\n"
+            "- Practice balancing complex redox and equilibrium reactions.\\n"
+            "- Master thermodynamics and kinetics with quantitative problem-solving.\\n"
+            "- Perform thought experiments on titration and volumetric analysis problems.\\n"
+            "- Study spectroscopy basics and its applications in structure determination.\\n"
             "- Analyze IChO past papers for pattern recognition and conceptual depth."
         ),
         "biology": (
-            "🧬 Olympiad Biology Tips:\n"
-            "- Grasp cellular and molecular biology fundamentals: DNA replication, transcription, translation.\n"
-            "- Understand physiological systems holistically with an emphasis on homeostasis.\n"
-            "- Master genetics problems including Mendelian inheritance and population genetics.\n"
-            "- Study evolutionary biology with evidence-based reasoning.\n"
-            "- Practice interpreting biological data and experiment design.\n"
-            "- Use detailed diagrams and label anatomical structures precisely.\n"
+            "🧬 Olympiad Biology Tips:\\n"
+            "- Grasp cellular and molecular biology fundamentals: DNA replication, transcription, translation.\\n"
+            "- Understand physiological systems holistically with an emphasis on homeostasis.\\n"
+            "- Master genetics problems including Mendelian inheritance and population genetics.\\n"
+            "- Study evolutionary biology with evidence-based reasoning.\\n"
+            "- Practice interpreting biological data and experiment design.\\n"
+            "- Use detailed diagrams and label anatomical structures precisely.\\n"
             "- Review BIO past Olympiad problems focusing on experimental biology."
         ),
         "computer_science": (
-            "💻 Olympiad Computer Science Tips:\n"
-            "- Master algorithmic paradigms: greedy, divide-and-conquer, dynamic programming, backtracking.\n"
-            "- Deeply understand data structures: trees, graphs, heaps, tries, segment trees.\n"
-            "- Practice coding efficiency and optimization under time constraints.\n"
-            "- Analyze problem constraints carefully to choose optimal approaches.\n"
-            "- Solve classic problems from IOI and similar contests regularly.\n"
-            "- Write clean, well-documented code with edge cases in mind.\n"
+            "💻 Olympiad Computer Science Tips:\\n"
+            "- Master algorithmic paradigms: greedy, divide-and-conquer, dynamic programming, backtracking.\\n"
+            "- Deeply understand data structures: trees, graphs, heaps, tries, segment trees.\\n"
+            "- Practice coding efficiency and optimization under time constraints.\\n"
+            "- Analyze problem constraints carefully to choose optimal approaches.\\n"
+            "- Solve classic problems from IOI and similar contests regularly.\\n"
+            "- Write clean, well-documented code with edge cases in mind.\\n"
             "- Explore computational geometry and number theory algorithms relevant to contests."
         ),
         "english": (
-            "📚 Olympiad English Tips:\n"
-            "- Develop critical reading skills: analyze passages for tone, purpose, and implicit meaning.\n"
-            "- Practice structured essay writing focusing on clear argumentation and evidence.\n"
-            "- Expand your vocabulary with academic and subject-specific terms.\n"
-            "- Hone your grammar and syntax for precision and variety.\n"
-            "- Practice timed writing to improve fluency under pressure.\n"
-            "- Engage with classical literature and non-fiction to enhance comprehension.\n"
+            "📚 Olympiad English Tips:\\n"
+            "- Develop critical reading skills: analyze passages for tone, purpose, and implicit meaning.\\n"
+            "- Practice structured essay writing focusing on clear argumentation and evidence.\\n"
+            "- Expand your vocabulary with academic and subject-specific terms.\\n"
+            "- Hone your grammar and syntax for precision and variety.\\n"
+            "- Practice timed writing to improve fluency under pressure.\\n"
+            "- Engage with classical literature and non-fiction to enhance comprehension.\\n"
             "- Work on summarizing complex texts concisely and accurately."
         ),
-    },
+    }},
 
     "motivation": [
         "Aylin, your creator, has devoted herself to mastering math, physics, robotics, and AI — balancing all these challenging fields with passion and dedication. You too can manage your interests with focus and heart! 💪🌟",
@@ -238,10 +233,9 @@ RESPONSE_DATA = {
         "Allow your feelings, then gently refocus. 🧘‍♂️",
         "Progress isn't linear; be kind to yourself. ❤️"
     ],
-}
+}}
 
-# Keywords for intent detection (subject + other categories)
-KEYWORDS = {
+KEYWORDS = {{
     "math": ["math", "algebra", "geometry", "number theory", "combinatorics", "inequality", "proof"],
     "physics": ["physics", "mechanics", "electromagnetism", "thermodynamics", "optics", "kinematics", "quantum"],
     "chemistry": ["chemistry", "organic", "inorganic", "reaction", "stoichiometry", "thermodynamics", "equilibrium"],
@@ -258,99 +252,88 @@ KEYWORDS = {
     "health": ["health", "sleep", "hydration", "exercise", "well-being"],
     "resources": ["resources", "books", "courses", "apps", "recommendation"],
     "emotional_support": ["feelings", "emotions", "support", "overwhelmed", "kindness"],
-}
+}}
 
-# Improved intent detection by keyword matching inside user input
-def detect_intent(user_input):
-    user_input_lower = user_input.lower()
+# URLs for fallback recommendations
+EXTERNAL_HELP = {{
+    "ChatGPT": "https://chat.openai.com/",
+    "DeepSeek": "https://deepseek.ai/",
+    "WolframAlpha": "https://www.wolframalpha.com/"
+}}
+
+def detect_intent(user_text):
+    user_text_lower = user_text.lower()
     for intent, keywords in KEYWORDS.items():
         for kw in keywords:
-            if kw in user_input_lower:
+            if kw in user_text_lower:
+                return intent
+    # If no direct keyword, try fuzzy matching to known intents (to catch typos)
+    all_keywords = [kw for keys in KEYWORDS.values() for kw in keys]
+    close_matches = get_close_matches(user_text_lower, all_keywords, n=1, cutoff=0.8)
+    if close_matches:
+        for intent, keywords in KEYWORDS.items():
+            if close_matches[0] in keywords:
                 return intent
     return None
 
-def generate_response(user_input):
-    user_input_clean = remove_emojis(user_input.lower())
+def generate_response(user_text):
+    intent = detect_intent(user_text)
+    if intent is None:
+        # No matching intent; guide user to external help
+        response = (
+            "Sorry, I couldn't find an answer. "
+            "You might try asking ChatGPT or DeepSeek for help:\n\n"
+            + "\n".join([f"- [{name}]({url})" for name, url in EXTERNAL_HELP.items()])
+        )
+        return response
+    
+    # Handle subjects separately
+    if intent == "math" or intent == "physics" or intent == "chemistry" or intent == "biology" or intent == "computer_science" or intent == "english":
+        tips = RESPONSE_DATA["subjects"].get(intent)
+        if tips:
+            return tips
+    
+    # For other intents, pick a random response from the list
+    if intent in RESPONSE_DATA:
+        responses = RESPONSE_DATA[intent]
+        if isinstance(responses, list):
+            return random.choice(responses)
+    
+    # Default fallback if something's off
+    return "I'm not sure how to help with that right now. Try rephrasing or ask about Olympiad topics!"
 
-    # Greeting detection
-    greetings_keywords = ["hello", "hi", "hey", "greetings"]
-    if any(word in user_input_clean for word in greetings_keywords):
-        return random.choice(RESPONSE_DATA["greetings"])
+def render_message(user_text, bot_response):
+    st.markdown(f'<div class="user">{escape(user_text)}</div>', unsafe_allow_html=True)
+    # For URLs in response, render as clickable links
+    def linkify(text):
+        url_pattern = r'(https?://[^\s]+)'
+        return re.sub(url_pattern, r'<a href="\1" target="_blank">\1</a>', text)
+    bot_response_html = linkify(bot_response).replace('\n', '<br>')
+    st.markdown(f'<div class="bot">{bot_response_html}</div>', unsafe_allow_html=True)
 
-    # Thanks detection
-    thanks_keywords = ["thanks", "thank you", "thx"]
-    if any(word in user_input_clean for word in thanks_keywords):
-        return random.choice(RESPONSE_DATA["thanks"])
-
-    # Farewell detection
-    farewell_keywords = ["bye", "goodbye", "see you"]
-    if any(word in user_input_clean for word in farewell_keywords):
-        return random.choice(RESPONSE_DATA["farewell"])
-
-    # How are you detection
-    how_are_you_keywords = ["how are you", "how do you feel", "how's it going"]
-    if any(phrase in user_input_clean for phrase in how_are_you_keywords):
-        return random.choice(RESPONSE_DATA["how_are_you"])
-
-    # Intent detection
-    intent = detect_intent(user_input_clean)
-
-    if intent == "motivation":
-        return random.choice(RESPONSE_DATA["motivation"])
-    if intent == "stress_relief":
-        return random.choice(RESPONSE_DATA["stress_relief"])
-    if intent == "time_management":
-        return random.choice(RESPONSE_DATA["time_management"])
-    if intent == "fun_facts":
-        return random.choice(RESPONSE_DATA["fun_facts"])
-    if intent == "goal_setting":
-        return random.choice(RESPONSE_DATA["goal_setting"])
-    if intent == "study_tips":
-        return random.choice(RESPONSE_DATA["study_tips"])
-    if intent == "health":
-        return random.choice(RESPONSE_DATA["health"])
-    if intent == "resources":
-        return random.choice(RESPONSE_DATA["resources"])
-    if intent == "emotional_support":
-        return random.choice(RESPONSE_DATA["emotional_support"])
-
-    # If subject intent, reply with detailed subject tips
-    if intent in RESPONSE_DATA["subjects"]:
-        return RESPONSE_DATA["subjects"][intent]
-
-    # Fallback response
-    return "I’m not sure how to respond to that. Could you please ask about a specific subject or topic? 🤔"
-
-# Streamlit UI
 def main():
-    st.title("AverlinMz Chatbot — Study with me! 📚")
+    st.markdown('<div class="chat-container">', unsafe_allow_html=True)
 
-    # Display chat messages
-    for msg in st.session_state.messages:
-        if msg["sender"] == "user":
-            st.markdown(f'<div class="user">{escape(msg["text"])}</div>', unsafe_allow_html=True)
-        else:
-            # Do NOT escape bot text to allow emojis to display
-            st.markdown(f'<div class="bot">{msg["text"]}</div>', unsafe_allow_html=True)
+    # Chat display
+    chat_window = st.container()
+    with chat_window:
+        for message in st.session_state.messages:
+            render_message(message['user'], message['bot'])
 
-    # User input box
-    user_input = st.text_input("You:", key="input")
+    # User input
+    user_input = st.text_input("You:", key="input", placeholder="Ask me about Olympiad topics or get study tips...")
 
-    if user_input:
-        # Append user message
-        st.session_state.messages.append({"sender": "user", "text": user_input})
+    if st.button("Send") or (user_input and st.session_state.input != ""):
+        user_text = user_input.strip()
+        if user_text:
+            bot_response = generate_response(user_text)
+            st.session_state.messages.append({"user": user_text, "bot": bot_response})
+            st.session_state.input = ""  # Clear input box
 
-        # Generate bot response
-        bot_reply = generate_response(user_input)
+            # Scroll to bottom workaround
+            st.experimental_rerun()
 
-        # Append bot response
-        st.session_state.messages.append({"sender": "bot", "text": bot_reply})
-
-        # Clear input box after submission
-        st.session_state.input = ""
-
-        # Rerun to display new messages
-        st.experimental_rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()

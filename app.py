@@ -347,14 +347,24 @@ def detect_intent(user_text):
 
 def generate_response(user_text):
     intent = detect_intent(user_text)
-   if intent is None:
-    response = (
-        "Sorry, I’m not sure how to answer that right now. "
-        "You might try rephrasing your question, checking reliable sources online, "
-        "or asking in another chat platform. I’m still learning every day!"
-    )
+    if intent is None:
+        return (
+            "Sorry, I’m not sure how to answer that right now. "
+            "You might try rephrasing your question, checking reliable sources online, "
+            "or asking in another chat platform. I’m still learning every day!"
+        )
 
-        return response
+    if intent in RESPONSE_DATA.get("subjects", {}):
+        return RESPONSE_DATA["subjects"].get(intent)
+
+    if intent in RESPONSE_DATA:
+        responses = RESPONSE_DATA[intent]
+        if isinstance(responses, list):
+            return random.choice(responses)
+
+    return "I'm not sure how to help with that right now. Try rephrasing or ask about Olympiad topics!"
+
+
     if intent in RESPONSE_DATA.get("subjects", {}):
         return RESPONSE_DATA["subjects"].get(intent)
     if intent in RESPONSE_DATA:

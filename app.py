@@ -124,12 +124,6 @@ RESPONSE_DATA = {
         "Stay calm and trust your preparation! 🧘‍♀️💡",
         "Remember to balance study and rest for best results. ⚖️😴"
     ],
-    "olympiad_prep": [
-        "🔬 Olympiad Preparation Tips:\n- Master foundational theory deeply before moving on.\n- Solve a wide variety of past olympiad problems to identify patterns.\n- Focus on problem-solving techniques and creative thinking.\n- Analyze solutions thoroughly; understand *why* each step works.\n- Practice timed tests to improve speed and accuracy.\n- Collaborate with peers or mentors for discussion and insights.\n- Maintain consistent daily practice with increasing difficulty.\n- Take care of your health and rest to keep your mind sharp.",
-        "To excel in olympiads, prioritize quality over quantity in practice. Learn to recognize common traps and strategies used in problems. Use official problem sets from previous years and similar contests.",
-        "Remember: Olympiads test deep understanding and ingenuity. Build strong fundamentals, then challenge yourself with advanced problems. Don't shy away from mistakes; they’re learning opportunities!",
-        "Mental preparation is key: stay calm under pressure, cultivate curiosity, and keep motivation high. Regularly review topics where you feel weak and track your progress."
-    ],
     "passed_exam": [
         "🎉 Congratulations! Your hard work paid off! 🏅",
         "Well done! Time to celebrate your success! 🎊",
@@ -143,11 +137,11 @@ RESPONSE_DATA = {
         "Think of me as your personal study assistant. 🧑‍💻🤓"
     ],
     "introduction": [
-        "I'm AverlinMz, your study chatbot, created by Aylin Muzaffarli from Azerbaijan. 🇦🇿🤖 Learn more: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>official website</a> 🌐",
-        "Hello! I'm here to support your study journey. �✨ Visit my site: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>AverlinMz Website</a> 💻",
-        "Created by Aylin, I help with study tips and motivation. 💡❤️ Check this out: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Learn more</a> 📖",
-        "Nice to meet you! Let's learn and grow together. 🌱📘 Want to know more? <a href='https://aylinmuzaffli.github.io/averlinmz-site/' target='_blank'>Click here</a> 🚀"
-    ],
+    "I'm AverlinMz, your study chatbot, created by Aylin Muzaffarli from Azerbaijan. 🇦🇿🤖 Learn more: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>official website</a> 🌐",
+    "Hello! I'm here to support your study journey. �✨ Visit my site: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>AverlinMz Website</a> 💻",
+    "Created by Aylin, I help with study tips and motivation. 💡❤️ Check this out: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Learn more</a> 📖",
+    "Nice to meet you! Let's learn and grow together. 🌱📘 Want to know more? <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Click here</a> 🚀"
+],
     "creator_info": [
         "Created by Aylin — passionate about science, tech, and helping others learn. 🔬💻",
         "Aylin's dedication makes this chatbot your study buddy. 🎯✨",
@@ -198,7 +192,6 @@ KEYWORDS = {
     "user_feeling_bad": ["i'm sad", "not good", "tired", "depressed", "down", "exhausted", "stressed", "anxious", "overwhelmed", "frustrated", "awful", "terrible", "horrible"],
     "love": ["i love you", "love you", "luv you", "like you", "adore you", "you're amazing", "you're awesome", "you're great", "you're wonderful"],
     "exam_prep": ["exam tips", "study for test", "prepare for exam", "how to study", "exam advice", "test preparation", "studying help", "exam strategies", "test tips", "study techniques", "best way to study", "exam prep"],
-    "olympiad_prep": ["olympiad prep", "olympiad tips", "olympiad advice", "olympiad preparation", "how to prepare for olympiad", "olympiad training", "competitive math", "physics olympiad", "chemistry olympiad", "biology olympiad", "programming olympiad", "ioi", "imo", "iphysics olympiad", "iphysics", "math olympiad"],
     "passed_exam": ["i passed", "i did it", "exam success", "cleared the test", "exam results", "got good marks", "aced the exam", "passed with flying colors", "nailed the test", "killed the exam"],
     "capabilities": ["what can you do", "your abilities", "features", "help me", "what do you offer", "how can you help", "your functions", "what help", "your skills"],
     "introduction": ["introduce", "who are you", "about you", "yourself", "tell me about yourself", "what are you", "your purpose", "your identity"],
@@ -206,142 +199,151 @@ KEYWORDS = {
     "contact_creator": ["how can i contact aylin", "contact aylin", "how to contact", "reach aylin", "get in touch with creator", "aylin's contact", "aylin's info", "reach the maker"],
     "ack_creator": ["thank aylin", "thanks aylin", "thank you aylin", "appreciate aylin", "grateful to aylin", "kudos to aylin", "props to aylin"],
     "thanks": ["thank you", "thanks", "thx", "ty", "much appreciated", "many thanks", "grateful", "appreciate it", "thanks a lot", "thank you so much"],
-    "subjects": [
-        "math", "mathematics", "algebra", "geometry", "calculus",
-        "physics", "mechanics", "thermodynamics", "optics",
-        "chemistry", "organic chemistry", "inorganic chemistry",
-        "biology", "botany", "zoology",
-        "history", "world history", "ancient history",
-        "language", "english", "french", "spanish",
-        "programming", "coding", "computer science", "algorithms",
-        "literature", "poetry", "novels", "drama",
-        "geography", "maps", "climate",
-        "economics", "microeconomics", "macroeconomics"
-    ]
+    "subjects": ["math", "physics", "chemistry", "biology", "history", "language", "programming", "literature", "geography", "economics",
+                "mathematics", "physic", "chem", "bio", "hist", "lang", "code", "lit", "geo", "econ",
+                "algebra", "calculus", "trigonometry", "statistics", "quantum", "mechanics", "thermodynamics",
+                "organic", "inorganic", "biochemistry", "genetics", "zoology", "botany", "anatomy",
+                "world history", "ancient", "medieval", "modern", "political",
+                "english", "spanish", "french", "german", "russian", "linguistics",
+                "python", "java", "javascript", "c++", "coding", "web development",
+                "poetry", "novel", "drama", "fiction", "shakespeare",
+                "physical geography", "human geography", "cartography", "gis",
+                "microeconomics", "macroeconomics", "finance", "business"]
 }
 
-# Clean keywords for matching (lowercase no punctuation)
+def clean_keyword_list(keywords_dict):
+    cleaned = {}
+    for intent, phrases in keywords_dict.items():
+        cleaned[intent] = [p.lower().translate(str.maketrans('', '', string.punctuation)).strip() for p in phrases]
+    return cleaned
+
+KEYWORDS_CLEANED = clean_keyword_list(KEYWORDS)
+
 def clean_text(text):
-    return re.sub(r'[^\w\s]', '', text.lower())
+    return text.lower().translate(str.maketrans('', '', string.punctuation)).strip()
 
-KEYWORDS_CLEANED = {}
-for intent, phrases in KEYWORDS.items():
-    cleaned = []
-    if isinstance(phrases, list):
-        for phrase in phrases:
-            cleaned.append(clean_text(phrase))
-    else:
-        cleaned.append(clean_text(phrases))
-    KEYWORDS_CLEANED[intent] = cleaned
-
-def detect_intent(user_text):
-    user_text_clean = clean_text(user_text)
-    # Try to find the best intent by keyword matching with fuzzy
-    for intent, phrases in KEYWORDS_CLEANED.items():
-        for phrase in phrases:
-            if phrase in user_text_clean:
+def detect_intent(text):
+    msg = clean_text(text)
+    
+    # First check for exact matches
+    for intent, kws in KEYWORDS_CLEANED.items():
+        if any(kw in msg for kw in kws):
+            return intent
+    
+    # Then check for similar words using fuzzy matching
+    words = msg.split()
+    for word in words:
+        for intent, kws in KEYWORDS_CLEANED.items():
+            # Find close matches with 65% similarity threshold (lowered for broader matching)
+            matches = get_close_matches(word, kws, n=1, cutoff=0.65)
+            if matches:
                 return intent
-    # fallback to None
+    
+    # Special case for subject detection with partial matching
+    for subj in KEYWORDS["subjects"]:
+        if subj in msg:
+            return "subjects"
+    
     return None
 
-def get_response(intent):
-    if intent in RESPONSE_DATA:
-        if isinstance(RESPONSE_DATA[intent], list):
-            return random.choice(RESPONSE_DATA[intent])
+def update_goals(user_input):
+    msg = clean_text(user_input)
+    goal_keywords = ["goal", "aim", "plan", "objective", "target", "resolution", "ambition", "purpose", "intention"]
+    if any(kw in msg for kw in goal_keywords):
+        if user_input not in st.session_state.goals:
+            st.session_state.goals.append(user_input)
+            return "Got it! I've added that to your study goals."
         else:
-            return RESPONSE_DATA[intent]
-    elif intent == "subjects":
-        # Try to detect which subject
-        for subj in RESPONSE_DATA["subjects"]:
-            if subj in st.session_state.user_input.lower():
-                return RESPONSE_DATA["subjects"][subj]
-        return "Which subject exactly? I can provide tips for Math, Physics, Chemistry, Biology, History, Language, Programming, Literature, Geography, Economics."
-    else:
-        return random.choice(RESPONSE_DATA["fallback"])
+            return "You already mentioned this goal."
+    return None
 
-def save_audio(text):
-    tts = gTTS(text=text, lang="en", slow=False)
-    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
-    tts.save(temp_file.name)
-    return temp_file.name
+def detect_sentiment(text):
+    positive = ["good", "great", "awesome", "love", "happy", "fine", "well", "fantastic", "wonderful", "excellent", "perfect", "super", "amazing", "terrific"]
+    negative = ["bad", "sad", "tired", "depressed", "down", "exhausted", "stressed", "anxious", "overwhelmed", "frustrated", "awful", "terrible", "horrible"]
+    txt = clean_text(text)
+    if any(word in txt for word in positive): return "positive"
+    if any(word in txt for word in negative): return "negative"
+    return "neutral"
 
-def render_messages():
-    for i, msg in enumerate(st.session_state.messages):
-        sender = "user" if i % 2 == 0 else "bot"
-        class_name = "user" if sender == "user" else "bot"
-        st.markdown(f'<div class="{class_name}">{escape(msg)}</div>', unsafe_allow_html=True)
+def get_bot_reply(user_input):
+    intent = detect_intent(user_input)
+    goal_msg = update_goals(user_input)
+    if goal_msg:
+        return goal_msg
 
-def add_message(user_input):
-    user_text = user_input.strip()
-    if not user_text:
-        return
-    # Append user message
-    st.session_state.messages.append(user_text)
-    # Detect intent and generate response
-    intent = detect_intent(user_text)
-    st.session_state.context_topic = intent
-    response = get_response(intent)
-    st.session_state.messages.append(response)
-    # Update last sentiment if applicable
-    if intent in ("user_feeling_good", "user_feeling_bad"):
-        st.session_state.last_sentiment = intent
-    return response
+    sentiment = detect_sentiment(user_input)
+    st.session_state.last_sentiment = sentiment
 
-def download_chat():
-    chat_text = ""
-    for i, msg in enumerate(st.session_state.messages):
-        sender = "You" if i % 2 == 0 else "AverlinMz"
-        chat_text += f"{sender}: {msg}\n"
-    return chat_text
+    if intent and intent in RESPONSE_DATA:
+        if intent == "subjects":
+            # detect specific subject mentioned
+            for subj in KEYWORDS["subjects"]:
+                if subj in user_input.lower():
+                    st.session_state.context_topic = subj
+                    break
+            return RESPONSE_DATA["subjects"].get(st.session_state.context_topic, random.choice(RESPONSE_DATA["fallback"]))
+        else:
+            st.session_state.context_topic = None
+            return random.choice(RESPONSE_DATA[intent])
 
-# Sidebar with goals & tips
+    if st.session_state.context_topic:
+        subj = st.session_state.context_topic
+        return RESPONSE_DATA["subjects"].get(subj, random.choice(RESPONSE_DATA["fallback"])) + "\n\n(You asked about this before!)"
+
+    if sentiment == "positive":
+        return "Glad to hear you're feeling good! Keep it up! 🎉"
+    elif sentiment == "negative":
+        return "I noticed you're feeling down. If you want, I can share some tips or just listen. 💙"
+
+    # Enhanced fallback that tries to extract possible subjects
+    possible_subjects = [subj for subj in KEYWORDS["subjects"] if subj in user_input.lower()]
+    if possible_subjects:
+        return f"I see you mentioned {possible_subjects[0]}. Here are some tips:\n\n{RESPONSE_DATA['subjects'].get(possible_subjects[0], '')}"
+
+    return random.choice(RESPONSE_DATA["fallback"])
+
+with st.form('chat_form', clear_on_submit=True):
+    user_input = st.text_input('Write your message…', key='input_field')
+    if st.form_submit_button('Send') and user_input.strip():
+        st.session_state.messages.append({'role': 'user', 'content': user_input})
+        bot_reply = get_bot_reply(user_input)
+        st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
+
+        # Remove emojis before TTS so audio is clean
+        clean_reply = remove_emojis(bot_reply)
+        tts = gTTS(clean_reply, lang='en')
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tts_file:
+            tts.save(tts_file.name)
+            audio_bytes = open(tts_file.name, "rb").read()
+        st.audio(audio_bytes, format="audio/mp3")
+        os.unlink(tts_file.name)
+
+st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
+msgs = st.session_state.messages
+# Display chat messages in reverse chronological order (newest at bottom)
+for i in range(len(msgs) - 2, -1, -2):
+    user_msg = msgs[i]['content']
+    bot_msg = msgs[i+1]['content'] if i+1 < len(msgs) else ''
+    # Use markdown with unsafe_allow_html=True so links work
+    st.markdown(f'<div class="user">{escape(user_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="bot">{bot_msg.replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
+st.markdown('</div></div>', unsafe_allow_html=True)
+
 with st.sidebar:
-    st.header("🎯 Your Study Goals")
-    if len(st.session_state.goals) == 0:
-        st.info("Add your study goals below!")
+    st.markdown("### 🎯 Your Goals")
+    if st.session_state.goals:
+        for g in st.session_state.goals:
+            st.write("- " + g)
     else:
-        for idx, goal in enumerate(st.session_state.goals, 1):
-            st.markdown(f"{idx}. {escape(goal)}")
-    new_goal = st.text_input("Add a new goal")
-    if st.button("Add Goal") and new_goal.strip():
-        st.session_state.goals.append(new_goal.strip())
-        st.experimental_rerun()
+        st.write("You haven't set any goals yet. Tell me your goals!")
 
-    st.markdown("---")
-    st.header("💡 Study Tips")
-    if st.session_state.context_topic in RESPONSE_DATA["subjects"]:
-        tips = RESPONSE_DATA["subjects"][st.session_state.context_topic]
-        st.markdown(tips)
-    elif st.session_state.context_topic == "olympiad_prep":
-        # Show olympiad prep tips in sidebar as well
-        tips = "\n\n".join(RESPONSE_DATA["olympiad_prep"])
-        st.markdown(f"### Olympiad Preparation Tips\n{tips}")
-    else:
-        st.markdown("Ask me for tips on Math, Physics, Chemistry, Biology, History, Language, Programming, Literature, Geography, Economics, or Olympiad prep.")
+    st.markdown("### 💡 Tips")
+    st.info("Try asking things like:\n- 'Give me study tips'\n- 'Tell me about physics'\n- 'How do I manage time?'\n- Or just say 'bye' to end the chat!")
 
-# Main chat container
-st.markdown('<div class="chat-container">', unsafe_allow_html=True)
+    st.markdown("### 🧠 Mini AI Assistant Mode")
+    st.write("This bot tries to detect your intent and give focused advice or answers.")
 
-# Display chat messages
-st.markdown('<div class="chat-window">', unsafe_allow_html=True)
-render_messages()
-st.markdown('</div>', unsafe_allow_html=True)
+filename = f"chat_history_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+chat_history_text = "\n".join([f"{m['role'].upper()}: {m['content']}\n" for m in st.session_state.messages])
+st.download_button("📥 Download Chat History", chat_history_text, file_name=filename)
 
-# Input form
-with st.form(key="chat_form", clear_on_submit=True):
-    user_input = st.text_input("Your message:", key="user_input", placeholder="Type your question or say hi!")
-    submit = st.form_submit_button("Send")
-
-if submit and user_input:
-    response = add_message(user_input)
-    # Play TTS audio of response
-    audio_path = save_audio(response)
-    st.audio(audio_path)
-    os.remove(audio_path)
-    st.experimental_rerun()
-
-# Download chat history button
-chat_log = download_chat()
-st.download_button("Download Chat History", chat_log, file_name="chat_history.txt", mime="text/plain")
-
-st.markdown('</div>', unsafe_allow_html=True)

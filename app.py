@@ -11,6 +11,11 @@ import streamlit as st
 
 hf_token = st.secrets["HF_API_TOKEN"]
 
+from huggingface_hub import InferenceClient
+
+client = InferenceClient(token=hf_token)
+
+
 
 # Initialize session state
 def init_session():

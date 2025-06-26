@@ -2,14 +2,13 @@ import streamlit as st
 import random
 import string
 from html import escape
-import datetime
 import re
 from gtts import gTTS
 import tempfile
 import os
 import difflib
 
-# Initialize session state
+# Initialize session state to store chat history and context
 def init_session():
     if "messages" not in st.session_state:
         st.session_state.messages = []
@@ -21,6 +20,7 @@ def init_session():
         st.session_state.last_sentiment = None
 init_session()
 
+# Function to remove emojis from user input for easier matching
 def remove_emojis(text):
     emoji_pattern = re.compile("[\U0001F600-\U0001F64F"
                                "\U0001F300-\U0001F5FF"
@@ -31,6 +31,7 @@ def remove_emojis(text):
                                flags=re.UNICODE)
     return emoji_pattern.sub(r'', text)
 
+# Set page config and title/icon
 st.set_page_config(
     page_title="AverlinMz Chatbot",
     page_icon="https://i.imgur.com/mJ1X49g_d.webp",
@@ -38,13 +39,14 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Theme selector
+# Theme selector with styles
 theme = st.sidebar.selectbox("🎨 Choose a theme", ["Default", "Night", "Blue"])
 if theme == "Night":
     st.markdown("""<style>body, .stApp { background:#111; color:#fff; } .user {background:#333;color:#fff;} .bot {background:#444;color:#fff;}</style>""", unsafe_allow_html=True)
 elif theme == "Blue":
     st.markdown("""<style>body, .stApp { background:#e0f7fa; } .user {background:#81d4fa;color:#01579b;} .bot {background:#b2ebf2;color:#004d40;}</style>""", unsafe_allow_html=True)
 
+# CSS for chat layout and styling
 st.markdown("""
 <style>
 .chat-container {max-width:900px;margin:0 auto;padding:20px;display:flex;flex-direction:column;}
@@ -68,6 +70,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# Title and logo
 st.markdown("""
 <div class="title-container">
   <img src="https://i.imgur.com/mJ1X49g_d.webp" alt="Chatbot Image" style="width:150px;border-radius:20px;margin-bottom:10px;"/>
@@ -75,8 +78,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# --- RESPONSES AND KEYWORDS ---
-
+# Response data for intents and subjects
 RESPONSE_DATA = {
     "greetings": [
         "Hello there! 👋 How’s your day going?",
@@ -165,6 +167,7 @@ RESPONSE_DATA = {
     ]
 }
 
+# Keywords to detect intent
 KEYWORDS = {
     "greetings": ["hello", "hi", "hey", "yo", "greetings", "good morning", "good evening"],
     "farewell": ["goodbye", "bye", "see you", "later", "farewell"],
@@ -184,8 +187,7 @@ KEYWORDS = {
     "more_request": ["more", "give more", "additional", "more advice", "tell me more"]
 }
 
-# --- Helper functions ---
-
+# Find user intent from input text using keywords
 def find_intent(user_text):
     user_text_lower = user_text.lower()
     for intent, keywords in KEYWORDS.items():
@@ -194,8 +196,8 @@ def find_intent(user_text):
                 return intent
     return None
 
+# Find best matching subject using fuzzy matching
 def get_best_subject_match(user_text):
-    # Try to match subject keywords with some fuzziness
     subjects = RESPONSE_DATA["subjects"].keys()
     user_text_lower = user_text.lower()
     best_match = None
@@ -209,26 +211,23 @@ def get_best_subject_match(user_text):
         return best_match
     return None
 
+# Generate chatbot response based on user input and context
 def generate_response(user_text):
-    # Clean input
     text = remove_emojis(user_text).lower().strip()
 
-    # Check "more" requests first
+    # If user asks for more info
     if any(phrase in text for phrase in KEYWORDS["more_request"]):
-        # If we have context topic, give the *_more response
         topic = st.session_state.context_topic
         if topic and topic + "_more" in RESPONSE_DATA["subjects"]:
             return RESPONSE_DATA["subjects"][topic + "_more"]
         else:
             return "Could you please specify the subject you want more info on? For example, type 'math', 'physics', or 'chemistry'."
 
-    # Detect intent
     intent = find_intent(text)
 
-    # If the intent is a subject name directly
+    # If intent is about subjects
     if intent == "subjects" or text in KEYWORDS["subjects"]:
         subj = None
-        # Try direct matching
         for s in KEYWORDS["subjects"]:
             if s in text:
                 subj = s
@@ -237,21 +236,23 @@ def generate_response(user_text):
             st.session_state.context_topic = subj
             return RESPONSE_DATA["subjects"].get(subj, "Sorry, I don't have tips for that subject yet.")
 
+    # For other intents
     if intent and intent in RESPONSE_DATA:
-        # Save context topic if subject
+        # Save context if subject
         if intent == "subjects":
             st.session_state.context_topic = text
         return random.choice(RESPONSE_DATA[intent])
 
-    # Try subject matching fuzzy
+    # Try fuzzy subject match if no intent found
     subj = get_best_subject_match(text)
     if subj:
         st.session_state.context_topic = subj
         return RESPONSE_DATA["subjects"][subj]
 
-    # Fallback response
+    # Default fallback responses
     return random.choice(RESPONSE_DATA["fallback"])
 
+# Generate speech audio from text using gTTS
 def synthesize_speech(text):
     try:
         tts = gTTS(text=text, lang='en')
@@ -262,8 +263,7 @@ def synthesize_speech(text):
         print(f"Error generating speech: {e}")
         return None
 
-# --- UI & Main ---
-
+# Display chat messages on the screen
 def display_chat():
     st.markdown('<div class="chat-window">', unsafe_allow_html=True)
     for message in st.session_state.messages:
@@ -275,24 +275,32 @@ def display_chat():
 
 def main():
     st.title("AverlinMz Chatbot")
+
+    # Display previous messages only once at the start
     display_chat()
 
-    user_input = st.text_input("Your message:", key="input_text")
+    # Use a form with text input and send button
+    with st.form(key='chat_form', clear_on_submit=True):
+        user_input = st.text_input("Your message:")
+        submitted = st.form_submit_button("Send")
 
-    if user_input:
-        st.session_state.messages.append({"role": "user", "content": user_input})
-        response = generate_response(user_input)
-        st.session_state.messages.append({"role": "bot", "content": response})
+        if submitted and user_input.strip():
+            # Add user's message
+            st.session_state.messages.append({"role": "user", "content": user_input})
 
-        # Display updated chat
-        display_chat()
+            # Generate bot response
+            response = generate_response(user_input)
+            st.session_state.messages.append({"role": "bot", "content": response})
 
-        # Speech audio
-        audio_file = synthesize_speech(response)
-        if audio_file:
-            audio_bytes = open(audio_file, "rb").read()
-            st.audio(audio_bytes, format="audio/mp3")
-            os.remove(audio_file)
+            # Display updated chat (only once after new messages)
+            display_chat()
+
+            # Generate and play audio
+            audio_file = synthesize_speech(response)
+            if audio_file:
+                audio_bytes = open(audio_file, "rb").read()
+                st.audio(audio_bytes, format="audio/mp3")
+                os.remove(audio_file)
 
 if __name__ == "__main__":
     main()

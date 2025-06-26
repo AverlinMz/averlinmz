@@ -77,7 +77,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 
-RESPONSE_DATA = {{
+RESPONSE_DATA = {
     "greetings": [
         "Hey! 👋 Ready to push your limits with some Olympiad-level challenges? 💪📚",
         "Hello! 😊 Which Olympiad subject shall we dive into today?",
@@ -103,68 +103,147 @@ RESPONSE_DATA = {{
         "Doing well! What topic shall we tackle today? 🌈"
     ],
 
-    "subjects": {{
+    # ---- Olympiad-level Subject-Specific Tips ----
+    "subjects": {
         "math": (
-            "🧮 Olympiad Math Tips:\\n"
-            "- Master problem-solving frameworks: invariants, extremal principles, and pigeonhole principle.\\n"
-            "- Focus on combinatorics and number theory; learn modular arithmetic deeply.\\n"
-            "- Practice proofs rigorously: be comfortable with induction, contradiction, and construction.\\n"
-            "- Analyze classical problems from IMO shortlist and past papers.\\n"
-            "- Develop intuition by exploring geometric transformations and inequalities (AM-GM, Cauchy-Schwarz).\\n"
-            "- Regularly write full solutions; clarity and precision are as important as correctness.\\n"
+            "🧮 Olympiad Math Tips:\n"
+            "- Master problem-solving frameworks: invariants, extremal principles, and pigeonhole principle.\n"
+            "- Focus on combinatorics and number theory; learn modular arithmetic deeply.\n"
+            "- Practice proofs rigorously: be comfortable with induction, contradiction, and construction.\n"
+            "- Analyze classical problems from IMO shortlist and past papers.\n"
+            "- Develop intuition by exploring geometric transformations and inequalities (AM-GM, Cauchy-Schwarz).\n"
+            "- Regularly write full solutions; clarity and precision are as important as correctness.\n"
             "- Study advanced topics like functional equations and algebraic inequalities with examples."
         ),
         "physics": (
-            "🧪 Olympiad Physics Tips:\\n"
-            "- Thoroughly understand fundamental concepts: mechanics, electromagnetism, thermodynamics, optics.\\n"
-            "- Develop skills in applying conservation laws creatively in non-standard problems.\\n"
-            "- Master vector calculus and kinematics in multiple dimensions.\\n"
-            "- Practice solving problems involving rotational motion and oscillations.\\n"
-            "- Analyze experimental setups and learn to estimate uncertainties.\\n"
-            "- Study past IPhO problems, focusing on derivations and multi-step reasoning.\\n"
+            "🧪 Olympiad Physics Tips:\n"
+            "- Thoroughly understand fundamental concepts: mechanics, electromagnetism, thermodynamics, optics.\n"
+            "- Develop skills in applying conservation laws creatively in non-standard problems.\n"
+            "- Master vector calculus and kinematics in multiple dimensions.\n"
+            "- Practice solving problems involving rotational motion and oscillations.\n"
+            "- Analyze experimental setups and learn to estimate uncertainties.\n"
+            "- Study past IPhO problems, focusing on derivations and multi-step reasoning.\n"
             "- Build your own physical intuition by linking theory to real-world phenomena."
         ),
         "chemistry": (
-            "⚗️ Olympiad Chemistry Tips:\\n"
-            "- Understand the underlying principles of atomic structure, chemical bonding, and molecular geometry.\\n"
-            "- Dive deep into reaction mechanisms, especially organic synthesis pathways.\\n"
-            "- Practice balancing complex redox and equilibrium reactions.\\n"
-            "- Master thermodynamics and kinetics with quantitative problem-solving.\\n"
-            "- Perform thought experiments on titration and volumetric analysis problems.\\n"
-            "- Study spectroscopy basics and its applications in structure determination.\\n"
+            "⚗️ Olympiad Chemistry Tips:\n"
+            "- Understand the underlying principles of atomic structure, chemical bonding, and molecular geometry.\n"
+            "- Dive deep into reaction mechanisms, especially organic synthesis pathways.\n"
+            "- Practice balancing complex redox and equilibrium reactions.\n"
+            "- Master thermodynamics and kinetics with quantitative problem-solving.\n"
+            "- Perform thought experiments on titration and volumetric analysis problems.\n"
+            "- Study spectroscopy basics and its applications in structure determination.\n"
             "- Analyze IChO past papers for pattern recognition and conceptual depth."
         ),
         "biology": (
-            "🧬 Olympiad Biology Tips:\\n"
-            "- Grasp cellular and molecular biology fundamentals: DNA replication, transcription, translation.\\n"
-            "- Understand physiological systems holistically with an emphasis on homeostasis.\\n"
-            "- Master genetics problems including Mendelian inheritance and population genetics.\\n"
-            "- Study evolutionary biology with evidence-based reasoning.\\n"
-            "- Practice interpreting biological data and experiment design.\\n"
-            "- Use detailed diagrams and label anatomical structures precisely.\\n"
+            "🧬 Olympiad Biology Tips:\n"
+            "- Grasp cellular and molecular biology fundamentals: DNA replication, transcription, translation.\n"
+            "- Understand physiological systems holistically with an emphasis on homeostasis.\n"
+            "- Master genetics problems including Mendelian inheritance and population genetics.\n"
+            "- Study evolutionary biology with evidence-based reasoning.\n"
+            "- Practice interpreting biological data and experiment design.\n"
+            "- Use detailed diagrams and label anatomical structures precisely.\n"
             "- Review BIO past Olympiad problems focusing on experimental biology."
         ),
         "computer_science": (
-            "💻 Olympiad Computer Science Tips:\\n"
-            "- Master algorithmic paradigms: greedy, divide-and-conquer, dynamic programming, backtracking.\\n"
-            "- Deeply understand data structures: trees, graphs, heaps, tries, segment trees.\\n"
-            "- Practice coding efficiency and optimization under time constraints.\\n"
-            "- Analyze problem constraints carefully to choose optimal approaches.\\n"
-            "- Solve classic problems from IOI and similar contests regularly.\\n"
-            "- Write clean, well-documented code with edge cases in mind.\\n"
+            "💻 Olympiad Computer Science Tips:\n"
+            "- Master algorithmic paradigms: greedy, divide-and-conquer, dynamic programming, backtracking.\n"
+            "- Deeply understand data structures: trees, graphs, heaps, tries, segment trees.\n"
+            "- Practice coding efficiency and optimization under time constraints.\n"
+            "- Analyze problem constraints carefully to choose optimal approaches.\n"
+            "- Solve classic problems from IOI and similar contests regularly.\n"
+            "- Write clean, well-documented code with edge cases in mind.\n"
             "- Explore computational geometry and number theory algorithms relevant to contests."
         ),
         "english": (
-            "📚 Olympiad English Tips:\\n"
-            "- Develop critical reading skills: analyze passages for tone, purpose, and implicit meaning.\\n"
-            "- Practice structured essay writing focusing on clear argumentation and evidence.\\n"
-            "- Expand your vocabulary with academic and subject-specific terms.\\n"
-            "- Hone your grammar and syntax for precision and variety.\\n"
-            "- Practice timed writing to improve fluency under pressure.\\n"
-            "- Engage with classical literature and non-fiction to enhance comprehension.\\n"
+            "📚 Olympiad English Tips:\n"
+            "- Develop critical reading skills: analyze passages for tone, purpose, and implicit meaning.\n"
+            "- Practice structured essay writing focusing on clear argumentation and evidence.\n"
+            "- Expand your vocabulary with academic and subject-specific terms.\n"
+            "- Hone your grammar and syntax for precision and variety.\n"
+            "- Practice timed writing to improve fluency under pressure.\n"
+            "- Engage with classical literature and non-fiction to enhance comprehension.\n"
             "- Work on summarizing complex texts concisely and accurately."
         ),
-    }},
+    },
+
+    "motivation": [
+        "Aylin — my creator — has devoted herself to mastering math, physics, robotics, and AI, balancing all these challenging fields with passion and dedication. You too can manage your interests with focus and heart! 💪🌟",
+        "Remember, Aylin started just like you — curious and driven, exploring many fields like robotics, AI, and physics. Your diverse passions are your strength! Keep nurturing them. 🚀❤️",
+        "Your creator Aylin beautifully blends the worlds of math, physics, and AI. You can do the same by pacing yourself, embracing challenges, and never losing sight of your goals. Keep going! 🌱🔥",
+        "Inspired by Aylin’s journey in science and tech? Your ability to balance study and passion is what sets you apart. Every small step counts! Keep your curiosity alive! 🌟📘"
+    ],
+
+    "stress_relief": [
+        "Feeling stressed? Take a moment to breathe deeply — try inhaling for 4 seconds, holding for 7, and exhaling for 8. It calms your mind and resets your focus. 🧘‍♀️✨",
+        "Short mindfulness breaks help: close your eyes, focus on your breath, and gently return your attention when distracted. 🌸💆‍♂️",
+        "Regular breaks recharge your brain. Stretch or walk for 5 minutes to boost concentration. 🎶🚶‍♀️",
+        "Ground yourself by naming things you see, feel, and hear to stay present and calm. 🌿🕊️"
+    ],
+
+    "time_management": [
+        "Build a daily routine focusing on 3 main tasks — achievable goals sustain motivation. ⏰📋",
+        "Use Pomodoro technique: 25-50 minutes work blocks with short breaks. 🍅✅",
+        "Prioritize important tasks first, avoid multitasking — focus increases quality. 🎯📅",
+        "Track time spent to identify distractions and improve focus. ⏳📊"
+    ],
+
+    "fun_facts": [
+        "The human brain processes info faster than a Formula 1 car! 🧠💨",
+        "Euler's number 'e' appears in growth, decay, and compound interest. 📈🔢",
+        "Quantum entanglement: particles affect each other instantly, regardless of distance. 👻⚛️",
+        "The first industrial robot revolutionized manufacturing in 1961. 🤖🏭"
+    ],
+
+    "goal_setting": [
+        "Set clear, achievable goals and break them into small steps. Celebrate progress! 🎯🎉",
+        "Regularly review and adjust goals to stay on track without burning out. 🔄📊",
+        "Use charts or journals to visualize progress and boost motivation. 📈📝",
+        "Accept setbacks as learning steps. Reflect, learn, and push forward! 🚀💪"
+    ],
+
+    "study_tips": [
+        "Use active recall by testing yourself, not just rereading. 🧠",
+        "Create mind maps to visualize complex topics. 🗺️",
+        "Teach concepts to someone else to reinforce understanding. 📢",
+        "Switch subjects regularly to keep your mind fresh. 🔄",
+        "Summarize study sessions with bullet points. 📝",
+        "Use spaced repetition for long-term retention. ⏳",
+        "Handwrite notes to improve memory. ✍️"
+    ],
+
+    "health": [
+        "Stay hydrated; water boosts brain function. 💧🧠",
+        "Exercise regularly; even short walks help memory and thinking. 🚶‍♂️⚡",
+        "Sleep 7-9 hours for memory consolidation. 🛌🌙",
+        "Balance screen time with breaks to reduce eye strain. 👀🛑"
+    ],
+
+    "resources": [
+        "‘The Art of Problem Solving’ books are excellent for math prep. 📚",
+        "Khan Academy and Coursera offer free quality courses. 🎓",
+        "Try ‘MinutePhysics’ on YouTube for physics concepts. ⚛️",
+        "Ask me for study app recommendations anytime!",
+        "'Automate the Boring Stuff with Python' is great for beginner programming. 💻",
+        "'fast.ai' courses offer practical AI learning. 🤖"
+    ],
+
+    "emotional_support": [
+        "It's okay to feel overwhelmed. You're not alone. 💙",
+        "Self-care is vital for your best performance. 🌸",
+        "Allow your feelings, then gently refocus. 🧘‍♂️",
+        "Progress isn't linear; be kind to yourself. ❤️"
+    ],
+
+    # Fallback answers when the bot doesn't understand a query
+    "fallback": [
+        "I’m not sure about that. You might want to try ChatGPT for detailed answers: https://chat.openai.com/",
+        "That’s beyond my current knowledge. DeepSeek might help you: https://deepseek.ai/",
+        "Try asking ChatGPT or DeepSeek for more info. I’m here to assist with Olympiad prep!",
+        "Sorry, I don’t have an answer right now. These tools can help: ChatGPT (https://chat.openai.com/), DeepSeek (https://deepseek.ai/)."
+    ]
+}
+
 
     "motivation": [
         "Aylin, your creator, has devoted herself to mastering math, physics, robotics, and AI — balancing all these challenging fields with passion and dedication. You too can manage your interests with focus and heart! 💪🌟",

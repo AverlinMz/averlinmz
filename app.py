@@ -255,9 +255,9 @@ def get_bot_reply(user_input):
         return RESPONSE_DATA["subjects"].get(subj, random.choice(RESPONSE_DATA["fallback"])) + "\n\n(You asked about this before!)"
 
     if sentiment == "positive":
-        return "Glad to hear you're feeling good! Keep it up! \ud83c\udf89"
+        return "Glad to hear you're feeling good! Keep it up! 🎉"
     elif sentiment == "negative":
-        return "I noticed you're feeling down. If you want, I can share some tips or just listen. \ud83d\udc99"
+        return "I noticed you're feeling down. If you want, I can share some tips or just listen. 💙 "
 
     possible_subjects = [subj for subj in KEYWORDS["subjects"] if subj in user_input.lower()]
     if possible_subjects:
@@ -275,6 +275,7 @@ with st.form('chat_form', clear_on_submit=True):
         bot_reply = get_bot_reply(user_input)
         st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
 
+        # Generate TTS audio
         clean_reply = remove_emojis(bot_reply)
         tts = gTTS(clean_reply, lang='en')
         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tts_file:
@@ -295,16 +296,18 @@ st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------------- SIDEBAR ----------------
 with st.sidebar:
-    st.markdown("### \ud83c\udf1f Your Goals")
+    st.markdown("### 🌟 Your Goals")
     if st.session_state.goals:
         for g in st.session_state.goals:
             st.write("- " + g)
     else:
         st.write("You haven't set any goals yet. Tell me your goals!")
 
-    st.markdown("### \ud83d\udca1 Tips")
+    st.markdown("### 💡 Tips")
     st.info("Try asking things like:\n- 'Give me study tips'\n- 'Tell me about physics'\n- 'How do I manage time?'\n- Or just say 'bye' to end the chat!")
 
-filename = f"chat_history_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
-chat_history_text = "\n".join([f"{m['role'].upper()}: {m['content']}\n" for m in st.session_state.messages])
-st.download_button("\ud83d\udcc5 Download Chat History", chat_history_text, file_name=filename)
+    # Prepare chat history text for download button here
+    filename = f"chat_history_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+    chat_history_text = "\n".join([f"{m['role'].upper()}: {m['content']}" for m in st.session_state.messages])
+
+    st.download_button("📅 Download Chat History", chat_history_text, file_name=filename)

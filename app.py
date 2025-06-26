@@ -75,8 +75,6 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Your existing RESPONSE_DATA and KEYWORDS here (not repeating for brevity)
-# Paste all RESPONSE_DATA and KEYWORDS dicts exactly as you gave me before here...
 RESPONSE_DATA = {
     "greetings": [
         "Hey! 👋 Ready to push your limits with some Olympiad-level challenges? 💪📚",
@@ -103,7 +101,6 @@ RESPONSE_DATA = {
         "Doing well! What topic shall we tackle today? 🌈"
     ],
 
-    # ---- Olympiad-level Subject-Specific Tips ----
     "subjects": {
         "math": (
             "🧮 Olympiad Math Tips:\n"
@@ -227,7 +224,6 @@ RESPONSE_DATA = {
     ],
 }
 
-# Your polished fallback responses with “I’m still learning”
 FALLBACK_RESPONSES = [
     "I’m still learning and don’t know the answer right now. Maybe try rephrasing your question or searching online.",
     "Sorry, I’m still learning and can’t answer that at the moment. You might find better info by checking other resources.",
@@ -256,8 +252,6 @@ KEYWORDS = {
     "emotional_support": ["feelings", "emotions", "support", "overwhelmed", "kindness"],
 }
 
-# I will assume RESPONSE_DATA and KEYWORDS are already defined here exactly as you gave me.
-
 def clean_keyword_list(keywords_dict):
     cleaned = {}
     for intent, phrases in keywords_dict.items():
@@ -280,7 +274,7 @@ def detect_intent(text):
             matches = get_close_matches(word, kws, n=1, cutoff=0.65)
             if matches:
                 return intent
-    for subj in KEYWORDS["subjects"]:
+    for subj in RESPONSE_DATA["subjects"].keys():
         if subj in msg:
             return "subjects"
     return None
@@ -321,71 +315,54 @@ def get_bot_reply(user_input):
                     break
             return RESPONSE_DATA["subjects"].get(st.session_state.context_topic, random.choice(FALLBACK_RESPONSES))
         else:
-            st.session_state.context_topic = None
             return random.choice(RESPONSE_DATA[intent])
 
+    # If context topic is set and user input relates to that subject
     if st.session_state.context_topic:
         subj = st.session_state.context_topic
-        return RESPONSE_DATA["subjects"].get(subj, random.choice(FALLBACK_RESPONSES)) + "\n\n(You asked about this before!)"
+        if subj in RESPONSE_DATA["subjects"]:
+            # Provide detailed tips again if user asks something else about the subject
+            if "more" in user_input.lower() or "again" in user_input.lower():
+                return RESPONSE_DATA["subjects"][subj]
+            # fallback to fallback response if user input is unrelated
+            if any(word in user_input.lower() for word in ["thanks", "thank you", "bye", "goodbye", "exit"]):
+                st.session_state.context_topic = None
+                return random.choice(RESPONSE_DATA["farewell"])
+            return RESPONSE_DATA["subjects"][subj]
 
-    # Fix here: use RESPONSE_DATA["subjects"].keys() to get valid subjects list
-    possible_subjects = [subj for subj in RESPONSE_DATA["subjects"].keys() if subj in user_input.lower()]
-    if possible_subjects:
-        return f"I see you mentioned {possible_subjects[0]}. Here are some tips:\n\n{RESPONSE_DATA['subjects'].get(possible_subjects[0], '')}"
-
-    if sentiment == "positive":
-        return "Glad to hear you're feeling good! Keep it up! 🎉"
-    elif sentiment == "negative":
-        return "I noticed you're feeling down. If you want, I can share some tips or just listen. 💙"
+    # Handle greetings and farewells explicitly
+    if any(greet in user_input.lower() for greet in ["hello", "hi", "hey", "good morning", "good evening"]):
+        return random.choice(RESPONSE_DATA["greetings"])
+    if any(farewell in user_input.lower() for farewell in ["bye", "goodbye", "see you", "later", "exit"]):
+        st.session_state.context_topic = None
+        return random.choice(RESPONSE_DATA["farewell"])
 
     return random.choice(FALLBACK_RESPONSES)
 
+def generate_audio_response(text):
+    tts = gTTS(text=text, lang="en", slow=False)
+    tmp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
+    tts.save(tmp_file.name)
+    return tmp_file.name
 
-# ---- CHAT FORM ----
-with st.form('chat_form', clear_on_submit=True):
-    user_input = st.text_input('Write your message…', key='input_field')
-    submitted = st.form_submit_button('Send')
+def main():
+    st.title("AverlinMz Study Chatbot 📚")
+    st.markdown("Ask me about Olympiad subjects, study tips, motivation, stress relief, or anything to help your preparation!")
 
-    if submitted and user_input.strip():
-        st.session_state.messages.append({'role': 'user', 'content': user_input})
-        bot_reply = get_bot_reply(user_input)
-        st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
+    user_input = st.text_input("You:", key="user_input")
+    if user_input:
+        user_input_clean = remove_emojis(user_input)
+        st.session_state.messages.append({"user": user_input_clean})
+        bot_reply = get_bot_reply(user_input_clean)
+        st.session_state.messages.append({"bot": bot_reply})
 
-        # Remove emojis before TTS so audio is clean
-        clean_reply = remove_emojis(bot_reply)
-        tts = gTTS(clean_reply, lang='en')
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tts_file:
-            tts.save(tts_file.name)
-            audio_bytes = open(tts_file.name, "rb").read()
-        st.audio(audio_bytes, format="audio/mp3")
-        os.unlink(tts_file.name)
+    if st.session_state.messages:
+        for i in range(len(st.session_state.messages)):
+            msg = st.session_state.messages[i]
+            if "user" in msg:
+                st.markdown(f'<div class="user"><b>You:</b> {escape(msg["user"])}</div>', unsafe_allow_html=True)
+            elif "bot" in msg:
+                st.markdown(f'<div class="bot"><b>AverlinMz:</b> {escape(msg["bot"])}</div>', unsafe_allow_html=True)
 
-# Display chat history
-st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
-msgs = st.session_state.messages
-for i in range(len(msgs) - 2, -1, -2):
-    user_msg = msgs[i]['content']
-    bot_msg = msgs[i+1]['content'] if i+1 < len(msgs) else ''
-    st.markdown(f'<div class="user">{escape(user_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
-    st.markdown(f'<div class="bot">{bot_msg.replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
-st.markdown('</div></div>', unsafe_allow_html=True)
-
-# Sidebar with goals and tips
-with st.sidebar:
-    st.markdown("### 🎯 Your Goals")
-    if st.session_state.goals:
-        for g in st.session_state.goals:
-            st.write("- " + g)
-    else:
-        st.write("You haven't set any goals yet. Tell me your goals!")
-
-    st.markdown("### 💡 Tips")
-    st.info("Try asking things like:\n- 'Give me study tips'\n- 'Tell me about physics'\n- 'How do I manage time?'\n- Or just say 'bye' to end the chat!")
-
-    st.markdown("### 🧠 Mini AI Assistant Mode")
-    st.write("This bot tries to detect your intent and give focused advice or answers.")
-
-# Download chat history button
-filename = f"chat_history_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
-chat_history_text = "\n".join([f"{m['role'].upper()}: {m['content']}\n" for m in st.session_state.messages])
-st.download_button("📥 Download Chat History", chat_history_text, file_name=filename)
+if __name__ == "__main__":
+    main()

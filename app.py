@@ -1,13 +1,11 @@
 import streamlit as st
 import random
 import string
-from html import escape
 import datetime
 import re
 import tempfile
 import os
 from gtts import gTTS
-from difflib import get_close_matches
 
 # Initialize session state
 def init_session():
@@ -19,6 +17,11 @@ def init_session():
         st.session_state.context_topic = None
     if "last_sentiment" not in st.session_state:
         st.session_state.last_sentiment = None
+    if "last_intent" not in st.session_state:
+        st.session_state.last_intent = None
+    if "last_reply" not in st.session_state:
+        st.session_state.last_reply = None
+
 init_session()
 
 def remove_emojis(text):
@@ -38,12 +41,14 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+# Theme selector with simple CSS injection
 theme = st.sidebar.selectbox("🎨 Choose a theme", ["Default", "Night", "Blue"])
 if theme == "Night":
     st.markdown("""<style>body, .stApp { background:#111; color:#fff; } .user {background:#333;color:#fff;} .bot {background:#444;color:#fff;}</style>""", unsafe_allow_html=True)
 elif theme == "Blue":
     st.markdown("""<style>body, .stApp { background:#e0f7fa; } .user {background:#81d4fa;color:#01579b;} .bot {background:#b2ebf2;color:#004d40;}</style>""", unsafe_allow_html=True)
 
+# Basic chat styling
 st.markdown("""
 <style>
 .chat-container {max-width:900px;margin:0 auto;padding:20px;display:flex;flex-direction:column;}
@@ -67,6 +72,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# Header with image and title
 st.markdown("""
 <div class="title-container">
   <img src="https://i.imgur.com/mJ1X49g_d.webp" alt="Chatbot Image" style="width:150px;border-radius:20px;margin-bottom:10px;"/>
@@ -74,276 +80,277 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+# ---------------- RESPONSE DATA ----------------
 RESPONSE_DATA = {
     "greetings": [
-        "Hey! 👋 How's your day shaping up? Ready to tackle some study questions? 📚",
-        "Hello! 😊 What topic shall we explore today? 🤔",
-        "Hi there! Let's make your study session productive! 💡",
-        "Hey! I'm here to help — what's on your mind? 💬"
+        "Hey! 👋 Ready to push your limits with some Olympiad-level challenges? 💪📚",
+        "Hello! 😊 Which Olympiad subject shall we dive into today?",
+        "Hi! Let’s sharpen those skills for the next big competition! 🔥",
+        "Hey there! Focused and ready? Let's make your prep efficient! 🚀"
     ],
     "thanks": [
-        "You're welcome! Glad I could help! 😊👍",
-        "Anytime! Keep shining in your studies! ✨",
-        "My pleasure! Let's keep going! 🚀",
-        "Happy to assist you! 🤝"
+        "Glad to help! Keep aiming high! 🌟",
+        "Anytime! Olympiad success takes persistence, and you have that! 💪",
+        "You're welcome! Keep up the strong effort! 🔥",
+        "Happy to assist! Let’s conquer those problems together! 🤝"
     ],
     "farewell": [
-        "Goodbye! 👋 Keep up the great work and see you soon! 🌟",
-        "Take care! Don't forget to rest too! 🌙",
-        "See you later! Stay curious and motivated! 🔥",
-        "Bye! Keep pushing forward! 💪"
+        "Good luck! Remember, every problem solved is progress! 👋",
+        "See you soon! Rest well and keep that mind sharp! 🧠",
+        "Bye! Keep practicing smarter, not just harder! ⚡",
+        "Take care! The Olympiad journey is a marathon, not a sprint! 🏃‍♀️"
     ],
     "how_are_you": [
-        "I'm doing well, thanks! How are you feeling today? 🙂",
-        "All good here! How about you? 🤗",
-        "Feeling ready to help! What about you? ⚡",
-        "Doing great! How's your mood? 🌈"
+        "I'm ready to challenge you! How are you feeling about your prep? 🙂",
+        "All set to help you sharpen your Olympiad skills! How's your day? 🤗",
+        "Eager to assist with your toughest questions! What's on your mind? ⚡",
+        "Doing well! What topic shall we tackle today? 🌈"
     ],
-    "user_feeling_good": [
-        "Awesome! Keep that positive energy flowing! 🎉🌟",
-        "Great to hear that! Let's keep this momentum going! 🏃‍♀️💨",
-        "Love that! Let's channel it into some productive study time! 📖✨",
-        "Fantastic! What would you like to focus on next? 🎯"
-    ],
-    "user_feeling_bad": [
-        "I'm sorry you're feeling down. Remember, every day is a fresh start! 💙🌅",
-        "Tough days happen — if you want, I can share some tips to lift your spirits. 🌻",
-        "I'm here for you. Let's try some quick focus or relaxation techniques. 🧘‍♂️",
-        "Hang in there! Let's work through this together. 🤝"
-    ],
-    "love": [
-        "Thanks! Your support means a lot — I'm here to help you succeed! 💖🚀",
-        "I appreciate that! Let's keep learning together! 🤓📚",
-        "Sending good vibes your way! 🤗✨",
-        "Grateful for you! Let's ace those studies! 🏆"
-    ],
-    "exam_prep": [
-        "Start early, plan well, and take short breaks. You've got this! 💪📅",
-        "Focus on understanding concepts, not just memorizing facts. 🧠🔍",
-        "Practice with past papers to build confidence. 📝✅",
-        "Stay calm and trust your preparation! 🧘‍♀️💡",
-        "Remember to balance study and rest for best results. ⚖️😴"
-    ],
-    "passed_exam": [
-        "🎉 Congratulations! Your hard work paid off! 🏅",
-        "Well done! Time to celebrate your success! 🎊",
-        "Amazing achievement! Keep aiming higher! 🚀",
-        "You did great! Ready for the next challenge? 🔥"
-    ],
-    "capabilities": [
-        "I offer study tips, answer questions, track your goals, and keep you motivated! 💡📈",
-        "I'm here to support your learning with advice, encouragement, and goal tracking. 🤖✨",
-        "Ask me about subjects, study strategies, or just chat! 💬📚",
-        "Think of me as your personal study assistant. 🧑‍💻🤓"
-    ],
-    "introduction": [
-    "I'm AverlinMz, your study chatbot, created by Aylin Muzaffarli from Azerbaijan. 🇦🇿🤖 Learn more: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>official website</a> 🌐",
-    "Hello! I'm here to support your study journey. �✨ Visit my site: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>AverlinMz Website</a> 💻",
-    "Created by Aylin, I help with study tips and motivation. 💡❤️ Check this out: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Learn more</a> 📖",
-    "Nice to meet you! Let's learn and grow together. 🌱📘 Want to know more? <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Click here</a> 🚀"
-],
-    "creator_info": [
-        "Created by Aylin — passionate about science, tech, and helping others learn. 🔬💻",
-        "Aylin's dedication makes this chatbot your study buddy. 🎯✨",
-        "Behind me is Aylin, focused on inspiring learners like you. 💡🌟",
-        "Aylin designed me to help students reach their goals. 🚀📚"
-    ],
-    "ack_creator": [
-        "All credit goes to Aylin Muzaffarli! 🌟🙌",
-        "Proudly created by Aylin — thanks for noticing! 💙🎉",
-        "A big shoutout to Aylin for this chatbot! 🎊🤖",
-        "Aylin's hard work made this possible. 👏🚀"
-    ],
-    "contact_creator": [
-        "You can contact Aylin by filling out this <a href='https://docs.google.com/forms/d/1hYk968UCuX0iqsJujVNFGVkBaJUIhA67SXJKe0xWeuM/edit' target='_blank'>Google Form</a> 📋✨",
-        "Reach out to Aylin anytime via this <a href='https://docs.google.com/forms/d/1hYk968UCuX0iqsJujVNFGVkBaJUIhA67SXJKe0xWeuM/edit' target='_blank'>Google Form</a> 📨🌟",
-        "Feel free to send your feedback or questions through this <a href='https://docs.google.com/forms/d/1hYk968UCuX0iqsJujVNFGVkBaJUIhA67SXJKe0xWeuM/edit' target='_blank'>Google Form</a> 💬😊",
-        "Aylin welcomes your messages! Use this <a href='https://docs.google.com/forms/d/1hYk968UCuX0iqsJujVNFGVkBaJUIhA67SXJKe0xWeuM/edit' target='_blank'>Google Form</a> 📬🤗"
-    ],
+
+    # ---- Olympiad-level Subject-Specific Tips ----
     "subjects": {
-        "math": "🧮 Math Tips:\n- Practice daily with diverse problems\n- Understand concepts before memorizing formulas\n- Break complex problems into smaller steps\n- Review mistakes to learn from them\n- Use visual aids like graphs and diagrams",
-        "physics": "🧪 Physics Tips:\n- Master fundamental concepts first\n- Draw diagrams for visualization\n- Understand units and dimensions\n- Relate theories to real-world examples\n- Practice derivations regularly",
-        "chemistry": "⚗️ Chemistry Tips:\n- Understand periodic trends thoroughly\n- Practice balancing equations daily\n- Use mnemonics for memorization\n- Connect concepts between organic/inorganic/phys chem\n- Do hands-on experiments when possible",
-        "biology": "🧬 Biology Tips:\n- Create concept maps for complex processes\n- Use flashcards for terminology\n- Draw and label diagrams repeatedly\n- Understand before memorizing\n- Relate concepts to real-life examples",
-        "history": "🏛 History Tips:\n- Create timelines for events\n- Understand causes and effects\n- Connect events to geographical contexts\n- Use storytelling techniques to remember\n- Relate past events to current affairs",
-        "language": "🗣 Language Learning Tips:\n- Practice speaking daily, even to yourself\n- Learn phrases not just words\n- Immerse yourself with media in target language\n- Keep a vocabulary journal\n- Don't fear mistakes - they're part of learning",
-        "programming": "💻 Programming Tips:\n- Code daily, even small projects\n- Read others' code to learn\n- Understand concepts before frameworks\n- Practice debugging skills\n- Work on real-world projects",
-        "literature": "📚 Literature Tips:\n- Read actively with annotations\n- Analyze themes and motifs\n- Connect texts to historical context\n- Practice close reading techniques\n- Discuss interpretations with others",
-        "geography": "🌍 Geography Tips:\n- Use maps frequently\n- Understand climate patterns\n- Connect physical and human geography\n- Create mind maps for concepts\n- Relate theories to current events",
-        "economics": "💹 Economics Tips:\n- Understand basic principles first\n- Follow current economic news\n- Practice graphing concepts\n- Connect micro and macro concepts\n- Apply theories to real-world scenarios"
+        "math": (
+            "🧮 Olympiad Math Tips:\n"
+            "- Master problem-solving frameworks: invariants, extremal principles, and pigeonhole principle.\n"
+            "- Focus on combinatorics and number theory; learn modular arithmetic deeply.\n"
+            "- Practice proofs rigorously: be comfortable with induction, contradiction, and construction.\n"
+            "- Analyze classical problems from IMO shortlist and past papers.\n"
+            "- Develop intuition by exploring geometric transformations and inequalities (AM-GM, Cauchy-Schwarz).\n"
+            "- Regularly write full solutions; clarity and precision are as important as correctness.\n"
+            "- Study advanced topics like functional equations and algebraic inequalities with examples."
+        ),
+        "physics": (
+            "🧪 Olympiad Physics Tips:\n"
+            "- Thoroughly understand fundamental concepts: mechanics, electromagnetism, thermodynamics, optics.\n"
+            "- Develop skills in applying conservation laws creatively in non-standard problems.\n"
+            "- Master vector calculus and kinematics in multiple dimensions.\n"
+            "- Practice solving problems involving rotational motion and oscillations.\n"
+            "- Analyze experimental setups and learn to estimate uncertainties.\n"
+            "- Study past IPhO problems, focusing on derivations and multi-step reasoning.\n"
+            "- Build your own physical intuition by linking theory to real-world phenomena."
+        ),
+        "chemistry": (
+            "⚗️ Olympiad Chemistry Tips:\n"
+            "- Understand the underlying principles of atomic structure, chemical bonding, and molecular geometry.\n"
+            "- Dive deep into reaction mechanisms, especially organic synthesis pathways.\n"
+            "- Practice balancing complex redox and equilibrium reactions.\n"
+            "- Master thermodynamics and kinetics with quantitative problem-solving.\n"
+            "- Perform thought experiments on titration and volumetric analysis problems.\n"
+            "- Study spectroscopy basics and its applications in structure determination.\n"
+            "- Analyze IChO past papers for pattern recognition and conceptual depth."
+        ),
+        "biology": (
+            "🧬 Olympiad Biology Tips:\n"
+            "- Grasp cellular and molecular biology fundamentals: DNA replication, transcription, translation.\n"
+            "- Understand physiological systems holistically with an emphasis on homeostasis.\n"
+            "- Master genetics problems including Mendelian inheritance and population genetics.\n"
+            "- Study evolutionary biology with evidence-based reasoning.\n"
+            "- Practice interpreting biological data and experiment design.\n"
+            "- Use detailed diagrams and label anatomical structures precisely.\n"
+            "- Review BIO past Olympiad problems focusing on experimental biology."
+        ),
+        "computer_science": (
+            "💻 Olympiad Computer Science Tips:\n"
+            "- Master algorithmic paradigms: greedy, divide-and-conquer, dynamic programming, backtracking.\n"
+            "- Deeply understand data structures: trees, graphs, heaps, tries, segment trees.\n"
+            "- Practice coding efficiency and optimization under time constraints.\n"
+            "- Analyze problem constraints carefully to choose optimal approaches.\n"
+            "- Solve classic problems from IOI and similar contests regularly.\n"
+            "- Write clean, well-documented code with edge cases in mind.\n"
+            "- Explore computational geometry and number theory algorithms relevant to contests."
+        ),
+        "english": (
+            "📚 Olympiad English Tips:\n"
+            "- Develop critical reading skills: analyze passages for tone, purpose, and implicit meaning.\n"
+            "- Practice structured essay writing focusing on clear argumentation and evidence.\n"
+            "- Expand your vocabulary with academic and subject-specific terms.\n"
+            "- Hone your grammar and syntax for precision and variety.\n"
+            "- Practice timed writing to improve fluency under pressure.\n"
+            "- Engage with classical literature and non-fiction to enhance comprehension.\n"
+            "- Work on summarizing complex texts concisely and accurately."
+        ),
     },
-    "fallback": [
-        "I'm not sure I understood that — could you try rephrasing? 🤔😊",
-        "Sorry, I didn't catch that. Want to try again? 🔄",
-        "I'm learning every day! Could you ask differently? 📚✨",
-        "That's new to me! Care to explain? 🤖❓",
-        "Oops, I didn't get that. Let's try another question! 💬",
-        "I might need more context. Could you elaborate? 💭",
-        "Interesting question! Could you phrase it differently? 🤔",
-        "I want to help - can you ask in another way? 🛠️"
-    ]
+
+    "motivation": [
+        "Aylin, your creator, has devoted herself to mastering math, physics, robotics, and AI — balancing all these challenging fields with passion and dedication. You too can manage your interests with focus and heart! 💪🌟",
+        "Remember, Aylin started just like you — curious and driven, exploring many fields like robotics, AI, and physics. Your diverse passions are your strength! Keep nurturing them. 🚀❤️",
+        "Your creator Aylin beautifully blends the worlds of math, physics, and AI. You can do the same by pacing yourself, embracing challenges, and never losing sight of your goals. Keep going! 🌱🔥",
+        "Inspired by Aylin’s journey in science and tech? Your ability to balance study and passion is what sets you apart. Every small step counts! Keep your curiosity alive! 🌟📘"
+    ],
+
+    "stress_relief": [
+        "Feeling stressed? Take a moment to breathe deeply — try inhaling for 4 seconds, holding for 7, and exhaling for 8. It calms your mind and resets your focus. 🧘‍♀️✨",
+        "Short mindfulness breaks help: close your eyes, focus on your breath, and gently return your attention when distracted. 🌸💆‍♂️",
+        "Regular breaks recharge your brain. Stretch or walk for 5 minutes to boost concentration. 🎶🚶‍♀️",
+        "Ground yourself by naming things you see, feel, and hear to stay present and calm. 🌿🕊️"
+    ],
+
+    "time_management": [
+        "Build a daily routine focusing on 3 main tasks — achievable goals sustain motivation. ⏰📋",
+        "Use Pomodoro technique: 25-50 minutes work blocks with short breaks. 🍅✅",
+        "Prioritize important tasks first, avoid multitasking — focus increases quality. 🎯📅",
+        "Track time spent to identify distractions and improve focus. ⏳📊"
+    ],
+
+    "fun_facts": [
+        "The human brain processes info faster than a Formula 1 car! 🧠💨",
+        "Euler's number 'e' appears in growth, decay, and compound interest. 📈🔢",
+        "Quantum entanglement: particles affect each other instantly, regardless of distance. 👻⚛️",
+        "The first industrial robot revolutionized manufacturing in 1961. 🤖🏭"
+    ],
+
+    "goal_setting": [
+        "Set clear, achievable goals and break them into small steps. Celebrate progress! 🎯🎉",
+        "Regularly review and adjust goals to stay on track without burning out. 🔄📊",
+        "Use charts or journals to visualize progress and boost motivation. 📈📝",
+        "Accept setbacks as learning steps. Reflect, learn, and push forward! 🚀💪"
+    ],
+
+    "study_tips": [
+        "Use active recall by testing yourself, not just rereading. 🧠",
+        "Create mind maps to visualize complex topics. 🗺️",
+        "Teach concepts to someone else to reinforce understanding. 📢",
+        "Switch subjects regularly to keep your mind fresh. 🔄",
+        "Summarize study sessions with bullet points. 📝",
+        "Use spaced repetition for long-term retention. ⏳",
+        "Handwrite notes to improve memory. ✍️"
+    ],
+
+    "health": [
+        "Stay hydrated; water boosts brain function. 💧🧠",
+        "Exercise regularly; even short walks help memory and thinking. 🚶‍♂️⚡",
+        "Sleep 7-9 hours for memory consolidation. 🛌🌙",
+        "Balance screen time with breaks to reduce eye strain. 👀🛑"
+    ],
+
+    "resources": [
+        "‘The Art of Problem Solving’ books are excellent for math prep. 📚",
+        "Khan Academy and Coursera offer free quality courses. 🎓",
+        "Try ‘MinutePhysics’ on YouTube for physics concepts. ⚛️",
+        "Ask me for study app recommendations anytime!",
+        "'Automate the Boring Stuff with Python' is great for beginner programming. 💻",
+        "'fast.ai' courses offer practical AI learning. 🤖"
+    ],
+
+    "emotional_support": [
+        "It's okay to feel overwhelmed. You're not alone. 💙",
+        "Self-care is vital for your best performance. 🌸",
+        "Allow your feelings, then gently refocus. 🧘‍♂️",
+        "Progress isn't linear; be kind to yourself. ❤️"
+    ],
 }
 
+# Keywords for intent detection (subject + other categories)
 KEYWORDS = {
-    "greetings": ["hello", "hi", "hey", "hiya", "greetings", "what's up", "howdy", "good morning", "good afternoon", "good evening", "sup", "yo"],
-    "farewell": ["goodbye", "bye", "see you", "farewell", "later", "take care", "until next time", "signing off", "talk later", "catch you later", "peace out"],
-    "how_are_you": ["how are you", "how's it going", "how do you do", "how have you been", "what's new", "how's life", "how's everything", "how're things"],
-    "user_feeling_good": ["i'm good", "great", "happy", "doing well", "awesome", "fine", "fantastic", "wonderful", "excellent", "perfect", "super", "amazing", "terrific"],
-    "user_feeling_bad": ["i'm sad", "not good", "tired", "depressed", "down", "exhausted", "stressed", "anxious", "overwhelmed", "frustrated", "awful", "terrible", "horrible"],
-    "love": ["i love you", "love you", "luv you", "like you", "adore you", "you're amazing", "you're awesome", "you're great", "you're wonderful"],
-    "exam_prep": ["exam tips", "study for test", "prepare for exam", "how to study", "exam advice", "test preparation", "studying help", "exam strategies", "test tips", "study techniques", "best way to study", "exam prep"],
-    "passed_exam": ["i passed", "i did it", "exam success", "cleared the test", "exam results", "got good marks", "aced the exam", "passed with flying colors", "nailed the test", "killed the exam"],
-    "capabilities": ["what can you do", "your abilities", "features", "help me", "what do you offer", "how can you help", "your functions", "what help", "your skills"],
-    "introduction": ["introduce", "who are you", "about you", "yourself", "tell me about yourself", "what are you", "your purpose", "your identity"],
-    "creator_info": ["who is aylin", "about aylin", "creator info", "who made you", "who created you", "who built you", "who programmed you", "who developed you"],
-    "contact_creator": ["how can i contact aylin", "contact aylin", "how to contact", "reach aylin", "get in touch with creator", "aylin's contact", "aylin's info", "reach the maker"],
-    "ack_creator": ["thank aylin", "thanks aylin", "thank you aylin", "appreciate aylin", "grateful to aylin", "kudos to aylin", "props to aylin"],
-    "thanks": ["thank you", "thanks", "thx", "ty", "much appreciated", "many thanks", "grateful", "appreciate it", "thanks a lot", "thank you so much"],
-    "subjects": ["math", "physics", "chemistry", "biology", "history", "language", "programming", "literature", "geography", "economics",
-                "mathematics", "physic", "chem", "bio", "hist", "lang", "code", "lit", "geo", "econ",
-                "algebra", "calculus", "trigonometry", "statistics", "quantum", "mechanics", "thermodynamics",
-                "organic", "inorganic", "biochemistry", "genetics", "zoology", "botany", "anatomy",
-                "world history", "ancient", "medieval", "modern", "political",
-                "english", "spanish", "french", "german", "russian", "linguistics",
-                "python", "java", "javascript", "c++", "coding", "web development",
-                "poetry", "novel", "drama", "fiction", "shakespeare",
-                "physical geography", "human geography", "cartography", "gis",
-                "microeconomics", "macroeconomics", "finance", "business"]
+    "math": ["math", "algebra", "geometry", "number theory", "combinatorics", "inequality", "proof"],
+    "physics": ["physics", "mechanics", "electromagnetism", "thermodynamics", "optics", "kinematics", "quantum"],
+    "chemistry": ["chemistry", "organic", "inorganic", "reaction", "stoichiometry", "thermodynamics", "equilibrium"],
+    "biology": ["biology", "cell", "genetics", "physiology", "anatomy", "evolution", "molecular"],
+    "computer_science": ["computer science", "programming", "algorithms", "data structures", "coding", "ioi", "competitive programming"],
+    "english": ["english", "essay", "reading", "writing", "grammar", "vocabulary", "comprehension"],
+
+    "motivation": ["motivation", "inspiration", "encouragement", "keep going", "push through"],
+    "stress_relief": ["stress", "anxiety", "overwhelmed", "calm", "relax"],
+    "time_management": ["time", "schedule", "routine", "pomodoro", "planning", "productivity"],
+    "fun_facts": ["fun fact", "trivia", "interesting", "did you know"],
+    "goal_setting": ["goal", "progress", "plan", "achievement", "motivation"],
+    "study_tips": ["study tips", "learning", "memorization", "technique", "focus"],
+    "health": ["health", "sleep", "hydration", "exercise", "well-being"],
+    "resources": ["resources", "books", "courses", "apps", "recommendation"],
+    "emotional_support": ["feelings", "emotions", "support", "overwhelmed", "kindness"],
 }
 
-def clean_keyword_list(keywords_dict):
-    cleaned = {}
-    for intent, phrases in keywords_dict.items():
-        cleaned[intent] = [p.lower().translate(str.maketrans('', '', string.punctuation)).strip() for p in phrases]
-    return cleaned
-
-KEYWORDS_CLEANED = clean_keyword_list(KEYWORDS)
-
-def clean_text(text):
-    return text.lower().translate(str.maketrans('', '', string.punctuation)).strip()
-
-def detect_intent(text):
-    msg = clean_text(text)
-    
-    # First check for exact matches
-    for intent, kws in KEYWORDS_CLEANED.items():
-        if any(kw in msg for kw in kws):
-            return intent
-    
-    # Then check for similar words using fuzzy matching
-    words = msg.split()
-    for word in words:
-        for intent, kws in KEYWORDS_CLEANED.items():
-            # Find close matches with 65% similarity threshold (lowered for broader matching)
-            matches = get_close_matches(word, kws, n=1, cutoff=0.65)
-            if matches:
+# Improved intent detection by keyword matching inside user input
+def detect_intent(user_input):
+    user_input_lower = user_input.lower()
+    for intent, keywords in KEYWORDS.items():
+        for kw in keywords:
+            if kw in user_input_lower:
                 return intent
-    
-    # Special case for subject detection with partial matching
-    for subj in KEYWORDS["subjects"]:
-        if subj in msg:
-            return "subjects"
-    
     return None
 
-def update_goals(user_input):
-    msg = clean_text(user_input)
-    goal_keywords = ["goal", "aim", "plan", "objective", "target", "resolution", "ambition", "purpose", "intention"]
-    if any(kw in msg for kw in goal_keywords):
-        if user_input not in st.session_state.goals:
-            st.session_state.goals.append(user_input)
-            return "Got it! I've added that to your study goals."
+def generate_response(user_input):
+    user_input_clean = remove_emojis(user_input.lower())
+
+    # Greeting detection
+    greetings_keywords = ["hello", "hi", "hey", "greetings"]
+    if any(word in user_input_clean for word in greetings_keywords):
+        return random.choice(RESPONSE_DATA["greetings"])
+
+    # Thanks detection
+    thanks_keywords = ["thanks", "thank you", "thx"]
+    if any(word in user_input_clean for word in thanks_keywords):
+        return random.choice(RESPONSE_DATA["thanks"])
+
+    # Farewell detection
+    farewell_keywords = ["bye", "goodbye", "see you"]
+    if any(word in user_input_clean for word in farewell_keywords):
+        return random.choice(RESPONSE_DATA["farewell"])
+
+    # How are you detection
+    how_are_you_keywords = ["how are you", "how do you feel", "how's it going"]
+    if any(phrase in user_input_clean for phrase in how_are_you_keywords):
+        return random.choice(RESPONSE_DATA["how_are_you"])
+
+    # Intent detection
+    intent = detect_intent(user_input_clean)
+
+    if intent == "motivation":
+        return random.choice(RESPONSE_DATA["motivation"])
+    if intent == "stress_relief":
+        return random.choice(RESPONSE_DATA["stress_relief"])
+    if intent == "time_management":
+        return random.choice(RESPONSE_DATA["time_management"])
+    if intent == "fun_facts":
+        return random.choice(RESPONSE_DATA["fun_facts"])
+    if intent == "goal_setting":
+        return random.choice(RESPONSE_DATA["goal_setting"])
+    if intent == "study_tips":
+        return random.choice(RESPONSE_DATA["study_tips"])
+    if intent == "health":
+        return random.choice(RESPONSE_DATA["health"])
+    if intent == "resources":
+        return random.choice(RESPONSE_DATA["resources"])
+    if intent == "emotional_support":
+        return random.choice(RESPONSE_DATA["emotional_support"])
+
+    # If subject intent, reply with detailed subject tips
+    if intent in RESPONSE_DATA["subjects"]:
+        return RESPONSE_DATA["subjects"][intent]
+
+    # Fallback response
+    return "I’m not sure how to respond to that. Could you please ask about a specific subject or topic? 🤔"
+
+# Streamlit UI
+def main():
+    st.title("AverlinMz Chatbot — Study with me! 📚")
+
+    # Display chat messages
+    for msg in st.session_state.messages:
+        if msg["sender"] == "user":
+            st.markdown(f'<div class="user">{escape(msg["text"])}</div>', unsafe_allow_html=True)
         else:
-            return "You already mentioned this goal."
-    return None
+            # Do NOT escape bot text to allow emojis to display
+            st.markdown(f'<div class="bot">{msg["text"]}</div>', unsafe_allow_html=True)
 
-def detect_sentiment(text):
-    positive = ["good", "great", "awesome", "love", "happy", "fine", "well", "fantastic", "wonderful", "excellent", "perfect", "super", "amazing", "terrific"]
-    negative = ["bad", "sad", "tired", "depressed", "down", "exhausted", "stressed", "anxious", "overwhelmed", "frustrated", "awful", "terrible", "horrible"]
-    txt = clean_text(text)
-    if any(word in txt for word in positive): return "positive"
-    if any(word in txt for word in negative): return "negative"
-    return "neutral"
+    # User input box
+    user_input = st.text_input("You:", key="input")
 
-def get_bot_reply(user_input):
-    intent = detect_intent(user_input)
-    goal_msg = update_goals(user_input)
-    if goal_msg:
-        return goal_msg
+    if user_input:
+        # Append user message
+        st.session_state.messages.append({"sender": "user", "text": user_input})
 
-    sentiment = detect_sentiment(user_input)
-    st.session_state.last_sentiment = sentiment
+        # Generate bot response
+        bot_reply = generate_response(user_input)
 
-    if intent and intent in RESPONSE_DATA:
-        if intent == "subjects":
-            # detect specific subject mentioned
-            for subj in KEYWORDS["subjects"]:
-                if subj in user_input.lower():
-                    st.session_state.context_topic = subj
-                    break
-            return RESPONSE_DATA["subjects"].get(st.session_state.context_topic, random.choice(RESPONSE_DATA["fallback"]))
-        else:
-            st.session_state.context_topic = None
-            return random.choice(RESPONSE_DATA[intent])
+        # Append bot response
+        st.session_state.messages.append({"sender": "bot", "text": bot_reply})
 
-    if st.session_state.context_topic:
-        subj = st.session_state.context_topic
-        return RESPONSE_DATA["subjects"].get(subj, random.choice(RESPONSE_DATA["fallback"])) + "\n\n(You asked about this before!)"
+        # Clear input box after submission
+        st.session_state.input = ""
 
-    if sentiment == "positive":
-        return "Glad to hear you're feeling good! Keep it up! 🎉"
-    elif sentiment == "negative":
-        return "I noticed you're feeling down. If you want, I can share some tips or just listen. 💙"
+        # Rerun to display new messages
+        st.experimental_rerun()
 
-    # Enhanced fallback that tries to extract possible subjects
-    possible_subjects = [subj for subj in KEYWORDS["subjects"] if subj in user_input.lower()]
-    if possible_subjects:
-        return f"I see you mentioned {possible_subjects[0]}. Here are some tips:\n\n{RESPONSE_DATA['subjects'].get(possible_subjects[0], '')}"
-
-    return random.choice(RESPONSE_DATA["fallback"])
-
-with st.form('chat_form', clear_on_submit=True):
-    user_input = st.text_input('Write your message…', key='input_field')
-    if st.form_submit_button('Send') and user_input.strip():
-        st.session_state.messages.append({'role': 'user', 'content': user_input})
-        bot_reply = get_bot_reply(user_input)
-        st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
-
-        # Remove emojis before TTS so audio is clean
-        clean_reply = remove_emojis(bot_reply)
-        tts = gTTS(clean_reply, lang='en')
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tts_file:
-            tts.save(tts_file.name)
-            audio_bytes = open(tts_file.name, "rb").read()
-        st.audio(audio_bytes, format="audio/mp3")
-        os.unlink(tts_file.name)
-
-st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
-msgs = st.session_state.messages
-# Display chat messages in reverse chronological order (newest at bottom)
-for i in range(len(msgs) - 2, -1, -2):
-    user_msg = msgs[i]['content']
-    bot_msg = msgs[i+1]['content'] if i+1 < len(msgs) else ''
-    # Use markdown with unsafe_allow_html=True so links work
-    st.markdown(f'<div class="user">{escape(user_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
-    st.markdown(f'<div class="bot">{bot_msg.replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
-st.markdown('</div></div>', unsafe_allow_html=True)
-
-with st.sidebar:
-    st.markdown("### 🎯 Your Goals")
-    if st.session_state.goals:
-        for g in st.session_state.goals:
-            st.write("- " + g)
-    else:
-        st.write("You haven't set any goals yet. Tell me your goals!")
-
-    st.markdown("### 💡 Tips")
-    st.info("Try asking things like:\n- 'Give me study tips'\n- 'Tell me about physics'\n- 'How do I manage time?'\n- Or just say 'bye' to end the chat!")
-
-    st.markdown("### 🧠 Mini AI Assistant Mode")
-    st.write("This bot tries to detect your intent and give focused advice or answers.")
-
-filename = f"chat_history_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
-chat_history_text = "\n".join([f"{m['role'].upper()}: {m['content']}\n" for m in st.session_state.messages])
-st.download_button("📥 Download Chat History", chat_history_text, file_name=filename)
-
+if __name__ == "__main__":
+    main()

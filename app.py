@@ -6,43 +6,20 @@ import datetime
 import re
 import tempfile
 import os
-import json
-from pathlib import Path
 from gtts import gTTS
 
-# === Memory file paths ===
-GOALS_FILE = Path("goals.json")
-MESSAGES_FILE = Path("messages.json")
-
-# === Initialize session with saved data ===
+# Initialize session state
 def init_session():
     if "messages" not in st.session_state:
-        if MESSAGES_FILE.exists():
-            with open(MESSAGES_FILE, "r", encoding="utf-8") as f:
-                st.session_state.messages = json.load(f)
-        else:
-            st.session_state.messages = []
-
+        st.session_state.messages = []
     if "goals" not in st.session_state:
-        if GOALS_FILE.exists():
-            with open(GOALS_FILE, "r", encoding="utf-8") as f:
-                st.session_state.goals = json.load(f)
-        else:
-            st.session_state.goals = []
-
+        st.session_state.goals = []
     if "context_topic" not in st.session_state:
         st.session_state.context_topic = None
-
+    if "last_sentiment" not in st.session_state:
+        st.session_state.last_sentiment = None
 init_session()
 
-# === Save memory to file ===
-def save_memory():
-    with open(GOALS_FILE, "w", encoding="utf-8") as f:
-        json.dump(st.session_state.goals, f, ensure_ascii=False, indent=2)
-    with open(MESSAGES_FILE, "w", encoding="utf-8") as f:
-        json.dump(st.session_state.messages, f, ensure_ascii=False, indent=2)
-
-# === Utilities ===
 def remove_emojis(text):
     emoji_pattern = re.compile("[\U0001F600-\U0001F64F"
                                "\U0001F300-\U0001F5FF"
@@ -53,7 +30,6 @@ def remove_emojis(text):
                                flags=re.UNICODE)
     return emoji_pattern.sub(r'', text)
 
-# === Page Setup ===
 st.set_page_config(
     page_title="AverlinMz Chatbot",
     page_icon="https://i.imgur.com/mJ1X49g_d.webp",
@@ -61,14 +37,12 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# === Theme Switch ===
 theme = st.sidebar.selectbox("🎨 Choose a theme", ["Default", "Night", "Blue"])
 if theme == "Night":
     st.markdown("""<style>body, .stApp { background:#111; color:#fff; } .user {background:#333;color:#fff;} .bot {background:#444;color:#fff;}</style>""", unsafe_allow_html=True)
 elif theme == "Blue":
     st.markdown("""<style>body, .stApp { background:#e0f7fa; } .user {background:#81d4fa;color:#01579b;} .bot {background:#b2ebf2;color:#004d40;}</style>""", unsafe_allow_html=True)
 
-# === Title + Style ===
 st.markdown("""
 <style>
 .chat-container {max-width:900px;margin:0 auto;padding:20px;display:flex;flex-direction:column;}
@@ -99,7 +73,6 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# === Response data and keywords ===
 RESPONSE_DATA = {
     "greetings": ["Hello there! 👋 How’s your day going? Ready to dive into learning today?"],
     "thanks": ["You’re very welcome! 😊"],
@@ -117,7 +90,7 @@ RESPONSE_DATA = {
     "ack_creator": ["Absolutely! All credit goes to Aylin Muzaffarli! 🌟"],
     "subjects": {
         "math": "🧮 Math Tips: Practice daily. Understand concepts. Use visuals. Solve real problems. Review mistakes.",
-        "physics": "🧪 Physics Tips: Learn the basics. Draw diagrams. Practice problems. Watch experiments. Memorize formulas."
+        "physics": "🧪 Physics Tips: Learn the basics. Draw diagrams. Practice problems. Watch experiments. Memorize formulas.",
     },
     "fallback": ["Hmm, I’m not sure how to answer that — but I’ll learn! Try rephrasing. 😊"]
 }
@@ -140,7 +113,6 @@ KEYWORDS = {
     "subjects": ["math", "physics"]
 }
 
-# === NLP Processing ===
 def clean_keyword_list(keywords_dict):
     cleaned = {}
     for intent, phrases in keywords_dict.items():
@@ -164,7 +136,6 @@ def update_goals(user_input):
     if "goal" in msg or "aim" in msg or "plan" in msg:
         if user_input not in st.session_state.goals:
             st.session_state.goals.append(user_input)
-            save_memory()
             return "Got it! I added that to your goals."
         else:
             return "You already mentioned this goal."
@@ -183,6 +154,10 @@ def get_bot_reply(user_input):
     goal_msg = update_goals(user_input)
     if goal_msg:
         return goal_msg
+
+    sentiment = detect_sentiment(user_input)
+    st.session_state.last_sentiment = sentiment
+
     if intent and intent in RESPONSE_DATA:
         if intent == "subjects":
             for subj in KEYWORDS["subjects"]:
@@ -193,24 +168,24 @@ def get_bot_reply(user_input):
         else:
             st.session_state.context_topic = None
             return random.choice(RESPONSE_DATA[intent])
+
     if st.session_state.context_topic:
         subj = st.session_state.context_topic
         return RESPONSE_DATA["subjects"].get(subj, random.choice(RESPONSE_DATA["fallback"])) + "\n\n(You asked about this before!)"
-    sentiment = detect_sentiment(user_input)
+
     if sentiment == "positive":
         return "I'm glad you're feeling good! Keep it up! 🎉"
     elif sentiment == "negative":
-        return "I'm sorry you're feeling that way. I'm here if you want to talk. 💙"
+        return "You mentioned you're feeling down earlier. Want a tip to boost your mood or focus better? 💙"
+
     return random.choice(RESPONSE_DATA["fallback"])
 
-# === Chat Form ===
 with st.form('chat_form', clear_on_submit=True):
     user_input = st.text_input('Write your message…', key='input_field')
     if st.form_submit_button('Send') and user_input.strip():
         st.session_state.messages.append({'role': 'user', 'content': user_input})
         bot_reply = get_bot_reply(user_input)
         st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
-        save_memory()
         clean_reply = remove_emojis(bot_reply)
         tts = gTTS(clean_reply, lang='en')
         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tts_file:
@@ -219,7 +194,6 @@ with st.form('chat_form', clear_on_submit=True):
         st.audio(audio_bytes, format="audio/mp3")
         os.unlink(tts_file.name)
 
-# === Chat History Rendering ===
 st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
 msgs = st.session_state.messages
 for i in range(len(msgs) - 2, -1, -2):
@@ -229,12 +203,11 @@ for i in range(len(msgs) - 2, -1, -2):
     st.markdown(f'<div class="bot">{escape(bot_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
 st.markdown('</div></div>', unsafe_allow_html=True)
 
-# === Sidebar ===
 with st.sidebar:
     st.markdown("### 🎯 Your Goals")
     if st.session_state.goals:
         for g in st.session_state.goals:
-            st.checkbox(g, value=False, key=g)
+            st.write("- " + g)
     else:
         st.write("You haven't set any goals yet. Tell me your goals!")
 
@@ -244,7 +217,6 @@ with st.sidebar:
     st.markdown("### 🧠 Mini AI Assistant Mode")
     st.write("This bot tries to detect your intent and give focused advice or answers.")
 
-# === Download Chat Button ===
 filename = f"chat_history_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
 chat_history_text = "\n".join([f"{m['role'].upper()}: {m['content']}\n" for m in st.session_state.messages])
 st.download_button("📥 Download Chat History", chat_history_text, file_name=filename)

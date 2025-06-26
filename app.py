@@ -307,7 +307,7 @@ RESPONSE_DATA = {
     ],
 }
 
-KEYWORDS = {{
+KEYWORDS = {
     "math": ["math", "algebra", "geometry", "number theory", "combinatorics", "inequality", "proof"],
     "physics": ["physics", "mechanics", "electromagnetism", "thermodynamics", "optics", "kinematics", "quantum"],
     "chemistry": ["chemistry", "organic", "inorganic", "reaction", "stoichiometry", "thermodynamics", "equilibrium"],
@@ -324,7 +324,7 @@ KEYWORDS = {{
     "health": ["health", "sleep", "hydration", "exercise", "well-being"],
     "resources": ["resources", "books", "courses", "apps", "recommendation"],
     "emotional_support": ["feelings", "emotions", "support", "overwhelmed", "kindness"],
-}}
+}
 
 # URLs for fallback recommendations
 EXTERNAL_HELP = {{

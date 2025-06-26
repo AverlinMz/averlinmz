@@ -167,12 +167,6 @@ RESPONSE_DATA = {
         ),
     },
 
-    "motivation": [
-        "Aylin — my creator — has devoted herself to mastering math, physics, robotics, and AI, balancing all these challenging fields with passion and dedication. You too can manage your interests with focus and heart! 💪🌟",
-        "Remember, Aylin started just like you — curious and driven, exploring many fields like robotics, AI, and physics. Your diverse passions are your strength! Keep nurturing them. 🚀❤️",
-        "Your creator Aylin beautifully blends the worlds of math, physics, and AI. You can do the same by pacing yourself, embracing challenges, and never losing sight of your goals. Keep going! 🌱🔥",
-        "Inspired by Aylin’s journey in science and tech? Your ability to balance study and passion is what sets you apart. Every small step counts! Keep your curiosity alive! 🌟📘"
-    ],
 
     "stress_relief": [
         "Feeling stressed? Take a moment to breathe deeply — try inhaling for 4 seconds, holding for 7, and exhaling for 8. It calms your mind and resets your focus. 🧘‍♀️✨",
@@ -241,8 +235,7 @@ RESPONSE_DATA = {
         "That’s beyond my current knowledge. DeepSeek might help you: https://deepseek.ai/",
         "Try asking ChatGPT or DeepSeek for more info. I’m here to assist with Olympiad prep!",
         "Sorry, I don’t have an answer right now. These tools can help: ChatGPT (https://chat.openai.com/), DeepSeek (https://deepseek.ai/)."
-    ]
-}
+    ],
 
 
     "motivation": [
@@ -312,7 +305,7 @@ RESPONSE_DATA = {
         "Allow your feelings, then gently refocus. 🧘‍♂️",
         "Progress isn't linear; be kind to yourself. ❤️"
     ],
-}}
+}
 
 KEYWORDS = {{
     "math": ["math", "algebra", "geometry", "number theory", "combinatorics", "inequality", "proof"],

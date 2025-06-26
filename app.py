@@ -355,7 +355,7 @@ def generate_response(user_text):
         )
 
     if intent in RESPONSE_DATA.get("subjects", {}):
-        return RESPONSE_DATA["subjects"].get(intent)
+        return RESPONSE_DATA["subjects"][intent]
 
     if intent in RESPONSE_DATA:
         responses = RESPONSE_DATA[intent]
@@ -363,6 +363,7 @@ def generate_response(user_text):
             return random.choice(responses)
 
     return "I'm not sure how to help with that right now. Try rephrasing or ask about Olympiad topics!"
+
 
 
     if intent in RESPONSE_DATA.get("subjects", {}):
@@ -383,18 +384,24 @@ def render_message(user_text, bot_response):
 
 def main():
     st.markdown('<div class="chat-container">', unsafe_allow_html=True)
+    
+    # Render chat history
     chat_window = st.container()
     with chat_window:
         for message in st.session_state.messages:
             render_message(message['user'], message['bot'])
+
+    # Input and button
     user_input = st.text_input("You:", key="input", placeholder="Ask me about Olympiad topics or get study tips...")
-    if st.button("Send") or (user_input and st.session_state.input != ""):
+
+    if st.button("Send") and user_input.strip():
         user_text = user_input.strip()
-        if user_text:
-            bot_response = generate_response(user_text)
-            st.session_state.messages.append({"user": user_text, "bot": bot_response})
-            st.session_state.input = ""
-            st.experimental_rerun()
+        bot_response = generate_response(user_text)
+        st.session_state.messages.append({"user": user_text, "bot": bot_response})
+        if "input" in st.session_state:
+            st.session_state.input = ""  # Safe clear
+        st.experimental_rerun()
+
     st.markdown('</div>', unsafe_allow_html=True)
 
 if __name__ == "__main__":

@@ -136,11 +136,11 @@ RESPONSE_DATA = {
         "Think of me as your personal study assistant. 🧑‍💻🤓"
     ],
     "introduction": [
-        "I’m AverlinMz, your study chatbot, created by Aylin Muzaffarli from Azerbaijan. 🇦🇿🤖",
-        "Hello! I’m here to support your study journey. 🎓✨",
-        "Created by Aylin, I help with study tips and motivation. 💡❤️",
-        "Nice to meet you! Let’s learn and grow together. 🌱📘"
-    ],
+    "I’m AverlinMz, your study chatbot, created by Aylin Muzaffarli from Azerbaijan. 🇦🇿🤖 Learn more: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>official website</a> 🌐",
+    "Hello! I’m here to support your study journey. 🎓✨ Visit my site: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>AverlinMz Website</a> 💻",
+    "Created by Aylin, I help with study tips and motivation. 💡❤️ Check this out: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Learn more</a> 📖",
+    "Nice to meet you! Let’s learn and grow together. 🌱📘 Want to know more? <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Click here</a> 🚀"
+],
     "creator_info": [
         "Created by Aylin — passionate about science, tech, and helping others learn. 🔬💻",
         "Aylin’s dedication makes this chatbot your study buddy. 🎯✨",

@@ -124,6 +124,12 @@ RESPONSE_DATA = {
         "Stay calm and trust your preparation! 🧘‍♀️💡",
         "Remember to balance study and rest for best results. ⚖️😴"
     ],
+    "olympiad_prep": [
+        "🔬 Olympiad Preparation Tips:\n- Master foundational theory deeply before moving on.\n- Solve a wide variety of past olympiad problems to identify patterns.\n- Focus on problem-solving techniques and creative thinking.\n- Analyze solutions thoroughly; understand *why* each step works.\n- Practice timed tests to improve speed and accuracy.\n- Collaborate with peers or mentors for discussion and insights.\n- Maintain consistent daily practice with increasing difficulty.\n- Take care of your health and rest to keep your mind sharp.",
+        "To excel in olympiads, prioritize quality over quantity in practice. Learn to recognize common traps and strategies used in problems. Use official problem sets from previous years and similar contests.",
+        "Remember: Olympiads test deep understanding and ingenuity. Build strong fundamentals, then challenge yourself with advanced problems. Don't shy away from mistakes; they’re learning opportunities!",
+        "Mental preparation is key: stay calm under pressure, cultivate curiosity, and keep motivation high. Regularly review topics where you feel weak and track your progress."
+    ],
     "passed_exam": [
         "🎉 Congratulations! Your hard work paid off! 🏅",
         "Well done! Time to celebrate your success! 🎊",
@@ -140,7 +146,7 @@ RESPONSE_DATA = {
         "I'm AverlinMz, your study chatbot, created by Aylin Muzaffarli from Azerbaijan. 🇦🇿🤖 Learn more: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>official website</a> 🌐",
         "Hello! I'm here to support your study journey. �✨ Visit my site: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>AverlinMz Website</a> 💻",
         "Created by Aylin, I help with study tips and motivation. 💡❤️ Check this out: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Learn more</a> 📖",
-        "Nice to meet you! Let's learn and grow together. 🌱📘 Want to know more? <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Click here</a> 🚀"
+        "Nice to meet you! Let's learn and grow together. 🌱📘 Want to know more? <a href='https://aylinmuzaffli.github.io/averlinmz-site/' target='_blank'>Click here</a> 🚀"
     ],
     "creator_info": [
         "Created by Aylin — passionate about science, tech, and helping others learn. 🔬💻",
@@ -192,6 +198,7 @@ KEYWORDS = {
     "user_feeling_bad": ["i'm sad", "not good", "tired", "depressed", "down", "exhausted", "stressed", "anxious", "overwhelmed", "frustrated", "awful", "terrible", "horrible"],
     "love": ["i love you", "love you", "luv you", "like you", "adore you", "you're amazing", "you're awesome", "you're great", "you're wonderful"],
     "exam_prep": ["exam tips", "study for test", "prepare for exam", "how to study", "exam advice", "test preparation", "studying help", "exam strategies", "test tips", "study techniques", "best way to study", "exam prep"],
+    "olympiad_prep": ["olympiad prep", "olympiad tips", "olympiad advice", "olympiad preparation", "how to prepare for olympiad", "olympiad training", "competitive math", "physics olympiad", "chemistry olympiad", "biology olympiad", "programming olympiad", "ioi", "imo", "iphysics olympiad", "iphysics", "math olympiad"],
     "passed_exam": ["i passed", "i did it", "exam success", "cleared the test", "exam results", "got good marks", "aced the exam", "passed with flying colors", "nailed the test", "killed the exam"],
     "capabilities": ["what can you do", "your abilities", "features", "help me", "what do you offer", "how can you help", "your functions", "what help", "your skills"],
     "introduction": ["introduce", "who are you", "about you", "yourself", "tell me about yourself", "what are you", "your purpose", "your identity"],
@@ -199,34 +206,37 @@ KEYWORDS = {
     "contact_creator": ["how can i contact aylin", "contact aylin", "how to contact", "reach aylin", "get in touch with creator", "aylin's contact", "aylin's info", "reach the maker"],
     "ack_creator": ["thank aylin", "thanks aylin", "thank you aylin", "appreciate aylin", "grateful to aylin", "kudos to aylin", "props to aylin"],
     "thanks": ["thank you", "thanks", "thx", "ty", "much appreciated", "many thanks", "grateful", "appreciate it", "thanks a lot", "thank you so much"],
-    "subjects": ["math", "physics", "chemistry", "biology", "history", "language", "programming", "literature", "geography", "economics",
-                "mathematics", "physic", "chem", "bio", "hist", "lang", "code", "lit", "geo", "econ",
-                "algebra", "calculus", "trigonometry", "statistics", "quantum", "mechanics", "thermodynamics",
-                "organic", "inorganic", "biochemistry", "genetics", "zoology", "botany", "anatomy",
-                "world history", "ancient", "medieval", "modern", "political",
-                "english", "spanish", "french", "german", "russian", "linguistics",
-                "python", "java", "javascript", "c++", "coding", "web development",
-                "poetry", "novel", "drama", "fiction", "shakespeare",
-                "physical geography", "human geography", "cartography", "gis",
-                "microeconomics", "macroeconomics", "finance", "business"]
+    "subjects": [
+        "math", "mathematics", "algebra", "geometry", "calculus",
+        "physics", "mechanics", "thermodynamics", "optics",
+        "chemistry", "organic chemistry", "inorganic chemistry",
+        "biology", "botany", "zoology",
+        "history", "world history", "ancient history",
+        "language", "english", "french", "spanish",
+        "programming", "coding", "computer science", "algorithms",
+        "literature", "poetry", "novels", "drama",
+        "geography", "maps", "climate",
+        "economics", "microeconomics", "macroeconomics"
+    ]
 }
 
-def clean_keyword_list(keywords_dict):
-    cleaned = {}
-    for intent, phrases in keywords_dict.items():
-        cleaned[intent] = [p.lower().translate(str.maketrans('', '', string.punctuation)).strip() for p in phrases]
-    return cleaned
-
-KEYWORDS_CLEANED = clean_keyword_list(KEYWORDS)
-
+# Clean keywords for matching (lowercase no punctuation)
 def clean_text(text):
-    return text.lower().translate(str.maketrans('', '', string.punctuation)).strip()
+    return re.sub(r'[^\w\s]', '', text.lower())
+
+KEYWORDS_CLEANED = {}
+for intent, phrases in KEYWORDS.items():
+    cleaned = []
+    if isinstance(phrases, list):
+        for phrase in phrases:
+            cleaned.append(clean_text(phrase))
+    else:
+        cleaned.append(clean_text(phrases))
+    KEYWORDS_CLEANED[intent] = cleaned
 
 def detect_intent(user_text):
     user_text_clean = clean_text(user_text)
     # Try to find the best intent by keyword matching with fuzzy
-    best_intent = None
-    best_score = 0
     for intent, phrases in KEYWORDS_CLEANED.items():
         for phrase in phrases:
             if phrase in user_text_clean:
@@ -236,7 +246,10 @@ def detect_intent(user_text):
 
 def get_response(intent):
     if intent in RESPONSE_DATA:
-        return random.choice(RESPONSE_DATA[intent])
+        if isinstance(RESPONSE_DATA[intent], list):
+            return random.choice(RESPONSE_DATA[intent])
+        else:
+            return RESPONSE_DATA[intent]
     elif intent == "subjects":
         # Try to detect which subject
         for subj in RESPONSE_DATA["subjects"]:
@@ -299,8 +312,12 @@ with st.sidebar:
     if st.session_state.context_topic in RESPONSE_DATA["subjects"]:
         tips = RESPONSE_DATA["subjects"][st.session_state.context_topic]
         st.markdown(tips)
+    elif st.session_state.context_topic == "olympiad_prep":
+        # Show olympiad prep tips in sidebar as well
+        tips = "\n\n".join(RESPONSE_DATA["olympiad_prep"])
+        st.markdown(f"### Olympiad Preparation Tips\n{tips}")
     else:
-        st.markdown("Ask me for tips on Math, Physics, Chemistry, Biology, History, Language, Programming, Literature, Geography, or Economics.")
+        st.markdown("Ask me for tips on Math, Physics, Chemistry, Biology, History, Language, Programming, Literature, Geography, Economics, or Olympiad prep.")
 
 # Main chat container
 st.markdown('<div class="chat-container">', unsafe_allow_html=True)

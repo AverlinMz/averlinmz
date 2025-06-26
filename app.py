@@ -79,7 +79,7 @@ RESPONSE_DATA = {
     "farewell": ["Goodbye! 👋 Come back soon for more study tips!"],
     "how_are_you": ["I'm doing well, thanks for asking! 💬 How are you feeling today?"],
     "user_feeling_good": ["That’s amazing to hear! 🎉 Keep riding that good energy!"],
-    "contact_creator": ["My creator is Aylin Muzaffarli — a genuine mind passionate about learning, coding, and inspiring others. 🌟"],
+    "contact_creator": ["You can contact Aylin Muzaffarli via email: aylin@example.com or through GitHub: https://github.com/aylinmuzaffarli"],
     "user_feeling_bad": ["Sorry to hear that. I’m always here if you want to talk or need a study boost. 💙🌟"],
     "exam_prep": ["Start early, revise often, rest well, and stay calm. You've got this! 💪"],
     "passed_exam": ["🎉 CONGRATULATIONS! That’s amazing news! I knew you could do it."],
@@ -107,7 +107,7 @@ KEYWORDS = {
     "capabilities": ["what can you do"],
     "introduction": ["introduce", "who are you"],
     "creator_info": ["who is aylin"],
-    "contact_creator": ["how to contact"],
+    "contact_creator": ["how can i contact aylin", "contact aylin", "how to contact"],
     "ack_creator": ["thank aylin"],
     "thanks": ["thank you"],
     "subjects": ["math", "physics"]

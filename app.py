@@ -13,12 +13,13 @@ from hashlib import sha256
 def hash_password(password):
     return sha256(password.encode()).hexdigest()
 
-# In-memory user store (not secure for production)
+# Simple in-memory user DB (not persistent)
 USER_DB = {"aylin": hash_password("password123")}
 
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
     st.session_state.username = None
+    st.session_state.auth_error = None
 
 def login_ui():
     st.sidebar.title("🔐 Login / Sign Up")
@@ -31,20 +32,23 @@ def login_ui():
             if user in USER_DB and USER_DB[user] == hashed:
                 st.session_state.authenticated = True
                 st.session_state.username = user
+                st.session_state.auth_error = None
                 st.experimental_rerun()
             else:
-                st.sidebar.error("❌ Invalid credentials")
+                st.session_state.auth_error = "❌ Invalid credentials"
         else:
             if not user or not pwd:
-                st.sidebar.warning("Enter username & password!")
+                st.session_state.auth_error = "⚠️ Enter username & password!"
             elif user in USER_DB:
-                st.sidebar.error("Username exists")
+                st.session_state.auth_error = "❌ Username exists"
             else:
                 USER_DB[user] = hashed
-                st.sidebar.success("Account created! Now log in.")
+                st.session_state.auth_error = "✅ Account created! Now log in."
 
 if not st.session_state.authenticated:
     login_ui()
+    if st.session_state.auth_error:
+        st.sidebar.error(st.session_state.auth_error)
     st.stop()
 
 # --------------- USER INFO & LOGOUT ----------------
@@ -166,11 +170,11 @@ RESPONSE_DATA = {
         "Think of me as your personal study assistant. 🧑‍💻🤓"
     ],
     "introduction": [
-    "I’m AverlinMz, your study chatbot, created by Aylin Muzaffarli from Azerbaijan. 🇦🇿🤖 Learn more: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>official website</a> 🌐",
-    "Hello! I’m here to support your study journey. 🎓✨ Visit my site: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>AverlinMz Website</a> 💻",
-    "Created by Aylin, I help with study tips and motivation. 💡❤️ Check this out: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Learn more</a> 📖",
-    "Nice to meet you! Let’s learn and grow together. 🌱📘 Want to know more? <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Click here</a> 🚀"
-],
+        "I’m AverlinMz, your study chatbot, created by Aylin Muzaffarli from Azerbaijan. 🇦🇿🤖 Learn more: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>official website</a> 🌐",
+        "Hello! I’m here to support your study journey. 🎓✨ Visit my site: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>AverlinMz Website</a> 💻",
+        "Created by Aylin, I help with study tips and motivation. 💡❤️ Check this out: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Learn more</a> 📖",
+        "Nice to meet you! Let’s learn and grow together. 🌱📘 Want to know more? <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Click here</a> 🚀"
+    ],
     "creator_info": [
         "Created by Aylin — passionate about science, tech, and helping others learn. 🔬💻",
         "Aylin’s dedication makes this chatbot your study buddy. 🎯✨",
@@ -193,6 +197,7 @@ RESPONSE_DATA = {
     "subjects": {
         "math": "🧮 Math Tips: Practice regularly, focus on concepts, and solve diverse problems. 🔢📝",
         "physics": "🧪 Physics Tips: Understand fundamentals, draw diagrams, and apply formulas in problems. ⚛️📊",
+        # add more subjects here if you want
     },
     "fallback": [
         "I’m not sure I understood that — could you try rephrasing? 🤔😊",
@@ -225,7 +230,8 @@ def clean_keyword_list(kws):
     return {intent: [p.lower().translate(str.maketrans("", "", string.punctuation)).strip() for p in phrases] for intent, phrases in kws.items()}
 KEYWORDS_CLEANED = clean_keyword_list(KEYWORDS)
 
-def clean_text(t): return t.lower().translate(str.maketrans("", "", string.punctuation)).strip()
+def clean_text(t): 
+    return t.lower().translate(str.maketrans("", "", string.punctuation)).strip()
 
 def detect_intent(text):
     msg = clean_text(text)
@@ -236,7 +242,7 @@ def detect_intent(text):
 
 def update_goals(inp):
     m = clean_text(inp)
-    if any(w in m for w in ["goal","aim","plan"]):
+    if any(w in m for w in ["goal", "aim", "plan"]):
         if inp not in st.session_state.goals:
             st.session_state.goals.append(inp)
             return "Got it! I've added that to your study goals."
@@ -245,17 +251,20 @@ def update_goals(inp):
     return None
 
 def detect_sentiment(txt):
-    pos = ["good","great","awesome","love","happy","fine","well"]
-    neg = ["bad","sad","tired","depressed","down","exhausted"]
+    pos = ["good", "great", "awesome", "love", "happy", "fine", "well"]
+    neg = ["bad", "sad", "tired", "depressed", "down", "exhausted"]
     t = clean_text(txt)
-    if any(w in t for w in pos): return "positive"
-    if any(w in t for w in neg): return "negative"
+    if any(w in t for w in pos): 
+        return "positive"
+    if any(w in t for w in neg): 
+        return "negative"
     return "neutral"
 
 def get_bot_reply(inp):
     intent = detect_intent(inp)
     gmsg = update_goals(inp)
-    if gmsg: return gmsg
+    if gmsg:
+        return gmsg
     sen = detect_sentiment(inp)
     st.session_state.last_sentiment = sen
     if intent and intent in RESPONSE_DATA:

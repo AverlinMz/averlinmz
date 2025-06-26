@@ -7,16 +7,7 @@ import re
 import tempfile
 import os
 from gtts import gTTS
-import difflib  # <-- Added for smarter intent matching
-
-# Hugging Face Inference Client
-from huggingface_hub import InferenceClient
-
-# Load your Hugging Face API token from Streamlit secrets
-hf_token = st.secrets["HF_API_TOKEN"]
-
-# Initialize Hugging Face client
-client = InferenceClient(token=hf_token)
+import difflib  # For fuzzy intent matching
 
 # Initialize session state
 def init_session():
@@ -47,6 +38,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+# Theme selector
 theme = st.sidebar.selectbox("🎨 Choose a theme", ["Default", "Night", "Blue"])
 if theme == "Night":
     st.markdown("""<style>body, .stApp { background:#111; color:#fff; } .user {background:#333;color:#fff;} .bot {background:#444;color:#fff;}</style>""", unsafe_allow_html=True)
@@ -89,7 +81,7 @@ RESPONSE_DATA = {
     "farewell": ["Goodbye! 👋 Come back soon for more study tips!"],
     "how_are_you": ["I'm doing well, thanks for asking! 💬 How are you feeling today?"],
     "user_feeling_good": ["That’s amazing to hear! 🎉 Keep riding that good energy!"],
-    "contact_creator": ["You can contact Aylin Muzaffarli via email: aylin@example.com or through GitHub: https://github.com/aylinmuzaffarli"],
+    "contact_creator": ["You can contact Aylin by filling this form: https://docs.google.com/forms/d/1hYk968UCuX0iqsJujVNFGVkBaJUIhA67SXJKe0xWeuM/edit"],
     "user_feeling_bad": ["Sorry to hear that. I’m always here if you want to talk or need a study boost. 💙🌟"],
     "exam_prep": ["Start early, revise often, rest well, and stay calm. You've got this! 💪"],
     "passed_exam": ["🎉 CONGRATULATIONS! That’s amazing news! I knew you could do it."],
@@ -101,6 +93,10 @@ RESPONSE_DATA = {
     "subjects": {
         "math": "🧮 Math Tips: Practice daily. Understand concepts. Use visuals. Solve real problems. Review mistakes.",
         "physics": "🧪 Physics Tips: Learn the basics. Draw diagrams. Practice problems. Watch experiments. Memorize formulas.",
+        "chemistry": "⚗️ Chemistry Tips: Balance equations. Understand reactions. Memorize key formulas. Use flashcards.",
+        "biology": "🧬 Biology Tips: Learn diagrams. Understand processes. Use mnemonics. Relate to real life.",
+        "computer science": "💻 CS Tips: Practice coding daily. Understand algorithms. Solve problems. Learn data structures.",
+        "english": "📚 English Tips: Read daily. Practice writing. Expand vocabulary. Listen to native speakers."
     },
     "fallback": ["Hmm, I’m not sure how to answer that — but I’ll learn! Try rephrasing. 😊"]
 }
@@ -120,7 +116,7 @@ KEYWORDS = {
     "contact_creator": ["how can i contact aylin", "contact aylin", "how to contact"],
     "ack_creator": ["thank aylin"],
     "thanks": ["thank you"],
-    "subjects": ["math", "physics"]
+    "subjects": ["math", "physics", "chemistry", "biology", "computer science", "english"]
 }
 
 def clean_keyword_list(keywords_dict):
@@ -134,7 +130,6 @@ KEYWORDS_CLEANED = clean_keyword_list(KEYWORDS)
 def clean_text(text):
     return text.lower().translate(str.maketrans('', '', string.punctuation)).strip()
 
-# Smarter intent detection with difflib for fuzzy matching
 def detect_intent(text):
     msg = clean_text(text)
     all_phrases = []
@@ -168,21 +163,6 @@ def detect_sentiment(text):
     if any(word in txt for word in negative): return "negative"
     return "neutral"
 
-# Hugging Face AI call function
-def get_ai_response(user_input):
-    response = client.text_generation(
-        model="mistralai/Mistral-Small-3.2-24B-Instruct-2506",
-        inputs=user_input,
-        parameters={"max_new_tokens": 100, "temperature": 0.7}
-    )
-    # The response format may vary, so check both options
-    if hasattr(response, "generated_text"):
-        return response.generated_text
-    elif isinstance(response, list) and "generated_text" in response[0]:
-        return response[0]["generated_text"]
-    else:
-        return "Sorry, I couldn't generate a response right now."
-
 def get_bot_reply(user_input):
     intent = detect_intent(user_input)
     goal_msg = update_goals(user_input)
@@ -212,16 +192,16 @@ def get_bot_reply(user_input):
     elif sentiment == "negative":
         return "You mentioned you're feeling down earlier. Want a tip to boost your mood or focus better? 💙"
 
-    # Fallback to AI-generated reply when no intent matched
-    return get_ai_response(user_input)
+    # No API fallback, just fallback response
+    return random.choice(RESPONSE_DATA["fallback"])
 
-# Streamlit UI form for chat input and submission
 with st.form('chat_form', clear_on_submit=True):
     user_input = st.text_input('Write your message…', key='input_field')
     if st.form_submit_button('Send') and user_input.strip():
         st.session_state.messages.append({'role': 'user', 'content': user_input})
         bot_reply = get_bot_reply(user_input)
         st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
+
         clean_reply = remove_emojis(bot_reply)
         tts = gTTS(clean_reply, lang='en')
         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tts_file:
@@ -230,7 +210,6 @@ with st.form('chat_form', clear_on_submit=True):
         st.audio(audio_bytes, format="audio/mp3")
         os.unlink(tts_file.name)
 
-# Display chat history in chat window
 st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
 msgs = st.session_state.messages
 for i in range(len(msgs) - 2, -1, -2):
@@ -240,7 +219,6 @@ for i in range(len(msgs) - 2, -1, -2):
     st.markdown(f'<div class="bot">{escape(bot_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
 st.markdown('</div></div>', unsafe_allow_html=True)
 
-# Sidebar with goals, tips, and explanation
 with st.sidebar:
     st.markdown("### 🎯 Your Goals")
     if st.session_state.goals:
@@ -255,7 +233,6 @@ with st.sidebar:
     st.markdown("### 🧠 Mini AI Assistant Mode")
     st.write("This bot tries to detect your intent and give focused advice or answers.")
 
-# Download chat history button
 filename = f"chat_history_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
 chat_history_text = "\n".join([f"{m['role'].upper()}: {m['content']}\n" for m in st.session_state.messages])
 st.download_button("📥 Download Chat History", chat_history_text, file_name=filename)

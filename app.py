@@ -32,13 +32,14 @@ def remove_emojis(text):
     return emoji_pattern.sub(r'', text)
 
 st.set_page_config(
-    page_title="AverlinMz Study Chatbot",
+    page_title="AverlinMz Chatbot",
     page_icon="https://i.imgur.com/mJ1X49g_d.webp",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-theme = st.sidebar.selectbox("\U0001F3A8 Choose a theme", ["Default", "Night", "Blue"])
+# Theme selection and CSS
+theme = st.sidebar.selectbox("🎨 Choose a theme", ["Default", "Night", "Blue"])
 if theme == "Night":
     st.markdown("""<style>body, .stApp { background:#111; color:#fff; } .user {background:#333;color:#fff;} .bot {background:#444;color:#fff;}</style>""", unsafe_allow_html=True)
 elif theme == "Blue":
@@ -59,8 +60,6 @@ st.markdown("""
 .user, .bot {align-self:center;width:100%;word-wrap:break-word;box-shadow:0 2px 4px rgba(0,0,0,0.1);font-family:'Poppins',sans-serif;}
 .user{background:#D1F2EB;color:#0B3D2E;padding:12px 16px;border-radius:18px 18px 4px 18px;}
 .bot{background:#EFEFEF;color:#333;padding:12px 16px;border-radius:18px 18px 18px 4px;animation:typing 1s ease-in-out;}
-a {color:#1a73e8; text-decoration:none;}
-a:hover {text-decoration:underline;}
 @keyframes typing {0%{opacity:0;}100%{opacity:1;}}
 @keyframes slideUpFadeIn {
   0% {opacity:0; transform: translateY(30px);}
@@ -69,13 +68,15 @@ a:hover {text-decoration:underline;}
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown(f"""
+st.markdown("""
 <div class="title-container">
   <img src="https://i.imgur.com/mJ1X49g_d.webp" alt="Chatbot Image" style="width:150px;border-radius:20px;margin-bottom:10px;"/>
   <h1>AverlinMz – Study Chatbot</h1>
 </div>
 """, unsafe_allow_html=True)
 
+# Your existing RESPONSE_DATA and KEYWORDS here (not repeating for brevity)
+# Paste all RESPONSE_DATA and KEYWORDS dicts exactly as you gave me before here...
 RESPONSE_DATA = {
     "greetings": [
         "Hey! 👋 Ready to push your limits with some Olympiad-level challenges? 💪📚",
@@ -255,64 +256,134 @@ KEYWORDS = {
     "emotional_support": ["feelings", "emotions", "support", "overwhelmed", "kindness"],
 }
 
-def detect_intent(user_text):
-    user_text_lower = user_text.lower()
-    for intent, keywords in KEYWORDS.items():
-        for kw in keywords:
-            if kw in user_text_lower:
+# I will assume RESPONSE_DATA and KEYWORDS are already defined here exactly as you gave me.
+
+def clean_keyword_list(keywords_dict):
+    cleaned = {}
+    for intent, phrases in keywords_dict.items():
+        cleaned[intent] = [p.lower().translate(str.maketrans('', '', string.punctuation)).strip() for p in phrases]
+    return cleaned
+
+KEYWORDS_CLEANED = clean_keyword_list(KEYWORDS)
+
+def clean_text(text):
+    return text.lower().translate(str.maketrans('', '', string.punctuation)).strip()
+
+def detect_intent(text):
+    msg = clean_text(text)
+    for intent, kws in KEYWORDS_CLEANED.items():
+        if any(kw in msg for kw in kws):
+            return intent
+    words = msg.split()
+    for word in words:
+        for intent, kws in KEYWORDS_CLEANED.items():
+            matches = get_close_matches(word, kws, n=1, cutoff=0.65)
+            if matches:
                 return intent
-    all_keywords = [kw for keys in KEYWORDS.values() for kw in keys]
-    close_matches = get_close_matches(user_text_lower, all_keywords, n=1, cutoff=0.8)
-    if close_matches:
-        for intent, keywords in KEYWORDS.items():
-            if close_matches[0] in keywords:
-                return intent
+    for subj in KEYWORDS["subjects"]:
+        if subj in msg:
+            return "subjects"
     return None
 
-def generate_response(user_text):
-    intent = detect_intent(user_text)
-    if intent is None:
-        return random.choice(FALLBACK_RESPONSES)
+def update_goals(user_input):
+    msg = clean_text(user_input)
+    goal_keywords = ["goal", "aim", "plan", "objective", "target", "resolution", "ambition", "purpose", "intention"]
+    if any(kw in msg for kw in goal_keywords):
+        if user_input not in st.session_state.goals:
+            st.session_state.goals.append(user_input)
+            return "Got it! I've added that to your study goals."
+        else:
+            return "You already mentioned this goal."
+    return None
 
-    if intent in RESPONSE_DATA.get("subjects", {}):
-        return RESPONSE_DATA["subjects"][intent]
+def detect_sentiment(text):
+    positive = ["good", "great", "awesome", "love", "happy", "fine", "well", "fantastic", "wonderful", "excellent", "perfect", "super", "amazing", "terrific"]
+    negative = ["bad", "sad", "tired", "depressed", "down", "exhausted", "stressed", "anxious", "overwhelmed", "frustrated", "awful", "terrible", "horrible"]
+    txt = clean_text(text)
+    if any(word in txt for word in positive): return "positive"
+    if any(word in txt for word in negative): return "negative"
+    return "neutral"
 
-    if intent in RESPONSE_DATA:
-        responses = RESPONSE_DATA[intent]
-        if isinstance(responses, list):
-            return random.choice(responses)
+def get_bot_reply(user_input):
+    intent = detect_intent(user_input)
+    goal_msg = update_goals(user_input)
+    if goal_msg:
+        return goal_msg
 
-    return random.choice(FALLBACK_RESPONSES)
+    sentiment = detect_sentiment(user_input)
+    st.session_state.last_sentiment = sentiment
 
-def render_message(user_text, bot_response):
-    st.markdown(f'<div class="user">{escape(user_text)}</div>', unsafe_allow_html=True)
-    def linkify(text):
-        url_pattern = r'(https?://[^\s]+)'
-        return re.sub(url_pattern, r'<a href="\1" target="_blank">\1</a>', text)
-    bot_response_html = linkify(bot_response).replace('\n', '<br>')
-    st.markdown(f'<div class="bot">{bot_response_html}</div>', unsafe_allow_html=True)
+    if intent and intent in RESPONSE_DATA:
+        if intent == "subjects":
+            for subj in KEYWORDS["subjects"]:
+                if subj in user_input.lower():
+                    st.session_state.context_topic = subj
+                    break
+            return RESPONSE_DATA["subjects"].get(st.session_state.context_topic, random.choice(RESPONSE_DATA["fallback"]))
+        else:
+            st.session_state.context_topic = None
+            return random.choice(RESPONSE_DATA[intent])
 
-def main():
-    st.markdown('<div class="chat-container">', unsafe_allow_html=True)
-    
-    # Render chat history
-    chat_window = st.container()
-    with chat_window:
-        for message in st.session_state.messages:
-            render_message(message['user'], message['bot'])
+    if st.session_state.context_topic:
+        subj = st.session_state.context_topic
+        return RESPONSE_DATA["subjects"].get(subj, random.choice(RESPONSE_DATA["fallback"])) + "\n\n(You asked about this before!)"
 
-    # Input and button
-    user_input = st.text_input("You:", key="input", placeholder="Ask me about Olympiad topics or get study tips...")
+    if sentiment == "positive":
+        return "Glad to hear you're feeling good! Keep it up! 🎉"
+    elif sentiment == "negative":
+        return "I noticed you're feeling down. If you want, I can share some tips or just listen. 💙"
 
-    if st.button("Send") and user_input.strip():
-        user_text = user_input.strip()
-        bot_response = generate_response(user_text)
-        st.session_state.messages.append({"user": user_text, "bot": bot_response})
-        # Clear input safely using session_state update
-        st.session_state.input = ""
-        st.experimental_rerun()
+    possible_subjects = [subj for subj in KEYWORDS["subjects"] if subj in user_input.lower()]
+    if possible_subjects:
+        return f"I see you mentioned {possible_subjects[0]}. Here are some tips:\n\n{RESPONSE_DATA['subjects'].get(possible_subjects[0], '')}"
 
-    st.markdown('</div>', unsafe_allow_html=True)
+    return random.choice(RESPONSE_DATA["fallback"])
 
-if __name__ == "__main__":
-    main()
+# ---- CHAT FORM ----
+with st.form('chat_form', clear_on_submit=True):
+    user_input = st.text_input('Write your message…', key='input_field')
+    submitted = st.form_submit_button('Send')
+
+    if submitted and user_input.strip():
+        st.session_state.messages.append({'role': 'user', 'content': user_input})
+        bot_reply = get_bot_reply(user_input)
+        st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
+
+        # Remove emojis before TTS so audio is clean
+        clean_reply = remove_emojis(bot_reply)
+        tts = gTTS(clean_reply, lang='en')
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tts_file:
+            tts.save(tts_file.name)
+            audio_bytes = open(tts_file.name, "rb").read()
+        st.audio(audio_bytes, format="audio/mp3")
+        os.unlink(tts_file.name)
+
+# Display chat history
+st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
+msgs = st.session_state.messages
+for i in range(len(msgs) - 2, -1, -2):
+    user_msg = msgs[i]['content']
+    bot_msg = msgs[i+1]['content'] if i+1 < len(msgs) else ''
+    st.markdown(f'<div class="user">{escape(user_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="bot">{bot_msg.replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
+st.markdown('</div></div>', unsafe_allow_html=True)
+
+# Sidebar with goals and tips
+with st.sidebar:
+    st.markdown("### 🎯 Your Goals")
+    if st.session_state.goals:
+        for g in st.session_state.goals:
+            st.write("- " + g)
+    else:
+        st.write("You haven't set any goals yet. Tell me your goals!")
+
+    st.markdown("### 💡 Tips")
+    st.info("Try asking things like:\n- 'Give me study tips'\n- 'Tell me about physics'\n- 'How do I manage time?'\n- Or just say 'bye' to end the chat!")
+
+    st.markdown("### 🧠 Mini AI Assistant Mode")
+    st.write("This bot tries to detect your intent and give focused advice or answers.")
+
+# Download chat history button
+filename = f"chat_history_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+chat_history_text = "\n".join([f"{m['role'].upper()}: {m['content']}\n" for m in st.session_state.messages])
+st.download_button("📥 Download Chat History", chat_history_text, file_name=filename)

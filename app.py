@@ -32,13 +32,13 @@ def remove_emojis(text):
     return emoji_pattern.sub(r'', text)
 
 st.set_page_config(
-    page_title="AverlinMz Olympiad Chatbot",
+    page_title="AverlinMz Study Chatbot",
     page_icon="https://i.imgur.com/mJ1X49g_d.webp",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-theme = st.sidebar.selectbox("🎨 Choose a theme", ["Default", "Night", "Blue"])
+theme = st.sidebar.selectbox("\U0001F3A8 Choose a theme", ["Default", "Night", "Blue"])
 if theme == "Night":
     st.markdown("""<style>body, .stApp { background:#111; color:#fff; } .user {background:#333;color:#fff;} .bot {background:#444;color:#fff;}</style>""", unsafe_allow_html=True)
 elif theme == "Blue":
@@ -72,10 +72,9 @@ a:hover {text-decoration:underline;}
 st.markdown(f"""
 <div class="title-container">
   <img src="https://i.imgur.com/mJ1X49g_d.webp" alt="Chatbot Image" style="width:150px;border-radius:20px;margin-bottom:10px;"/>
-  <h1>AverlinMz – Olympiad Study Chatbot</h1>
+  <h1>AverlinMz – Study Chatbot</h1>
 </div>
 """, unsafe_allow_html=True)
-
 
 RESPONSE_DATA = {
     "greetings": [
@@ -326,12 +325,11 @@ KEYWORDS = {
     "emotional_support": ["feelings", "emotions", "support", "overwhelmed", "kindness"],
 }
 
-# URLs for fallback recommendations
-EXTERNAL_HELP = {{
+EXTERNAL_HELP = {
     "ChatGPT": "https://chat.openai.com/",
     "DeepSeek": "https://deepseek.ai/",
     "WolframAlpha": "https://www.wolframalpha.com/"
-}}
+}
 
 def detect_intent(user_text):
     user_text_lower = user_text.lower()
@@ -339,7 +337,6 @@ def detect_intent(user_text):
         for kw in keywords:
             if kw in user_text_lower:
                 return intent
-    # If no direct keyword, try fuzzy matching to known intents (to catch typos)
     all_keywords = [kw for keys in KEYWORDS.values() for kw in keys]
     close_matches = get_close_matches(user_text_lower, all_keywords, n=1, cutoff=0.8)
     if close_matches:
@@ -350,33 +347,24 @@ def detect_intent(user_text):
 
 def generate_response(user_text):
     intent = detect_intent(user_text)
-    if intent is None:
-        # No matching intent; guide user to external help
-        response = (
-            "Sorry, I couldn't find an answer. "
-            "You might try asking ChatGPT or DeepSeek for help:\n\n"
-            + "\n".join([f"- [{name}]({url})" for name, url in EXTERNAL_HELP.items()])
-        )
+   if intent is None:
+    response = (
+        "Sorry, I’m not sure how to answer that right now. "
+        "You might try rephrasing your question, checking reliable sources online, "
+        "or asking in another chat platform. I’m still learning every day!"
+    )
+
         return response
-    
-    # Handle subjects separately
-    if intent == "math" or intent == "physics" or intent == "chemistry" or intent == "biology" or intent == "computer_science" or intent == "english":
-        tips = RESPONSE_DATA["subjects"].get(intent)
-        if tips:
-            return tips
-    
-    # For other intents, pick a random response from the list
+    if intent in RESPONSE_DATA.get("subjects", {}):
+        return RESPONSE_DATA["subjects"].get(intent)
     if intent in RESPONSE_DATA:
         responses = RESPONSE_DATA[intent]
         if isinstance(responses, list):
             return random.choice(responses)
-    
-    # Default fallback if something's off
     return "I'm not sure how to help with that right now. Try rephrasing or ask about Olympiad topics!"
 
 def render_message(user_text, bot_response):
     st.markdown(f'<div class="user">{escape(user_text)}</div>', unsafe_allow_html=True)
-    # For URLs in response, render as clickable links
     def linkify(text):
         url_pattern = r'(https?://[^\s]+)'
         return re.sub(url_pattern, r'<a href="\1" target="_blank">\1</a>', text)
@@ -385,26 +373,18 @@ def render_message(user_text, bot_response):
 
 def main():
     st.markdown('<div class="chat-container">', unsafe_allow_html=True)
-
-    # Chat display
     chat_window = st.container()
     with chat_window:
         for message in st.session_state.messages:
             render_message(message['user'], message['bot'])
-
-    # User input
     user_input = st.text_input("You:", key="input", placeholder="Ask me about Olympiad topics or get study tips...")
-
     if st.button("Send") or (user_input and st.session_state.input != ""):
         user_text = user_input.strip()
         if user_text:
             bot_response = generate_response(user_text)
             st.session_state.messages.append({"user": user_text, "bot": bot_response})
-            st.session_state.input = ""  # Clear input box
-
-            # Scroll to bottom workaround
+            st.session_state.input = ""
             st.experimental_rerun()
-
     st.markdown('</div>', unsafe_allow_html=True)
 
 if __name__ == "__main__":

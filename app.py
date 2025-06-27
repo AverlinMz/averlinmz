@@ -74,8 +74,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-
-  RESPONSE_DATA = {
+RESPONSE_DATA = {
     "greetings": [
         "Hey! 👋 How's your day shaping up? Ready to tackle some study questions? 📚",
         "Hello! 😊 What topic shall we explore today? 🤔",
@@ -275,7 +274,6 @@ st.markdown("""
         "I didn’t quite get that. Could you rephrase or ask something else? 💡"
     ]
 }
-
 
 KEYWORDS = {
     "greetings": ["hi", "hello", "hey", "good morning", "good afternoon", "good evening", "greetings", "yo"],

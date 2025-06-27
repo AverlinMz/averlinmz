@@ -256,7 +256,7 @@ RESPONSE_DATA = {
         "Feel free to send your feedback or questions through this <a href='https://docs.google.com/forms/d/1hYk968UCuX0iqsJujVNFGVkBaJUIhA67SXJKe0xWeuM/edit' target='_blank'>Google Form</a> 💬😊",
         "Aylin welcomes your messages! Use this <a href='https://docs.google.com/forms/d/1hYk968UCuX0iqsJujVNFGVkBaJUIhA67SXJKe0xWeuM/edit' target='_blank'>Google Form</a> 📬🤗"
     ],
-    subjects = {
+    subjects : {
     "math": "🧮 Math Tips:\n"
             "1️⃣ Master core topics: algebra, number theory, combinatorics, geometry, inequalities, functional equations. Understand key theorems deeply (e.g., AM-GM, Pigeonhole).\n"
             "2️⃣ Practice rigorous proofs and reasoning techniques — induction, contradiction, extremal principles. Focus on creativity beyond standard exercises.\n"

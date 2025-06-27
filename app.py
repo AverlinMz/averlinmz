@@ -268,20 +268,21 @@ RESPONSE_DATA = {
         "What’s a small win you can celebrate today? Recognition fuels motivation! 🏆",
         "Are your study goals still relevant? Adjusting plans is a sign of wisdom, not weakness. 🔧"
     ],
-    "fallback": [
-        "I'm not sure I understood that — could you try rephrasing? 🤔😊",
-        "Sorry, I didn't catch that. Want to try again? 🔄",
-        "I'm learning every day! Could you ask differently? 📚✨",
-        "That's new to me! Care to explain? 🤖❓",
-        "Oops, I didn't get that. Let's try another question! 💬",
-        "I might need more context. Could you elaborate? 💭",
-        "Interesting question! Could you phrase it differently? 🤔",
-        "I want to help - can you ask in another way? 🛠️"
-    ]
+   "fallback": [
+    "I'm not sure I have a good answer to that — I'm still learning, just like you. 🌱  \
+    But that doesn't mean your question isn't valuable. Sometimes, asking the right question *is* the first step to learning. \
+    You might try rephrasing it, or explore with tools like web search, books, or even other AIs. Either way, I'm here to support you, not pretend I know everything. Let's figure it out together. 🤝"
+]
+
 }
 
 
 KEYWORDS = {
+    "smart_study": [
+    "study smart", "study tips", "effective study", "study strategies",
+    "meta learning", "learning how to learn", "smart studying", "study hacks",
+    "how to study smart and not hard", "give me some study hacks"
+],
     "greetings": ["hello", "hi", "hey", "hiya", "greetings", "what's up", "howdy", "good morning", "good afternoon", "good evening", "sup", "yo"],
     "thanks": ["thank you", "thanks", "thx", "ty", "much appreciated", "many thanks", "grateful", "appreciate it", "thanks a lot", "thank you so much"],
     "farewell": ["goodbye", "bye", "see you", "farewell", "later", "take care", "until next time", "signing off", "talk later", "catch you later", "peace out"],

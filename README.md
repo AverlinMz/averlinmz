@@ -48,6 +48,8 @@ _Set your targets to get reminders and encouragement along the way._
 -> Engage in ongoing conversations.  
 _Use the chatbot to deepen your study planning and maintain motivation._  
 
+*If at any point AverlinMz doesn’t have an answer to your question, consider exploring additional resources such as web searches or other AI chatbots to complement your learning.*
+
 ---
 
 ## Access AverlinMz anytime here:

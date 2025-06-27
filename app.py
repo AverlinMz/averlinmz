@@ -31,6 +31,12 @@ def remove_emojis(text):
                                flags=re.UNICODE)
     return emoji_pattern.sub(r'', text)
 
+
+def strip_urls_for_tts(text):
+    url_pattern = r'http[s]?://\S+|www\.\S+'
+    return re.sub(url_pattern, '', text)
+
+
 st.set_page_config(
     page_title="AverlinMz Chatbot",
     page_icon="https://i.imgur.com/mJ1X49g_d.webp",
@@ -682,20 +688,23 @@ with st.form('chat_form', clear_on_submit=True):
     if st.form_submit_button('Send') and user_input.strip():
         st.session_state.messages.append({'role': 'user', 'content': user_input})
         
-        bot_reply = get_bot_reply(user_input)
-        st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
+                bot_reply = get_bot_reply(user_input)
 
-        # --- Prepare clean version of bot reply for audio ---
+        # Clean bot reply for TTS only
         clean_reply = remove_emojis(bot_reply)
         clean_reply_no_urls = strip_urls_for_tts(clean_reply)
 
-        # --- Convert to speech and play ---
+        # Save both original and clean versions
+        st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
+
+        # TTS with clean version
         tts = gTTS(clean_reply_no_urls, lang='en')
         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tts_file:
             tts.save(tts_file.name)
             audio_bytes = open(tts_file.name, "rb").read()
         st.audio(audio_bytes, format="audio/mp3")
         os.unlink(tts_file.name)
+
 
 st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
 msgs = st.session_state.messages

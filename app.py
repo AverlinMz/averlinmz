@@ -115,7 +115,7 @@ RESPONSE_DATA = {
         "Handle stress with simple strategies:\n1️⃣ Practice deep breathing or mindfulness breaks to calm your mind.\n2️⃣ Move your body — a short walk or stretch releases tension.\n3️⃣ Keep a balanced routine with hobbies and social time to recharge. 🌬️🚶‍♂️🎨",
         
         "Maintain emotional well-being:\n1️⃣ Prioritize a healthy sleep schedule — avoid late-night studying.\n2️⃣ Unwind before bed with relaxing activities.\n3️⃣ Talk to someone you trust or journal your feelings when anxiety builds up. 🛌💬📝"
-    ]
+    ],
     "thanks": [
         "You're welcome! Glad I could help! 😊👍",
         "Anytime! Keep shining in your studies! ✨",

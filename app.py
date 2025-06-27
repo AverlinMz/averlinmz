@@ -75,7 +75,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 RESPONSE_DATA = {
-      "how_are_you": [
+    "how_are_you": [
         "I'm doing well, thanks! How are you feeling today? 🙂",
         "All good here! How about you? 🤗",
         "Feeling ready to help! What about you? ⚡",
@@ -87,33 +87,24 @@ RESPONSE_DATA = {
         "Hi there! Let's make your study session productive! 💡",
         "Hey! I'm here to help — what's on your mind? 💬"
     ],
-     "problem_solving_mindset": [
+    "problem_solving_mindset": [
         "Stuck on a tough problem? Try these steps:\n1️⃣ Break it down into smaller parts and look for patterns.\n2️⃣ Explain the problem out loud or teach it to someone else — it often sparks new ideas.\n3️⃣ Remember, practice builds skill — take breaks if frustrated and return fresh! 💡🧩",
-        
         "Problem-solving requires creativity and patience:\n1️⃣ Change your perspective or try a different approach.\n2️⃣ Step back and assess what you know vs. what you need to find out.\n3️⃣ Keep experimenting and trust the process — persistence pays off! 🔄🔍"
     ],
-
     "metacognition": [
         "Boost your learning with metacognition techniques:\n1️⃣ Use active recall by testing yourself instead of rereading notes.\n2️⃣ Apply spaced repetition to review material at increasing intervals.\n3️⃣ Summarize concepts in your own words or teach them — this deepens understanding! 🧠📚",
-        
         "Improve memory and comprehension:\n1️⃣ Mix topics during study sessions (interleaving) to enhance retention.\n2️⃣ Reflect on mistakes and successes after each study period.\n3️⃣ Use the Feynman technique: explain ideas simply to grasp them better! ✍️🔄"
     ],
-
     "time_management": [
         "Manage your time like a pro:\n1️⃣ Set clear study goals and take regular breaks using Pomodoro (25 min study, 5 min rest).\n2️⃣ Focus on one task at a time — multitasking hurts productivity.\n3️⃣ Prioritize tasks by deadlines and importance for efficient progress. ⏰🎯",
-        
         "Optimize your daily schedule:\n1️⃣ Track your time to spot distractions and improve focus.\n2️⃣ Allocate time for rest, hobbies, and socializing to avoid burnout.\n3️⃣ Stay flexible and adjust your plan as needed — balance is key! ⚖️🌟"
     ],
-
     "growth_mindset": [
         "Embrace a growth mindset to thrive:\n1️⃣ See mistakes as learning opportunities, not failures.\n2️⃣ Face challenges confidently — every effort builds skill.\n3️⃣ Celebrate small wins to keep motivation high! 🚀🌱",
-        
         "Build resilience and confidence:\n1️⃣ Change strategies or ask for feedback when stuck.\n2️⃣ View failure as a step toward success.\n3️⃣ Remember, progress takes time — be patient and persistent! 💪🌈"
     ],
-
     "stress_management": [
         "Handle stress with simple strategies:\n1️⃣ Practice deep breathing or mindfulness breaks to calm your mind.\n2️⃣ Move your body — a short walk or stretch releases tension.\n3️⃣ Keep a balanced routine with hobbies and social time to recharge. 🌬️🚶‍♂️🎨",
-        
         "Maintain emotional well-being:\n1️⃣ Prioritize a healthy sleep schedule — avoid late-night studying.\n2️⃣ Unwind before bed with relaxing activities.\n3️⃣ Talk to someone you trust or journal your feelings when anxiety builds up. 🛌💬📝"
     ],
     "thanks": [
@@ -128,7 +119,6 @@ RESPONSE_DATA = {
         "See you later! Stay curious and motivated! 🔥",
         "Bye! Keep pushing forward! 💪"
     ],
-  
     "burnout": [
         "You're pushing hard — maybe too hard. A short break can recharge you more than another hour of stress. 🌱",
         "No shame in feeling tired. Real strength is knowing when to pause. Rest isn't quitting — it's strategy. 💡",
@@ -254,135 +244,58 @@ RESPONSE_DATA = {
         "You can contact Aylin by filling out this <a href='https://docs.google.com/forms/d/1hYk968UCuX0iqsJujVNFGVkBaJUIhA67SXJKe0xWeuM/edit' target='_blank'>Google Form</a> 📋✨",
         "Reach out to Aylin anytime via this <a href='https://docs.google.com/forms/d/1hYk968UCuX0iqsJujVNFGVkBaJUIhA67SXJKe0xWeuM/edit' target='_blank'>Google Form</a> 📨🌟",
         "Feel free to send your feedback or questions through this <a href='https://docs.google.com/forms/d/1hYk968UCuX0iqsJujVNFGVkBaJUIhA67SXJKe0xWeuM/edit' target='_blank'>Google Form</a> 💬😊",
-        "Aylin welcomes your messages! Use this <a href='https://docs.google.com/forms/d/1hYk968UCuX0iqsJujVNFGVkBaJUIhA67SXJKe0xWeuM/edit' target='_blank'>Google Form</a> 📬🤗"
+        "Aylin welcomes your messages! Use this <a href='https://docs.google.com/forms/d/1hYk968UCuX0iqsJujVNFGVkBaJUIhA67SXJKe0xWeuM/edit' target='_blank'>Google Form</a> 📬"
     ],
-    subjects : {
-    "math": "🧮 Math Tips:\n"
-            "1️⃣ Master core topics: algebra, number theory, combinatorics, geometry, inequalities, functional equations. Understand key theorems deeply (e.g., AM-GM, Pigeonhole).\n"
-            "2️⃣ Practice rigorous proofs and reasoning techniques — induction, contradiction, extremal principles. Focus on creativity beyond standard exercises.\n"
-            "3️⃣ Solve progressively challenging problems from trusted sources. Struggling through hard problems builds true skill.\n"
-            "4️⃣ Analyze multiple solution paths, including elegant shortcuts and alternative methods. Reflect on mistakes and missed insights.\n"
-            "5️⃣ Develop time management skills for problem-solving under pressure. Know when to move on or rethink approaches.\n"
-            "6️⃣ Discuss solutions and proofs with peers or mentors. Explaining ideas aloud sharpens understanding.\n"
-            "7️⃣ Keep a detailed problem log: attempts, solutions, errors, and lessons learned. Review regularly to track progress.",
-
-    "physics": "🧪 Physics Tips:\n"
-               "1️⃣ Build a solid conceptual foundation in classical mechanics, electromagnetism, thermodynamics, optics, and quantum basics. Understand principles, not just formulas.\n"
-               "2️⃣ Derive key formulas yourself to internalize assumptions and deepen comprehension.\n"
-               "3️⃣ Solve both theoretical and practical problems. Experiment skills and data interpretation are crucial.\n"
-               "4️⃣ Visualize problems with diagrams and free body forces; it clarifies complex ideas.\n"
-               "5️⃣ Study dimensional analysis and units carefully to avoid errors.\n"
-               "6️⃣ Connect physics concepts to real-world applications to enhance intuition.\n"
-               "7️⃣ Review mistakes thoroughly; understanding errors is key to improvement.",
-
-    "chemistry": "⚗️ Chemistry Tips:\n"
-                 "1️⃣ Understand periodic trends, atomic structure, and bonding thoroughly.\n"
-                 "2️⃣ Practice balancing complex reactions and predicting products accurately.\n"
-                 "3️⃣ Memorize key functional groups and reaction mechanisms with purpose.\n"
-                 "4️⃣ Relate organic, inorganic, and physical chemistry concepts cohesively.\n"
-                 "5️⃣ Apply concepts through problem-solving, especially stoichiometry and thermodynamics.\n"
-                 "6️⃣ Conduct or simulate experiments to visualize chemical processes.\n"
-                 "7️⃣ Develop systematic approaches to tackle multi-step synthesis problems.",
-
-    "biology": "🧬 Biology Tips:\n"
-               "1️⃣ Build clear mental models for complex processes like cellular respiration, photosynthesis, and genetics.\n"
-               "2️⃣ Use diagrams extensively to map structures and physiological pathways.\n"
-               "3️⃣ Connect concepts across molecular biology, ecology, and evolution for integrated understanding.\n"
-               "4️⃣ Memorize terminology with flashcards, but focus on understanding functions.\n"
-               "5️⃣ Relate biological systems to real-life examples for better retention.\n"
-               "6️⃣ Practice interpreting experimental data and drawing conclusions.\n"
-               "7️⃣ Review past questions to identify common patterns and themes.",
-
-    "history": "🏛 History Tips:\n"
-               "1️⃣ Create detailed timelines to understand the sequence and context of events.\n"
-               "2️⃣ Analyze causes, effects, and long-term consequences critically.\n"
-               "3️⃣ Connect political, economic, and cultural factors for holistic perspectives.\n"
-               "4️⃣ Use storytelling techniques to remember complex narratives.\n"
-               "5️⃣ Relate historical events to contemporary issues for relevance.\n"
-               "6️⃣ Practice essay writing focusing on argument structure and evidence.\n"
-               "7️⃣ Compare different historians’ interpretations to develop analytical skills.",
-
-    "language": "🗣 Language Learning Tips:\n"
-                "1️⃣ Practice speaking daily, even to yourself, to build fluency.\n"
-                "2️⃣ Learn phrases and idioms, not just individual words.\n"
-                "3️⃣ Immerse yourself with media: books, podcasts, shows in the target language.\n"
-                "4️⃣ Keep a vocabulary journal with context sentences.\n"
-                "5️⃣ Don’t fear mistakes; they’re essential for learning.\n"
-                "6️⃣ Use spaced repetition for long-term retention.\n"
-                "7️⃣ Practice listening actively to different accents and speeds.",
-
-    "programming": "💻 Programming Tips:\n"
-                   "1️⃣ Code daily, starting with small projects to build consistency.\n"
-                   "2️⃣ Read and analyze others’ code to learn different styles and approaches.\n"
-                   "3️⃣ Understand core concepts deeply before moving to frameworks.\n"
-                   "4️⃣ Practice debugging methodically; learn to read error messages.\n"
-                   "5️⃣ Work on projects that solve real problems to stay motivated.\n"
-                   "6️⃣ Write clean, commented code to improve readability.\n"
-                   "7️⃣ Keep updating yourself with algorithm and data structure challenges.",
-
-    "literature": "📚 Literature Tips:\n"
-                  "1️⃣ Read actively by annotating texts and noting themes.\n"
-                  "2️⃣ Analyze motifs, symbols, and narrative techniques deeply.\n"
-                  "3️⃣ Connect works to their historical and cultural contexts.\n"
-                  "4️⃣ Practice close reading and textual analysis.\n"
-                  "5️⃣ Discuss interpretations with peers to broaden perspectives.\n"
-                  "6️⃣ Write essays focusing on clear arguments supported by evidence.\n"
-                  "7️⃣ Explore different literary genres and styles.",
-
-    "geography": "🌍 Geography Tips:\n"
-                 "1️⃣ Use maps regularly to understand spatial relationships.\n"
-                 "2️⃣ Study climate systems and their impact on human activity.\n"
-                 "3️⃣ Integrate physical geography with human geography concepts.\n"
-                 "4️⃣ Create mind maps linking topics like urbanization, resources, and environment.\n"
-                 "5️⃣ Relate theories to current global issues like climate change.\n"
-                 "6️⃣ Practice interpreting geographic data and charts.\n"
-                 "7️⃣ Stay updated with geographical news and case studies.",
-
-    "economics": "💹 Economics Tips:\n"
-                 "1️⃣ Grasp basic principles: supply & demand, market structures, elasticity.\n"
-                 "2️⃣ Follow current economic news to see theories in action.\n"
-                 "3️⃣ Practice drawing and analyzing graphs carefully.\n"
-                 "4️⃣ Understand micro and macroeconomics links thoroughly.\n"
-                 "5️⃣ Apply models to real-world scenarios to build intuition.\n"
-                 "6️⃣ Work on quantitative problems involving data interpretation.\n"
-                 "7️⃣ Review policy impacts and their economic rationale."
-},
+    "subjects": {
+        "math": (
+            "🧮 Math Tips:\n"
+            "1️⃣ Master core topics like algebra, geometry, number theory, and combinatorics.\n"
+            "2️⃣ Practice problem-solving regularly — it's not just theory, it's application.\n"
+            "3️⃣ Review past Olympiad problems to understand common patterns.\n"
+            "4️⃣ Break complex problems into smaller steps.\n"
+            "5️⃣ Always check your solutions for mistakes."
+        ),
+        "physics": (
+            "⚛️ Physics Tips:\n"
+            "1️⃣ Understand fundamental concepts before memorizing formulas.\n"
+            "2️⃣ Solve plenty of problems covering mechanics, electromagnetism, thermodynamics.\n"
+            "3️⃣ Draw diagrams to visualize problems.\n"
+            "4️⃣ Practice applying concepts to real-world situations.\n"
+            "5️⃣ Review units and dimensional analysis carefully."
+        ),
+        "chemistry": (
+            "⚗️ Chemistry Tips:\n"
+            "1️⃣ Focus on chemical reactions, stoichiometry, and periodic table trends.\n"
+            "2️⃣ Practice balancing equations and understanding reaction mechanisms.\n"
+            "3️⃣ Memorize common ions and molecules.\n"
+            "4️⃣ Conduct or visualize lab experiments mentally.\n"
+            "5️⃣ Link theory to practical applications."
+        ),
+        "biology": (
+            "🧬 Biology Tips:\n"
+            "1️⃣ Learn cell biology, genetics, evolution, and ecology.\n"
+            "2️⃣ Use diagrams and flowcharts for processes.\n"
+            "3️⃣ Memorize key terms but focus on understanding.\n"
+            "4️⃣ Relate concepts to everyday life for better retention.\n"
+            "5️⃣ Review past exam questions."
+        ),
+        "computer_science": (
+            "💻 CS Tips:\n"
+            "1️⃣ Learn algorithms and data structures thoroughly.\n"
+            "2️⃣ Practice coding problems regularly.\n"
+            "3️⃣ Understand complexity and optimization.\n"
+            "4️⃣ Work on small projects to apply knowledge.\n"
+            "5️⃣ Participate in contests to improve speed and accuracy."
+        )
+    },
     "emotional_support": [
-        "It's okay to feel overwhelmed. You're not alone in this — let’s take it one step at a time. 🤗",
-        "Your feelings are valid. Taking care of your mind is just as important as your studies. 🧠❤️",
-        "When the load feels too heavy, remember: small steps forward still move you ahead. 🌿",
-        "You’re stronger than you think. Together, we’ll find ways to cope and keep going. 💪"
-    ],
-    "growth_mindset": [
-        "Mistakes are proof you're trying. Every error is a step towards mastery. 📈",
-        "Curiosity is your best study partner — ask questions, explore, and grow! 🌱",
-        "Challenges shape you — they’re not roadblocks but stepping stones. Keep climbing! 🧗",
-        "Growth isn’t linear. Be patient with yourself and celebrate progress, no matter how small. 🎉"
-    ],
-    "smart_study": [
-        "Active recall beats passive reading — test yourself often! 🧠",
-        "Switch subjects to keep your brain fresh and focused. Variety helps retention. 🔄",
-        "Set specific, achievable goals to avoid overwhelm. Clarity fuels action. 🎯",
-        "Teach what you learn — explaining concepts deepens understanding. 👩‍🏫"
-    ],
-    "fun_curiosity": [
-        "Did you know? The brain’s neurons can make a thousand new connections every second! 🤯",
-        "Here's a fun fact: The word 'quiz' started as a bet! Want to know more quirky study trivia? 🤓",
-        "Taking a short laugh break boosts memory retention. Ready for a study joke? 🃏",
-        "Curiosity sparks dopamine — the brain’s reward chemical. Learning is literally addictive! 🎉"
-    ],
-    "user_reflection": [
-        "What’s one thing you learned today that surprised you? 🤔",
-        "How did you feel during your study session? Tracking emotions helps improve focus. 📊",
-        "What’s a small win you can celebrate today? Recognition fuels motivation! 🏆",
-        "Are your study goals still relevant? Adjusting plans is a sign of wisdom, not weakness. 🔧"
-    ],
-    "fallback": [
-        "Sorry, I didn't understand that. Can you try asking differently? 🤔",
-        "Hmm, I’m not sure how to respond to that yet. Let’s keep the focus on studies! 📚",
-        "I didn’t quite get that. Could you rephrase or ask something else? 💡"
+        "It's okay to feel overwhelmed sometimes. You're stronger than you think. 💪❤️",
+        "Take a deep breath. You're doing your best, and that's enough. 🌬️✨",
+        "Remember, progress isn't always linear. Be kind to yourself. 🌱",
+        "Whenever you feel stuck, reach out — you're not alone in this. 🤝"
     ]
 }
+
 
 KEYWORDS = {
     "greetings": [

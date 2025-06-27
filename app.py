@@ -9,7 +9,7 @@ import os
 from gtts import gTTS
 from difflib import get_close_matches
 
-# ----- Session state initialization -----
+# Initialize session state
 def init_session():
     if "messages" not in st.session_state:
         st.session_state.messages = []
@@ -35,128 +35,47 @@ st.set_page_config(
     page_title="AverlinMz Chatbot",
     page_icon="https://i.imgur.com/mJ1X49g_d.webp",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
-# --- Warm gradient background and bubble styles ---
+theme = st.sidebar.selectbox("🎨 Choose a theme", ["Default", "Night", "Blue"])
+if theme == "Night":
+    st.markdown("""<style>body, .stApp { background:#111; color:#fff; } .user {background:#333;color:#fff;} .bot {background:#444;color:#fff;}</style>""", unsafe_allow_html=True)
+elif theme == "Blue":
+    st.markdown("""<style>body, .stApp { background:#e0f7fa; } .user {background:#81d4fa;color:#01579b;} .bot {background:#b2ebf2;color:#004d40;}</style>""", unsafe_allow_html=True)
+
 st.markdown("""
 <style>
-body, .stApp {
-  background: linear-gradient(135deg, #F9D423 0%, #FF4E50 50%, #E7206D 100%);
-  color: #222;
-  font-family: 'Poppins', sans-serif;
-}
+.chat-container {max-width:900px;margin:0 auto;padding:20px;display:flex;flex-direction:column;}
 .title-container {
   text-align:center;
-  padding-bottom: 20px;
+  padding-bottom:10px;
+  font-family:'Poppins',sans-serif;
+  font-weight:600;
   animation: slideUpFadeIn 1s ease forwards;
 }
-.title-container h1 {
-  margin:0;
-  font-weight: 700;
-  font-size: 3rem;
-  background: linear-gradient(90deg, #F9D423 0%, #FF4E50 50%, #E7206D 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-.chat-container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  background: rgba(255,255,255,0.85);
-  border-radius: 20px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-}
-.chat-window {
-  flex-grow: 1;
-  max-height: 60vh;
-  overflow-y: auto;
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  scroll-behavior: smooth;
-}
-.user, .bot {
-  max-width: 70%;
-  word-wrap: break-word;
-  font-size: 1.1rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  padding: 14px 20px;
-  border-radius: 25px;
-  animation: typing 1s ease-in-out;
-}
-.user {
-  background: #FFD966;
-  color: #662E00;
-  align-self: flex-end;
-  border-radius: 25px 25px 5px 25px;
-}
-.bot {
-  background: #FF9AA2;
-  color: #3B0B0B;
-  align-self: flex-start;
-  border-radius: 25px 25px 25px 5px;
-}
-input[type="text"] {
-  width: 100%;
-  padding: 15px 20px;
-  font-size: 1.1rem;
-  border-radius: 30px;
-  border: 2px solid #FF4E50;
-  outline: none;
-  transition: border-color 0.3s ease;
-  box-shadow: 0 4px 12px rgba(255,78,80,0.3);
-}
-input[type="text"]:focus {
-  border-color: #E7206D;
-  box-shadow: 0 6px 20px rgba(231,32,109,0.5);
-}
-.send-button {
-  background: #E7206D;
-  color: white;
-  font-weight: 700;
-  padding: 12px 25px;
-  border: none;
-  border-radius: 30px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-  margin-left: 10px;
-}
-.send-button:hover {
-  background: #FF4E50;
-}
-@keyframes typing {
-  0% {opacity: 0;}
-  100% {opacity: 1;}
-}
+.title-container h1 {margin:0;}
+.chat-window{flex-grow:1;max-height:60vh;overflow-y:auto;padding:15px;display:flex;flex-direction:column;gap:15px;}
+.user, .bot {align-self:center;width:100%;word-wrap:break-word;box-shadow:0 2px 4px rgba(0,0,0,0.1);font-family:'Poppins',sans-serif;}
+.user{background:#D1F2EB;color:#0B3D2E;padding:12px 16px;border-radius:18px 18px 4px 18px;}
+.bot{background:#EFEFEF;color:#333;padding:12px 16px;border-radius:18px 18px 18px 4px;animation:typing 1s ease-in-out;}
+@keyframes typing {0%{opacity:0;}100%{opacity:1;}}
 @keyframes slideUpFadeIn {
-  0% {opacity: 0; transform: translateY(30px);}
-  100% {opacity: 1; transform: translateY(0);}
-}
-.sidebar .block-container {
-  background: rgba(255,255,255,0.9) !important;
-  border-radius: 20px !important;
-  padding: 20px !important;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.1) !important;
-  margin-bottom: 20px !important;
+  0% {opacity:0; transform: translateY(30px);}
+  100% {opacity:1; transform: translateY(0);}
 }
 </style>
 """, unsafe_allow_html=True)
 
-# Title and logo
-st.markdown(f"""
+st.markdown("""
 <div class="title-container">
-  <img src="https://i.imgur.com/mJ1X49g_d.webp" alt="AverlinMz Logo" style="width:180px; border-radius: 30px; margin-bottom: 15px;" />
+  <img src="https://i.imgur.com/mJ1X49g_d.webp" alt="Chatbot Image" style="width:150px;border-radius:20px;margin-bottom:10px;"/>
   <h1>AverlinMz – Study Chatbot</h1>
 </div>
 """, unsafe_allow_html=True)
 
-# Your keyword and response data placeholders (add your real data)
 RESPONSE_DATA = {
-       "greetings": [
+    "greetings": [
         "Hey! 👋 How's your day shaping up? Ready to tackle some study questions? 📚",
         "Hello! 😊 What topic shall we explore today? 🤔",
         "Hi there! Let's make your study session productive! 💡",
@@ -355,11 +274,11 @@ RESPONSE_DATA = {
     You might try rephrasing it, or explore with tools like web search, books, or even other AIs. Either way, I'm here to support you, not pretend I know everything. Let's figure it out together. 🤝"
 ]
 
-
 }
 
+
 KEYWORDS = {
-     "smart_study": [
+    "smart_study": [
     "study smart", "study tips", "effective study", "study strategies",
     "meta learning", "learning how to learn", "smart studying", "study hacks",
     "how to study smart and not hard", "give me some study hacks"
@@ -404,8 +323,8 @@ KEYWORDS = {
     "smart_study": ["study smart", "study tips", "effective study", "study strategies", "meta learning", "learning how to learn", "smart studying", "study hacks"],
     "fun_curiosity": ["fun fact", "study joke", "interesting fact", "did you know", "fun trivia", "curiosity", "learning fun", "fun study"],
     "user_reflection": ["reflect", "self reflection", "what did i learn", "how do i feel", "track progress", "self tracking", "reflection", "journal"]
-
 }
+
 
 def clean_keyword_list(keywords_dict):
     cleaned = {}
@@ -426,10 +345,11 @@ def detect_intent(text):
         if any(kw in msg for kw in kws):
             return intent
     
-    # Then check for fuzzy matches
+    # Then check for similar words using fuzzy matching
     words = msg.split()
     for word in words:
         for intent, kws in KEYWORDS_CLEANED.items():
+            # Find close matches with 65% similarity threshold (lowered for broader matching)
             matches = get_close_matches(word, kws, n=1, cutoff=0.65)
             if matches:
                 return intent
@@ -471,6 +391,7 @@ def get_bot_reply(user_input):
 
     if intent and intent in RESPONSE_DATA:
         if intent == "subjects":
+            # detect specific subject mentioned
             for subj in KEYWORDS["subjects"]:
                 if subj in user_input.lower():
                     st.session_state.context_topic = subj
@@ -489,22 +410,21 @@ def get_bot_reply(user_input):
     elif sentiment == "negative":
         return "I noticed you're feeling down. If you want, I can share some tips or just listen. 💙"
 
+    # Enhanced fallback that tries to extract possible subjects
     possible_subjects = [subj for subj in KEYWORDS["subjects"] if subj in user_input.lower()]
     if possible_subjects:
         return f"I see you mentioned {possible_subjects[0]}. Here are some tips:\n\n{RESPONSE_DATA['subjects'].get(possible_subjects[0], '')}"
 
     return random.choice(RESPONSE_DATA["fallback"])
 
-# --- Main chat UI ---
 with st.form('chat_form', clear_on_submit=True):
-    user_input = st.text_input('Write your message…', key='input_field', placeholder="Ask me anything about studying!")
-    send_clicked = st.form_submit_button('Send')
-    if send_clicked and user_input.strip():
+    user_input = st.text_input('Write your message…', key='input_field')
+    if st.form_submit_button('Send') and user_input.strip():
         st.session_state.messages.append({'role': 'user', 'content': user_input})
         bot_reply = get_bot_reply(user_input)
         st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
 
-        # Remove emojis before TTS
+        # Remove emojis before TTS so audio is clean
         clean_reply = remove_emojis(bot_reply)
         tts = gTTS(clean_reply, lang='en')
         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tts_file:
@@ -513,17 +433,17 @@ with st.form('chat_form', clear_on_submit=True):
         st.audio(audio_bytes, format="audio/mp3")
         os.unlink(tts_file.name)
 
-# Render chat messages
 st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
 msgs = st.session_state.messages
-for i in range(len(msgs)):
-    role = msgs[i]['role']
-    content = msgs[i]['content']
-    css_class = "user" if role == "user" else "bot"
-    st.markdown(f'<div class="{css_class}">{escape(content).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
+# Display chat messages in reverse chronological order (newest at bottom)
+for i in range(len(msgs) - 2, -1, -2):
+    user_msg = msgs[i]['content']
+    bot_msg = msgs[i+1]['content'] if i+1 < len(msgs) else ''
+    # Use markdown with unsafe_allow_html=True so links work
+    st.markdown(f'<div class="user">{escape(user_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="bot">{bot_msg.replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
 st.markdown('</div></div>', unsafe_allow_html=True)
 
-# Sidebar
 with st.sidebar:
     st.markdown("### 🎯 Your Goals")
     if st.session_state.goals:
@@ -541,3 +461,5 @@ with st.sidebar:
 filename = f"chat_history_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
 chat_history_text = "\n".join([f"{m['role'].upper()}: {m['content']}\n" for m in st.session_state.messages])
 st.download_button("📥 Download Chat History", chat_history_text, file_name=filename)
+
+

@@ -75,6 +75,12 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 RESPONSE_DATA = {
+      "how_are_you": [
+        "I'm doing well, thanks! How are you feeling today? 🙂",
+        "All good here! How about you? 🤗",
+        "Feeling ready to help! What about you? ⚡",
+        "Doing great! How's your mood? 🌈"
+    ],
     "greetings": [
         "Hey! 👋 How's your day shaping up? Ready to tackle some study questions? 📚",
         "Hello! 😊 What topic shall we explore today? 🤔",
@@ -93,12 +99,7 @@ RESPONSE_DATA = {
         "See you later! Stay curious and motivated! 🔥",
         "Bye! Keep pushing forward! 💪"
     ],
-    "how_are_you": [
-        "I'm doing well, thanks! How are you feeling today? 🙂",
-        "All good here! How about you? 🤗",
-        "Feeling ready to help! What about you? ⚡",
-        "Doing great! How's your mood? 🌈"
-    ],
+  
     "burnout": [
         "You're pushing hard — maybe too hard. A short break can recharge you more than another hour of stress. 🌱",
         "No shame in feeling tired. Real strength is knowing when to pause. Rest isn't quitting — it's strategy. 💡",

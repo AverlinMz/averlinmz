@@ -87,6 +87,35 @@ RESPONSE_DATA = {
         "Hi there! Let's make your study session productive! 💡",
         "Hey! I'm here to help — what's on your mind? 💬"
     ],
+     "problem_solving_mindset": [
+        "Stuck on a tough problem? Try these steps:\n1️⃣ Break it down into smaller parts and look for patterns.\n2️⃣ Explain the problem out loud or teach it to someone else — it often sparks new ideas.\n3️⃣ Remember, practice builds skill — take breaks if frustrated and return fresh! 💡🧩",
+        
+        "Problem-solving requires creativity and patience:\n1️⃣ Change your perspective or try a different approach.\n2️⃣ Step back and assess what you know vs. what you need to find out.\n3️⃣ Keep experimenting and trust the process — persistence pays off! 🔄🔍"
+    ],
+
+    "metacognition": [
+        "Boost your learning with metacognition techniques:\n1️⃣ Use active recall by testing yourself instead of rereading notes.\n2️⃣ Apply spaced repetition to review material at increasing intervals.\n3️⃣ Summarize concepts in your own words or teach them — this deepens understanding! 🧠📚",
+        
+        "Improve memory and comprehension:\n1️⃣ Mix topics during study sessions (interleaving) to enhance retention.\n2️⃣ Reflect on mistakes and successes after each study period.\n3️⃣ Use the Feynman technique: explain ideas simply to grasp them better! ✍️🔄"
+    ],
+
+    "time_management": [
+        "Manage your time like a pro:\n1️⃣ Set clear study goals and take regular breaks using Pomodoro (25 min study, 5 min rest).\n2️⃣ Focus on one task at a time — multitasking hurts productivity.\n3️⃣ Prioritize tasks by deadlines and importance for efficient progress. ⏰🎯",
+        
+        "Optimize your daily schedule:\n1️⃣ Track your time to spot distractions and improve focus.\n2️⃣ Allocate time for rest, hobbies, and socializing to avoid burnout.\n3️⃣ Stay flexible and adjust your plan as needed — balance is key! ⚖️🌟"
+    ],
+
+    "growth_mindset": [
+        "Embrace a growth mindset to thrive:\n1️⃣ See mistakes as learning opportunities, not failures.\n2️⃣ Face challenges confidently — every effort builds skill.\n3️⃣ Celebrate small wins to keep motivation high! 🚀🌱",
+        
+        "Build resilience and confidence:\n1️⃣ Change strategies or ask for feedback when stuck.\n2️⃣ View failure as a step toward success.\n3️⃣ Remember, progress takes time — be patient and persistent! 💪🌈"
+    ],
+
+    "stress_management": [
+        "Handle stress with simple strategies:\n1️⃣ Practice deep breathing or mindfulness breaks to calm your mind.\n2️⃣ Move your body — a short walk or stretch releases tension.\n3️⃣ Keep a balanced routine with hobbies and social time to recharge. 🌬️🚶‍♂️🎨",
+        
+        "Maintain emotional well-being:\n1️⃣ Prioritize a healthy sleep schedule — avoid late-night studying.\n2️⃣ Unwind before bed with relaxing activities.\n3️⃣ Talk to someone you trust or journal your feelings when anxiety builds up. 🛌💬📝"
+    ]
     "thanks": [
         "You're welcome! Glad I could help! 😊👍",
         "Anytime! Keep shining in your studies! ✨",
@@ -277,41 +306,148 @@ RESPONSE_DATA = {
 }
 
 KEYWORDS = {
-    "greetings": ["hi", "hello", "hey", "good morning", "good afternoon", "good evening", "greetings", "yo"],
-    "thanks": ["thanks", "thank you", "thx", "thankful", "appreciate"],
-    "farewell": ["bye", "goodbye", "see you", "farewell", "later", "catch you", "take care"],
-    "how_are_you": ["how are you", "how do you feel", "how's it going", "how you doing", "how are things"],
-    "burnout": ["burnout", "exhausted", "tired", "overwhelmed", "fatigue", "drained"],
-    "exam_exhaustion": ["exams", "exam stress", "exam tired", "study exhaustion", "test fatigue", "exam anxiety"],
-    "health_tips": ["health", "wellbeing", "well-being", "self-care", "rest", "hydrate", "sleep", "exercise"],
-    "study_balance": ["balance", "study rest", "take break", "overstudy", "study too much", "burned out"],
-    "night_stress": ["night", "late night", "insomnia", "can't sleep", "anxiety night", "stress at night"],
-    "perfectionism": ["perfect", "perfectionism", "too perfect", "can't finish", "always wrong", "perfect is hard"],
-    "self_doubt": ["self doubt", "doubt myself", "not sure", "uncertain", "confidence", "insecure"],
-    "resilience": ["resilience", "keep going", "bounce back", "don't give up", "push through", "keep fighting"],
-    "emotion_checkin": ["feelings", "emotions", "mood", "emotion check", "how do I feel"],
-    "daily_review": ["today", "daily review", "reflection", "how was today", "what did I do"],
-    "set_goal": ["goal", "set goal", "target", "aim", "objective", "plan for today"],
-    "user_feeling_good": ["good", "great", "happy", "awesome", "excited", "fine", "well"],
-    "user_feeling_bad": ["bad", "sad", "tired", "down", "unhappy", "stressed", "anxious", "worried"],
-    "love": ["love you", "thanks", "appreciate you", "like you", "grateful"],
-    "exam_prep": ["exam prep", "study for exams", "test prep", "preparing for exam", "exam tips"],
-    "passed_exam": ["passed exam", "exam result", "exam success", "I passed", "got good grade", "success"],
-    "capabilities": ["what can you do", "capabilities", "help", "assist", "features", "what are you"],
-    "introduction": ["who are you", "introduce yourself", "about you", "your name", "creator"],
-    "creator_info": ["creator", "who made you", "author", "developer", "owner"],
-    "ack_creator": ["credit", "acknowledge", "thanks to", "creator credit"],
-    "contact_creator": ["contact", "reach", "feedback", "message", "form"],
-    "subjects": [
-        "math", "physics", "chemistry", "biology", "history", "language",
-        "programming", "literature", "geography", "economics"
+    "greetings": [
+        "hi", "hello", "hey", "hiya", "howdy", "good morning", "good afternoon", "good evening",
+        "greetings", "yo", "sup", "what's up", "hey there", "hi there", "hello there"
     ],
-    "emotional_support": ["overwhelmed", "stress", "sad", "anxious", "frustrated", "upset"],
-    "growth_mindset": ["mistakes", "fail", "failure", "try again", "learning", "progress", "growth"],
-    "smart_study": ["study tips", "study advice", "learn better", "study smarter", "study strategy"],
-    "fun_curiosity": ["fun fact", "did you know", "curious", "interesting", "trivia", "joke"],
-    "user_reflection": ["reflect", "reflection", "learned today", "feelings about study", "goals progress"],
-    "fallback": []  # Usually triggered when none of the above matches
+    "thanks": [
+        "thanks", "thank you", "thx", "thankful", "appreciate", "much appreciated", "thanks a lot",
+        "ty", "grateful", "cheers", "thanks so much", "thank you very much", "thanks a bunch"
+    ],
+    "farewell": [
+        "bye", "goodbye", "see you", "farewell", "later", "catch you", "take care", "see ya",
+        "peace out", "talk later", "gotta go", "see you later", "bye bye", "have a good one"
+    ],
+    "how_are_you": [
+        "how are you", "how do you feel", "how's it going", "how you doing", "how are things",
+        "what's up", "how have you been", "how r u", "how ya doing", "how's everything"
+    ],
+    "burnout": [
+        "burnout", "burned out", "exhausted", "tired", "worn out", "overwhelmed", "fatigue",
+        "drained", "burnt out", "stressed out", "feeling burnt", "mental exhaustion", "energy low"
+    ],
+    "exam_exhaustion": [
+        "exams", "exam stress", "exam tired", "study exhaustion", "test fatigue", "exam anxiety",
+        "test stress", "exam pressure", "exam burnout", "overstudying", "exam overwhelm"
+    ],
+    "health_tips": [
+        "health", "wellbeing", "well-being", "self-care", "rest", "hydrate", "drink water", "sleep",
+        "exercise", "nutrition", "mental health", "take care of myself", "healthy habits", "wellness"
+    ],
+    "study_balance": [
+        "balance", "study rest", "take break", "overstudy", "study too much", "burned out",
+        "study-life balance", "break time", "work life balance", "time off", "rest time", "study breaks"
+    ],
+    "night_stress": [
+        "night", "late night", "insomnia", "can't sleep", "anxiety night", "stress at night",
+        "nighttime worries", "sleep problems", "night anxiety", "can't fall asleep", "restless night"
+    ],
+    "perfectionism": [
+        "perfect", "perfectionism", "too perfect", "can't finish", "always wrong", "perfect is hard",
+        "imperfect", "perfectionist", "need to be perfect", "fear of failure", "never good enough"
+    ],
+    "self_doubt": [
+        "self doubt", "doubt myself", "not sure", "uncertain", "confidence", "insecure",
+        "lack confidence", "unsure", "second guessing", "not confident", "feeling unsure"
+    ],
+    "resilience": [
+        "resilience", "keep going", "bounce back", "don't give up", "push through", "keep fighting",
+        "stay strong", "persevere", "never quit", "keep trying", "stay motivated", "hold on"
+    ],
+    "emotion_checkin": [
+        "feelings", "emotions", "mood", "emotion check", "how do I feel", "feel", "emotion",
+        "checking in", "feeling down", "feeling up", "how's my mood", "emotional state"
+    ],
+    "daily_review": [
+        "today", "daily review", "reflection", "how was today", "what did I do", "daily reflection",
+        "review day", "day summary", "how did I do today", "today's review", "daily recap"
+    ],
+    "set_goal": [
+        "goal", "set goal", "target", "aim", "objective", "plan for today", "ambition", "intention",
+        "resolution", "goal setting", "my goal", "goal for today", "goal idea"
+    ],
+    "user_feeling_good": [
+        "good", "great", "happy", "awesome", "excited", "fine", "well", "fantastic", "wonderful",
+        "excellent", "amazing", "super", "feeling good", "all good", "feeling great"
+    ],
+    "user_feeling_bad": [
+        "bad", "sad", "tired", "down", "unhappy", "stressed", "anxious", "worried", "depressed",
+        "frustrated", "feeling low", "feeling bad", "not good", "upset", "melancholy"
+    ],
+    "love": [
+        "love you", "thanks", "appreciate you", "like you", "grateful", "thankful for you",
+        "really like you", "love this", "you rock", "thank you so much"
+    ],
+    "exam_prep": [
+        "exam prep", "study for exams", "test prep", "preparing for exam", "exam tips",
+        "exam study", "test preparation", "exam strategy", "how to study for exams"
+    ],
+    "passed_exam": [
+        "passed exam", "exam result", "exam success", "I passed", "got good grade", "success",
+        "exam achievement", "exam cleared", "exam done", "passed test"
+    ],
+    "capabilities": [
+        "what can you do", "capabilities", "help", "assist", "features", "what are you",
+        "what do you offer", "your functions", "what can you help with"
+    ],
+    "introduction": [
+        "who are you", "introduce yourself", "about you", "your name", "creator",
+        "tell me about you", "what is your name", "who made you"
+    ],
+    "creator_info": [
+        "creator", "who made you", "author", "developer", "owner", "built by", "programmer",
+        "made by", "created by", "developed by"
+    ],
+    "ack_creator": [
+        "credit", "acknowledge", "thanks to", "creator credit", "recognition",
+        "thank the creator", "creator thanks", "acknowledgement"
+    ],
+    "contact_creator": [
+        "contact", "reach", "feedback", "message", "form", "how to contact",
+        "get in touch", "contact info", "send message", "feedback form"
+    ],
+    "subjects": [
+        "math", "mathematics", "physics", "chemistry", "biology", "history", "language",
+        "programming", "coding", "literature", "geography", "economics", "computer science",
+        "robotics", "english", "algorithms", "calculus", "algebra", "geometry"
+    ],
+    "emotional_support": [
+        "overwhelmed", "stress", "sad", "anxious", "frustrated", "upset", "depressed",
+        "lonely", "need help", "feeling down", "need support"
+    ],
+    "growth_mindset": [
+        "mistakes", "fail", "failure", "try again", "learning", "progress", "growth",
+        "improvement", "keep trying", "never give up", "growth mindset"
+    ],
+    "smart_study": [
+        "study tips", "study advice", "learn better", "study smarter", "study strategy",
+        "effective studying", "study hacks", "study methods", "best ways to study"
+    ],
+    "fun_curiosity": [
+        "fun fact", "did you know", "curious", "interesting", "trivia", "joke",
+        "random fact", "funny", "amusing", "did u know", "tell me something fun"
+    ],
+    "user_reflection": [
+        "reflect", "reflection", "learned today", "feelings about study", "goals progress",
+        "self-assessment", "daily thoughts", "thoughts", "review myself", "how am I doing"
+    ],
+    "problem_solving_mindset": [
+        "problem solving", "problem-solving", "solution", "thinking", "mindset", "approach",
+        "strategy", "puzzle", "challenge", "solve problem", "problem fix", "finding solution"
+    ],
+    "metacognition": [
+        "metacognition", "self-awareness", "thinking about thinking", "reflection",
+        "learning how to learn", "study methods", "mindful learning", "awareness"
+    ],
+    "time_management": [
+        "time management", "schedule", "planning", "organize", "prioritize", "deadlines",
+        "time allocation", "time tracking", "manage time", "time plan", "time schedule"
+    ],
+    "stress_management": [
+        "stress management", "relax", "calm down", "mindfulness", "breathing", "anxiety relief",
+        "coping", "stress relief", "stress reduction", "stay calm", "de-stress"
+    ],
+    "fallback": []
 }
 
 

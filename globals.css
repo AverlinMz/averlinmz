@@ -1,1 +1,138 @@
 
+import React, { useState, useEffect, useRef } from 'react';
+import { ChatWindow } from '../components/ChatWindow';
+import { ChatInput } from '../components/ChatInput';
+import { Sidebar } from '../components/Sidebar';
+import { ThemeSelector } from '../components/ThemeSelector';
+import { ChatbotEngine } from '../utils/chatbotEngine';
+import { Message, Theme } from '../types/chatbot';
+import { Bot } from 'lucide-react';
+
+const Index = () => {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [goals, setGoals] = useState<string[]>([]);
+  const [theme, setTheme] = useState<Theme>('default');
+  const [contextTopic, setContextTopic] = useState<string | null>(null);
+  const [lastSentiment, setLastSentiment] = useState<string | null>(null);
+  const chatbotEngine = useRef(new ChatbotEngine());
+
+  const handleSendMessage = async (userInput: string) => {
+    if (!userInput.trim()) return;
+
+    // Add user message
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: userInput,
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+
+    // Process message with chatbot engine
+    const response = await chatbotEngine.current.processMessage(userInput, {
+      goals,
+      contextTopic,
+      lastSentiment
+    });
+
+    // Update state based on response
+    if (response.newGoal) {
+      setGoals(prev => [...prev, response.newGoal!]);
+    }
+    if (response.contextTopic !== undefined) {
+      setContextTopic(response.contextTopic);
+    }
+    if (response.sentiment) {
+      setLastSentiment(response.sentiment);
+    }
+
+    // Add bot message
+    const botMessage: Message = {
+      id: (Date.now() + 1).toString(),
+      role: 'bot',
+      content: response.message,
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, botMessage]);
+
+    // Text-to-speech for bot response
+    if (response.message && 'speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(response.message.replace(/[^\w\s.,!?]/g, ''));
+      utterance.rate = 0.8;
+      utterance.pitch = 1;
+      speechSynthesis.speak(utterance);
+    }
+  };
+
+  const downloadChatHistory = () => {
+    const chatHistory = messages.map(msg => 
+      `${msg.role.toUpperCase()}: ${msg.content}\n`
+    ).join('\n');
+    
+    const blob = new Blob([chatHistory], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `chat_history_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const getThemeClasses = () => {
+    switch (theme) {
+      case 'night':
+        return 'bg-gray-900 text-white';
+      case 'blue':
+        return 'bg-cyan-50 text-cyan-900';
+      default:
+        return 'bg-gradient-to-br from-blue-50 to-indigo-100 text-gray-800';
+    }
+  };
+
+  return (
+    <div className={`min-h-screen transition-all duration-500 ${getThemeClasses()}`}>
+      <div className="container mx-auto px-4 py-6 max-w-6xl">
+        {/* Header */}
+        <div className="text-center mb-8 animate-slideDown">
+          <div className="flex justify-center items-center mb-4">
+            <div className="relative">
+              <Bot className="w-20 h-20 text-blue-600 animate-bounce" />
+              <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full animate-pulse"></div>
+            </div>
+          </div>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+            AverlinMz Study Assistant
+          </h1>
+          <p className="text-lg opacity-80">Your AI-powered study companion with fuzzy understanding</p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Main Chat Area */}
+          <div className="lg:col-span-3 space-y-4">
+            <ThemeSelector theme={theme} onThemeChange={setTheme} />
+            
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+              <ChatWindow messages={messages} theme={theme} />
+              <ChatInput onSendMessage={handleSendMessage} theme={theme} />
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <div className="lg:col-span-1">
+            <Sidebar 
+              goals={goals} 
+              onDownloadHistory={downloadChatHistory}
+              theme={theme}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Index;

@@ -72,6 +72,6 @@ Your input will help me refine and enhance AverlinMz to better serve students li
 
 ---
 
-Thank you for taking the time to learn about AverlinMz. I hope it becomes a reliable and supportive partner in your academic journey. Wishing you focus, balance, and success. 🚀
+I hope it becomes a reliable and supportive partner in your academic journey. Wishing you focus, balance, and success. 🚀
 
 — Aylin Muzaffarli

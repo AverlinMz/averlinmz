@@ -99,6 +99,72 @@ RESPONSE_DATA = {
         "Feeling ready to help! What about you? ⚡",
         "Doing great! How's your mood? 🌈"
     ],
+    "burnout": [
+        "You're pushing hard — maybe too hard. A short break can recharge you more than another hour of stress. 🌱",
+        "No shame in feeling tired. Real strength is knowing when to pause. Rest isn't quitting — it's strategy. 💡",
+        "Even your brain has a battery. When it's drained, rest is productive. Let’s reset — you’ll come back stronger. 🔋",
+        "Breaks aren’t wasted time. They're investments in your energy. Use them wisely. 💫"
+    ],
+    "exam_exhaustion": [
+        "When exams take everything from you, give something back to yourself — like sleep, or joy, or a quiet moment. ☁️",
+        "This exam won't define your life. Resting today might save your focus for tomorrow. 🧠✨",
+        "Even high-achievers need off-switches. Your value isn’t based on how many hours you grind. ⏳",
+        "Take care of you. Without that, no exam score will ever be worth it. 🤍"
+    ],
+    "health_tips": [
+        "🩺 Health Tip: Your brain needs hydration, rest, and oxygen. That means water, sleep, and short walks. 🚶",
+        "You can’t pour from an empty cup. Prioritize basic care: food, rest, breath. 🧘",
+        "Sleep isn't a luxury. It's fuel for thinking. Power off to power up. 🔋",
+        "Balance your inputs: good food, good music, good thoughts. What you feed yourself becomes your energy. 🧠💚"
+    ],
+    "study_balance": [
+        "Study smart, not just long. Rest turns short-term memory into long-term gains. 🧠",
+        "Rest is part of the strategy, not an excuse. Athletes rest to win — so should learners. 🏁",
+        "If your head's foggy, maybe it's time to close the books and open a window. 🌬️",
+        "Burnout isn’t proof of dedication — balance is. Keep your flame, don’t burn it out. 🔥🕯️"
+    ],
+    "night_stress": [
+        "Late nights magnify worry. If it’s past midnight and your brain is spiraling, pause. Sleep is healing. 🌙",
+        "2AM thoughts lie. Sleep now, and return when your mind is clearer. 🌅",
+        "Working while exhausted is like writing in fog. You’ll spend more fixing than gaining. 💤",
+        "Pause. You’re not giving up. You’re protecting your mind. That’s smart. 🧠💤"
+    ],
+    "perfectionism": [
+        "Perfection is a cage. Progress is the key. Let yourself move forward. 🔓",
+        "Nobody does it perfectly — they just keep showing up. That’s enough. 📈",
+        "Your first draft won’t be flawless. That’s okay. Mastery is messy. ✍️",
+        "You’re learning, not performing. Messy is normal. Beautiful even. 🎨"
+    ],
+    "self_doubt": [
+        "Smart people doubt themselves. It’s a side effect of caring. Don’t stop because of it. 💭",
+        "Feeling unsure doesn’t mean you’re not capable. It means you’re human. 🌍",
+        "You don’t need proof of brilliance. You need patience with your growth. 🌱",
+        "Self-doubt is a fog, not a wall. You *can* move through it. ☁️➡️🌤️"
+    ],
+    "resilience": [
+        "Resilience isn’t toughness — it’s learning how to stand back up. You’re doing that. ✨",
+        "You fell. You’re getting up. That’s the story. That’s the win. 🏆",
+        "Each setback is data. You’re debugging life — and you’re improving. 👩‍💻",
+        "Keep going. Not because it’s easy. But because you’re growing. 🌿"
+    ],
+    "emotion_checkin": [
+        "Before we dive in — how are you *really* feeling? This is your space. 🌈",
+        "Let's pause. What emotion’s loudest right now? You can tell me. 🤍",
+        "Even one word is enough. Tired? Excited? Meh? I'm here for all of it. ✍️",
+        "Your emotions matter. Not just your progress. Let’s hold both. 🧠❤️"
+    ],
+    "daily_review": [
+        "Reflect time: What’s one thing you did today that you’re glad about? Even tiny wins matter. ✨",
+        "Today’s done. What did you try? What worked? What’s worth repeating? 🔄",
+        "You survived today. That’s already something. Be kind to yourself. 🌙",
+        "Journal moment: What challenged you today — and what did you learn from it? 📓"
+    ],
+    "set_goal": [
+        "What’s one small goal we can aim for today? Keep it real. Keep it doable. 🎯",
+        "Start with a target: Finish 3 questions? Read 2 pages? Let’s define it. 🗂️",
+        "Clarity makes action easier. What’s the one thing you want to complete today? 🧭",
+        "Name your goal — and let’s make your future self proud. 🚀"
+    ],
     "user_feeling_good": [
         "Awesome! Keep that positive energy flowing! 🎉🌟",
         "Great to hear that! Let's keep this momentum going! 🏃‍♀️💨",
@@ -137,11 +203,11 @@ RESPONSE_DATA = {
         "Think of me as your personal study assistant. 🧑‍💻🤓"
     ],
     "introduction": [
-    "I'm AverlinMz, your study chatbot, created by Aylin Muzaffarli from Azerbaijan. 🇦🇿🤖 Learn more: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>official website</a> 🌐",
-    "Hello! I'm here to support your study journey. �✨ Visit my site: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>AverlinMz Website</a> 💻",
-    "Created by Aylin, I help with study tips and motivation. 💡❤️ Check this out: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Learn more</a> 📖",
-    "Nice to meet you! Let's learn and grow together. 🌱📘 Want to know more? <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Click here</a> 🚀"
-],
+        "I'm AverlinMz, your study chatbot, created by Aylin Muzaffarli from Azerbaijan. 🇦🇿🤖 Learn more: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>official website</a> 🌐",
+        "Hello! I'm here to support your study journey. �✨ Visit my site: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>AverlinMz Website</a> 💻",
+        "Created by Aylin, I help with study tips and motivation. 💡❤️ Check this out: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Learn more</a> 📖",
+        "Nice to meet you! Let's learn and grow together. 🌱📘 Want to know more? <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Click here</a> 🚀"
+    ],
     "creator_info": [
         "Created by Aylin — passionate about science, tech, and helping others learn. 🔬💻",
         "Aylin's dedication makes this chatbot your study buddy. 🎯✨",
@@ -172,6 +238,36 @@ RESPONSE_DATA = {
         "geography": "🌍 Geography Tips:\n- Use maps frequently\n- Understand climate patterns\n- Connect physical and human geography\n- Create mind maps for concepts\n- Relate theories to current events",
         "economics": "💹 Economics Tips:\n- Understand basic principles first\n- Follow current economic news\n- Practice graphing concepts\n- Connect micro and macro concepts\n- Apply theories to real-world scenarios"
     },
+    "emotional_support": [
+        "It's okay to feel overwhelmed. You're not alone in this — let’s take it one step at a time. 🤗",
+        "Your feelings are valid. Taking care of your mind is just as important as your studies. 🧠❤️",
+        "When the load feels too heavy, remember: small steps forward still move you ahead. 🌿",
+        "You’re stronger than you think. Together, we’ll find ways to cope and keep going. 💪"
+    ],
+    "growth_mindset": [
+        "Mistakes are proof you're trying. Every error is a step towards mastery. 📈",
+        "Curiosity is your best study partner — ask questions, explore, and grow! 🌱",
+        "Challenges shape you — they’re not roadblocks but stepping stones. Keep climbing! 🧗",
+        "Growth isn’t linear. Be patient with yourself and celebrate progress, no matter how small. 🎉"
+    ],
+    "smart_study": [
+        "Active recall beats passive reading — test yourself often! 🧠",
+        "Switch subjects to keep your brain fresh and focused. Variety helps retention. 🔄",
+        "Set specific, achievable goals to avoid overwhelm. Clarity fuels action. 🎯",
+        "Teach what you learn — explaining concepts deepens understanding. 👩‍🏫"
+    ],
+    "fun_curiosity": [
+        "Did you know? The brain’s neurons can make a thousand new connections every second! 🤯",
+        "Here's a fun fact: The word 'quiz' started as a bet! Want to know more quirky study trivia? 🤓",
+        "Taking a short laugh break boosts memory retention. Ready for a study joke? 🃏",
+        "Curiosity sparks dopamine — the brain’s reward chemical. Learning is literally addictive! 🎉"
+    ],
+    "user_reflection": [
+        "What’s one thing you learned today that surprised you? 🤔",
+        "How did you feel during your study session? Tracking emotions helps improve focus. 📊",
+        "What’s a small win you can celebrate today? Recognition fuels motivation! 🏆",
+        "Are your study goals still relevant? Adjusting plans is a sign of wisdom, not weakness. 🔧"
+    ],
     "fallback": [
         "I'm not sure I understood that — could you try rephrasing? 🤔😊",
         "Sorry, I didn't catch that. Want to try again? 🔄",
@@ -184,21 +280,33 @@ RESPONSE_DATA = {
     ]
 }
 
+
 KEYWORDS = {
     "greetings": ["hello", "hi", "hey", "hiya", "greetings", "what's up", "howdy", "good morning", "good afternoon", "good evening", "sup", "yo"],
+    "thanks": ["thank you", "thanks", "thx", "ty", "much appreciated", "many thanks", "grateful", "appreciate it", "thanks a lot", "thank you so much"],
     "farewell": ["goodbye", "bye", "see you", "farewell", "later", "take care", "until next time", "signing off", "talk later", "catch you later", "peace out"],
     "how_are_you": ["how are you", "how's it going", "how do you do", "how have you been", "what's new", "how's life", "how's everything", "how're things"],
+    "burnout": ["i'm tired", "burnt out", "no energy", "exhausted", "need a break", "i can't do this anymore", "mentally drained", "burnout", "overwhelmed"],
+    "exam_exhaustion": ["studying all day", "study burnout", "exam stress", "too much studying", "i'm done with exams", "no strength left", "exam tired", "exam exhaustion", "exams tiring me"],
+    "health_tips": ["health tips", "how to be healthy", "stay fit", "tips for health", "physical health", "mental health", "healthy mind", "health advice"],
+    "study_balance": ["study and rest", "study balance", "study too much", "rest time", "overstudying", "balance studying", "study stress", "study fatigue"],
+    "night_stress": ["2am", "late night study", "can’t focus", "i'm stuck", "midnight study", "overthinking at night", "late night stress", "can't sleep"],
+    "perfectionism": ["perfect", "must be perfect", "i failed", "can’t mess up", "no mistakes allowed", "it has to be right", "perfectionism", "fear of failure"],
+    "self_doubt": ["i'm not smart", "i can't do this", "maybe not for me", "not good enough", "i'll fail", "self doubt", "imposter syndrome"],
+    "resilience": ["i'll try again", "i will not give up", "i failed but", "bounce back", "resilient", "keep going", "don't give up", "stay strong"],
+    "emotion_checkin": ["how do i feel", "check my mood", "emotion check", "status check", "i feel weird", "how am i feeling", "mood check"],
+    "daily_review": ["daily review", "today summary", "end of day", "what i did today", "check today", "reflection", "journal", "review day"],
+    "set_goal": ["my goal is", "i plan to", "today i want", "i aim to", "goal setting", "set goal", "goal for today"],
     "user_feeling_good": ["i'm good", "great", "happy", "doing well", "awesome", "fine", "fantastic", "wonderful", "excellent", "perfect", "super", "amazing", "terrific"],
-    "user_feeling_bad": ["i'm sad", "not good", "tired", "depressed", "down", "exhausted", "stressed", "anxious", "overwhelmed", "frustrated", "awful", "terrible", "horrible"],
-    "love": ["i love you", "love you", "luv you", "like you", "adore you", "you're amazing", "you're awesome", "you're great", "you're wonderful"],
+    "user_feeling_bad": ["i'm sad", "not good", "tired", "depressed", "down", "exhausted", "stressed", "anxious", "overwhelmed", "frustrated", "awful", "terrible", "horrible", "bad mood"],
+    "love": ["i love you", "love you", "luv you", "like you", "adore you", "you're amazing", "you're awesome", "you're great", "you're wonderful", "thanks for being here"],
     "exam_prep": ["exam tips", "study for test", "prepare for exam", "how to study", "exam advice", "test preparation", "studying help", "exam strategies", "test tips", "study techniques", "best way to study", "exam prep"],
     "passed_exam": ["i passed", "i did it", "exam success", "cleared the test", "exam results", "got good marks", "aced the exam", "passed with flying colors", "nailed the test", "killed the exam"],
-    "capabilities": ["what can you do", "your abilities", "features", "help me", "what do you offer", "how can you help", "your functions", "what help", "your skills"],
+    "capabilities": ["what can you do", "your abilities", "features", "help me", "what do you offer", "your functions", "what help", "your skills"],
     "introduction": ["introduce", "who are you", "about you", "yourself", "tell me about yourself", "what are you", "your purpose", "your identity"],
     "creator_info": ["who is aylin", "about aylin", "creator info", "who made you", "who created you", "who built you", "who programmed you", "who developed you"],
     "contact_creator": ["how can i contact aylin", "contact aylin", "how to contact", "reach aylin", "get in touch with creator", "aylin's contact", "aylin's info", "reach the maker"],
     "ack_creator": ["thank aylin", "thanks aylin", "thank you aylin", "appreciate aylin", "grateful to aylin", "kudos to aylin", "props to aylin"],
-    "thanks": ["thank you", "thanks", "thx", "ty", "much appreciated", "many thanks", "grateful", "appreciate it", "thanks a lot", "thank you so much"],
     "subjects": ["math", "physics", "chemistry", "biology", "history", "language", "programming", "literature", "geography", "economics",
                 "mathematics", "physic", "chem", "bio", "hist", "lang", "code", "lit", "geo", "econ",
                 "algebra", "calculus", "trigonometry", "statistics", "quantum", "mechanics", "thermodynamics",
@@ -208,8 +316,14 @@ KEYWORDS = {
                 "python", "java", "javascript", "c++", "coding", "web development",
                 "poetry", "novel", "drama", "fiction", "shakespeare",
                 "physical geography", "human geography", "cartography", "gis",
-                "microeconomics", "macroeconomics", "finance", "business"]
+                "microeconomics", "macroeconomics", "finance", "business"],
+    "emotional_support": ["feeling overwhelmed", "need support", "mental health", "emotional help", "feeling stressed", "anxiety", "depression", "emotional support", "feeling down"],
+    "growth_mindset": ["growth mindset", "learning from mistakes", "keep growing", "improve myself", "challenge myself", "curious", "embrace failure", "growth", "mindset"],
+    "smart_study": ["study smart", "study tips", "effective study", "study strategies", "meta learning", "learning how to learn", "smart studying", "study hacks"],
+    "fun_curiosity": ["fun fact", "study joke", "interesting fact", "did you know", "fun trivia", "curiosity", "learning fun", "fun study"],
+    "user_reflection": ["reflect", "self reflection", "what did i learn", "how do i feel", "track progress", "self tracking", "reflection", "journal"]
 }
+
 
 def clean_keyword_list(keywords_dict):
     cleaned = {}

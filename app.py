@@ -376,7 +376,13 @@ RESPONSE_DATA = {
         "I appreciate you! Let's keep learning together! 🤓",
         "Sending good vibes your way! 🤗",
         "You're awesome! Keep shining! ✨"
-    ]
+    ],
+    "improve_concentration": [
+    "Improving concentration takes practice. Try setting short, focused study sessions with clear goals and minimal distractions. 📵",
+    "Break your study time into manageable chunks, like 25 minutes of focus followed by a 5-minute break (Pomodoro Technique). ⏲️",
+    "Make sure your study environment is quiet and free from interruptions. Sometimes background music without lyrics can help. 🎧",
+    "Keep your mind fresh by staying hydrated, taking regular breaks, and getting enough sleep. Your brain needs fuel to focus well. 💧😴",
+]
 }
 
 
@@ -385,6 +391,17 @@ KEYWORDS = {
         "hi", "hello", "hey", "hiya", "howdy", "good morning", "good afternoon", "good evening",
         "greetings", "yo", "sup", "what's up", "hey there", "hi there", "hello there"
     ],
+    "improve_concentration": [
+    "concentration",
+    "focus",
+    "improve concentration",
+    "concentrate",
+    "focus better",
+    "stay focused",
+    "how to focus",
+    "focus tips"
+],
+
     "thanks": [
         "thanks", "thank you", "thx", "thankful", "appreciate", "much appreciated", "thanks a lot",
         "ty", "grateful", "cheers", "thanks so much", "thank you very much", "thanks a bunch"

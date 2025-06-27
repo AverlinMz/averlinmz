@@ -328,27 +328,68 @@ def clean_text(text):
 
 def detect_intent(text):
     msg = clean_text(text)
-    
-    # First check for exact matches
-    for intent, kws in KEYWORDS_CLEANED.items():
-        if any(kw in msg for kw in kws):
-            return intent
-    
-    # Then check for similar words using fuzzy matching
+
+    # Priority order matters: specific before general
+    priority_order = [
+        "introduction",
+        "how_are_you",
+        "burnout",
+        "exam_exhaustion",
+        "health_tips",
+        "study_balance",
+        "night_stress",
+        "perfectionism",
+        "self_doubt",
+        "resilience",
+        "emotion_checkin",
+        "daily_review",
+        "set_goal",
+        "user_feeling_good",
+        "user_feeling_bad",
+        "love",
+        "exam_prep",
+        "passed_exam",
+        "capabilities",
+        "creator_info",
+        "ack_creator",
+        "contact_creator",
+        "thanks",
+        "farewell",
+        "greetings",
+        "fun_curiosity",
+        "user_reflection",
+        "emotional_support",
+        "growth_mindset",
+        "smart_study",
+        "subjects",
+        "fallback"  # fallback last
+    ]
+
+    # 1) Check for exact phrase match with word boundaries for each keyword
+    for intent in priority_order:
+        kws = KEYWORDS_CLEANED.get(intent, [])
+        for kw in kws:
+            # Use regex to match whole word or phrase
+            pattern = r'\b' + re.escape(kw) + r'\b'
+            if re.search(pattern, msg):
+                return intent
+
+    # 2) Fuzzy matching fallback
     words = msg.split()
     for word in words:
-        for intent, kws in KEYWORDS_CLEANED.items():
-            # Find close matches with 65% similarity threshold (lowered for broader matching)
+        for intent in priority_order:
+            kws = KEYWORDS_CLEANED.get(intent, [])
             matches = get_close_matches(word, kws, n=1, cutoff=0.65)
             if matches:
                 return intent
-    
-    # Special case for subject detection with partial matching
+
+    # 3) Check subjects separately (partial match allowed)
     for subj in KEYWORDS["subjects"]:
         if subj in msg:
             return "subjects"
-    
+
     return None
+
 
 def update_goals(user_input):
     msg = clean_text(user_input)

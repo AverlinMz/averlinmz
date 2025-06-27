@@ -629,6 +629,11 @@ def detect_sentiment(text):
     if any(word in txt for word in negative): return "negative"
     return "neutral"
 
+def strip_urls_for_tts(text):
+    url_pattern = r'http[s]?://\S+|www\.\S+'
+    return re.sub(url_pattern, '', text)
+
+
 def get_bot_reply(user_input):
     intent = detect_intent(user_input)
     goal_msg = update_goals(user_input)
@@ -640,38 +645,51 @@ def get_bot_reply(user_input):
 
     if intent and intent in RESPONSE_DATA:
         if intent == "subjects":
-            # detect specific subject mentioned
             for subj in KEYWORDS["subjects"]:
                 if subj in user_input.lower():
                     st.session_state.context_topic = subj
                     break
-            return RESPONSE_DATA["subjects"].get(st.session_state.context_topic, random.choice(RESPONSE_DATA["fallback"]))
+            return RESPONSE_DATA["subjects"].get(
+                st.session_state.context_topic, 
+                random.choice(RESPONSE_DATA["fallback"])
+            )
         else:
             st.session_state.context_topic = None
             return random.choice(RESPONSE_DATA[intent])
 
     if st.session_state.context_topic:
         subj = st.session_state.context_topic
-        return RESPONSE_DATA["subjects"].get(subj, random.choice(RESPONSE_DATA["fallback"])) + "\n\n(You asked about this before!)"
+        return RESPONSE_DATA["subjects"].get(
+            subj, 
+            random.choice(RESPONSE_DATA["fallback"])
+        ) + "\n\n(You asked about this before!)"
 
     if sentiment == "positive":
         return "Glad to hear you're feeling good! Keep it up! 🎉"
     elif sentiment == "negative":
         return "I noticed you're feeling down. If you want, I can share some tips or just listen. 💙"
 
-    # Enhanced fallback that tries to extract possible subjects
-    possible_subjects = [subj for subj in KEYWORDS["subjects"] if subj in user_input.lower()]
+    possible_subjects = [
+        subj for subj in KEYWORDS["subjects"] if subj in user_input.lower()
+    ]
     if possible_subjects:
         return f"I see you mentioned {possible_subjects[0]}. Here are some tips:\n\n{RESPONSE_DATA['subjects'].get(possible_subjects[0], '')}"
 
     return random.choice(RESPONSE_DATA["fallback"])
 
-        # Remove emojis before TTS so audio is clean
-        clean_reply = remove_emojis(bot_reply)
+with st.form('chat_form', clear_on_submit=True):
+    user_input = st.text_input('Write your message…', key='input_field')
+    if st.form_submit_button('Send') and user_input.strip():
+        st.session_state.messages.append({'role': 'user', 'content': user_input})
+        
+        bot_reply = get_bot_reply(user_input)
+        st.session_state.messages.append({'role': 'bot', 'content': bot_reply})
 
-        # Strip URLs from the reply before sending to TTS
+        # --- Prepare clean version of bot reply for audio ---
+        clean_reply = remove_emojis(bot_reply)
         clean_reply_no_urls = strip_urls_for_tts(clean_reply)
 
+        # --- Convert to speech and play ---
         tts = gTTS(clean_reply_no_urls, lang='en')
         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tts_file:
             tts.save(tts_file.name)
@@ -679,14 +697,13 @@ def get_bot_reply(user_input):
         st.audio(audio_bytes, format="audio/mp3")
         os.unlink(tts_file.name)
 
-
 st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
 msgs = st.session_state.messages
+
 # Display chat messages in reverse chronological order (newest at bottom)
 for i in range(len(msgs) - 2, -1, -2):
     user_msg = msgs[i]['content']
     bot_msg = msgs[i+1]['content'] if i+1 < len(msgs) else ''
-    # Use markdown with unsafe_allow_html=True so links work
     st.markdown(f'<div class="user">{escape(user_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
     st.markdown(f'<div class="bot">{bot_msg.replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
 st.markdown('</div></div>', unsafe_allow_html=True)
@@ -705,8 +722,7 @@ with st.sidebar:
     st.markdown("### 🧠 Mini AI Assistant Mode")
     st.write("This bot tries to detect your intent and give focused advice or answers.")
 
+# Chat download button
 filename = f"chat_history_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
 chat_history_text = "\n".join([f"{m['role'].upper()}: {m['content']}\n" for m in st.session_state.messages])
 st.download_button("📥 Download Chat History", chat_history_text, file_name=filename)
-
-

@@ -1,40 +1,13 @@
-import re
-from difflib import get_close_matches
 import streamlit as st
 import random
 import string
 from html import escape
 import datetime
+import re
 import tempfile
 import os
 from gtts import gTTS
-
-# Normalize user input to lowercase, remove punctuation, compress repeated letters
-def normalize_text(text):
-    text = text.lower()
-    text = re.sub(r'[^\w\s]', '', text)  # remove punctuation
-    text = re.sub(r'(.)\1{2,}', r'\1', text)  # compress repeated chars >2 to 1 (uuu -> u)
-    return text.strip()
-
-# Check if input matches any keyword approximately
-def find_intent(user_input, keywords_dict, cutoff=0.6):
-    normalized_input = normalize_text(user_input)
-    
-    # Flatten all keywords to a single list with their intent tags
-    all_keywords = []
-    keyword_to_intent = {}
-    for intent, keywords in keywords_dict.items():
-        for kw in keywords:
-            norm_kw = normalize_text(kw)
-            all_keywords.append(norm_kw)
-            keyword_to_intent[norm_kw] = intent
-    
-    # Find close matches
-    matches = get_close_matches(normalized_input, all_keywords, n=1, cutoff=cutoff)
-    if matches:
-        return keyword_to_intent[matches[0]]
-    else:
-        return None
+from difflib import get_close_matches
 
 # Initialize session state
 def init_session():
@@ -129,18 +102,18 @@ RESPONSE_DATA = {
     "burnout": [
         "You're pushing hard — maybe too hard. A short break can recharge you more than another hour of stress. 🌱",
         "No shame in feeling tired. Real strength is knowing when to pause. Rest isn't quitting — it's strategy. 💡",
-        "Even your brain has a battery. When it's drained, rest is productive. Let's reset — you'll come back stronger. 🔋",
-        "Breaks aren't wasted time. They're investments in your energy. Use them wisely. 💫"
+        "Even your brain has a battery. When it's drained, rest is productive. Let’s reset — you’ll come back stronger. 🔋",
+        "Breaks aren’t wasted time. They're investments in your energy. Use them wisely. 💫"
     ],
     "exam_exhaustion": [
         "When exams take everything from you, give something back to yourself — like sleep, or joy, or a quiet moment. ☁️",
         "This exam won't define your life. Resting today might save your focus for tomorrow. 🧠✨",
-        "Even high-achievers need off-switches. Your value isn't based on how many hours you grind. ⏳",
+        "Even high-achievers need off-switches. Your value isn’t based on how many hours you grind. ⏳",
         "Take care of you. Without that, no exam score will ever be worth it. 🤍"
     ],
     "health_tips": [
         "🩺 Health Tip: Your brain needs hydration, rest, and oxygen. That means water, sleep, and short walks. 🚶",
-        "You can't pour from an empty cup. Prioritize basic care: food, rest, breath. 🧘",
+        "You can’t pour from an empty cup. Prioritize basic care: food, rest, breath. 🧘",
         "Sleep isn't a luxury. It's fuel for thinking. Power off to power up. 🔋",
         "Balance your inputs: good food, good music, good thoughts. What you feed yourself becomes your energy. 🧠💚"
     ],
@@ -148,49 +121,49 @@ RESPONSE_DATA = {
         "Study smart, not just long. Rest turns short-term memory into long-term gains. 🧠",
         "Rest is part of the strategy, not an excuse. Athletes rest to win — so should learners. 🏁",
         "If your head's foggy, maybe it's time to close the books and open a window. 🌬️",
-        "Burnout isn't proof of dedication — balance is. Keep your flame, don't burn it out. 🔥🕯️"
+        "Burnout isn’t proof of dedication — balance is. Keep your flame, don’t burn it out. 🔥🕯️"
     ],
     "night_stress": [
-        "Late nights magnify worry. If it's past midnight and your brain is spiraling, pause. Sleep is healing. 🌙",
+        "Late nights magnify worry. If it’s past midnight and your brain is spiraling, pause. Sleep is healing. 🌙",
         "2AM thoughts lie. Sleep now, and return when your mind is clearer. 🌅",
-        "Working while exhausted is like writing in fog. You'll spend more fixing than gaining. 💤",
-        "Pause. You're not giving up. You're protecting your mind. That's smart. 🧠💤"
+        "Working while exhausted is like writing in fog. You’ll spend more fixing than gaining. 💤",
+        "Pause. You’re not giving up. You’re protecting your mind. That’s smart. 🧠💤"
     ],
     "perfectionism": [
         "Perfection is a cage. Progress is the key. Let yourself move forward. 🔓",
-        "Nobody does it perfectly — they just keep showing up. That's enough. 📈",
-        "Your first draft won't be flawless. That's okay. Mastery is messy. ✍️",
-        "You're learning, not performing. Messy is normal. Beautiful even. 🎨"
+        "Nobody does it perfectly — they just keep showing up. That’s enough. 📈",
+        "Your first draft won’t be flawless. That’s okay. Mastery is messy. ✍️",
+        "You’re learning, not performing. Messy is normal. Beautiful even. 🎨"
     ],
     "self_doubt": [
-        "Smart people doubt themselves. It's a side effect of caring. Don't stop because of it. 💭",
-        "Feeling unsure doesn't mean you're not capable. It means you're human. 🌍",
-        "You don't need proof of brilliance. You need patience with your growth. 🌱",
+        "Smart people doubt themselves. It’s a side effect of caring. Don’t stop because of it. 💭",
+        "Feeling unsure doesn’t mean you’re not capable. It means you’re human. 🌍",
+        "You don’t need proof of brilliance. You need patience with your growth. 🌱",
         "Self-doubt is a fog, not a wall. You *can* move through it. ☁️➡️🌤️"
     ],
     "resilience": [
-        "Resilience isn't toughness — it's learning how to stand back up. You're doing that. ✨",
-        "You fell. You're getting up. That's the story. That's the win. 🏆",
-        "Each setback is data. You're debugging life — and you're improving. 👩‍💻",
-        "Keep going. Not because it's easy. But because you're growing. 🌿"
+        "Resilience isn’t toughness — it’s learning how to stand back up. You’re doing that. ✨",
+        "You fell. You’re getting up. That’s the story. That’s the win. 🏆",
+        "Each setback is data. You’re debugging life — and you’re improving. 👩‍💻",
+        "Keep going. Not because it’s easy. But because you’re growing. 🌿"
     ],
     "emotion_checkin": [
         "Before we dive in — how are you *really* feeling? This is your space. 🌈",
-        "Let's pause. What emotion's loudest right now? You can tell me. 🤍",
+        "Let's pause. What emotion’s loudest right now? You can tell me. 🤍",
         "Even one word is enough. Tired? Excited? Meh? I'm here for all of it. ✍️",
-        "Your emotions matter. Not just your progress. Let's hold both. 🧠❤️"
+        "Your emotions matter. Not just your progress. Let’s hold both. 🧠❤️"
     ],
     "daily_review": [
-        "Reflect time: What's one thing you did today that you're glad about? Even tiny wins matter. ✨",
-        "Today's done. What did you try? What worked? What's worth repeating? 🔄",
-        "You survived today. That's already something. Be kind to yourself. 🌙",
+        "Reflect time: What’s one thing you did today that you’re glad about? Even tiny wins matter. ✨",
+        "Today’s done. What did you try? What worked? What’s worth repeating? 🔄",
+        "You survived today. That’s already something. Be kind to yourself. 🌙",
         "Journal moment: What challenged you today — and what did you learn from it? 📓"
     ],
     "set_goal": [
-        "What's one small goal we can aim for today? Keep it real. Keep it doable. 🎯",
-        "Start with a target: Finish 3 questions? Read 2 pages? Let's define it. 🗂️",
-        "Clarity makes action easier. What's the one thing you want to complete today? 🧭",
-        "Name your goal — and let's make your future self proud. 🚀"
+        "What’s one small goal we can aim for today? Keep it real. Keep it doable. 🎯",
+        "Start with a target: Finish 3 questions? Read 2 pages? Let’s define it. 🗂️",
+        "Clarity makes action easier. What’s the one thing you want to complete today? 🧭",
+        "Name your goal — and let’s make your future self proud. 🚀"
     ],
     "user_feeling_good": [
         "Awesome! Keep that positive energy flowing! 🎉🌟",
@@ -218,7 +191,7 @@ RESPONSE_DATA = {
         "Remember to balance study and rest for best results. ⚖️😴"
     ],
     "passed_exam": [
-        "🎉 Congratulations! Your hard work paid off! �",
+        "🎉 Congratulations! Your hard work paid off! 🏅",
         "Well done! Time to celebrate your success! 🎊",
         "Amazing achievement! Keep aiming higher! 🚀",
         "You did great! Ready for the next challenge? 🔥"
@@ -231,7 +204,7 @@ RESPONSE_DATA = {
     ],
     "introduction": [
         "I'm AverlinMz, your study chatbot, created by Aylin Muzaffarli from Azerbaijan. 🇦🇿🤖 Learn more: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>official website</a> 🌐",
-        "Hello! I'm here to support your study journey. ✨ Visit my site: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>AverlinMz Website</a> 💻",
+        "Hello! I'm here to support your study journey. �✨ Visit my site: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>AverlinMz Website</a> 💻",
         "Created by Aylin, I help with study tips and motivation. 💡❤️ Check this out: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Learn more</a> 📖",
         "Nice to meet you! Let's learn and grow together. 🌱📘 Want to know more? <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Click here</a> 🚀"
     ],
@@ -266,16 +239,16 @@ RESPONSE_DATA = {
         "economics": "💹 Economics Tips:\n- Understand basic principles first\n- Follow current economic news\n- Practice graphing concepts\n- Connect micro and macro concepts\n- Apply theories to real-world scenarios"
     },
     "emotional_support": [
-        "It's okay to feel overwhelmed. You're not alone in this — let's take it one step at a time. 🤗",
+        "It's okay to feel overwhelmed. You're not alone in this — let’s take it one step at a time. 🤗",
         "Your feelings are valid. Taking care of your mind is just as important as your studies. 🧠❤️",
         "When the load feels too heavy, remember: small steps forward still move you ahead. 🌿",
-        "You're stronger than you think. Together, we'll find ways to cope and keep going. 💪"
+        "You’re stronger than you think. Together, we’ll find ways to cope and keep going. 💪"
     ],
     "growth_mindset": [
         "Mistakes are proof you're trying. Every error is a step towards mastery. 📈",
         "Curiosity is your best study partner — ask questions, explore, and grow! 🌱",
-        "Challenges shape you — they're not roadblocks but stepping stones. Keep climbing! 🧗",
-        "Growth isn't linear. Be patient with yourself and celebrate progress, no matter how small. 🎉"
+        "Challenges shape you — they’re not roadblocks but stepping stones. Keep climbing! 🧗",
+        "Growth isn’t linear. Be patient with yourself and celebrate progress, no matter how small. 🎉"
     ],
     "smart_study": [
         "Active recall beats passive reading — test yourself often! 🧠",
@@ -284,30 +257,32 @@ RESPONSE_DATA = {
         "Teach what you learn — explaining concepts deepens understanding. 👩‍🏫"
     ],
     "fun_curiosity": [
-        "Did you know? The brain's neurons can make a thousand new connections every second! 🤯",
+        "Did you know? The brain’s neurons can make a thousand new connections every second! 🤯",
         "Here's a fun fact: The word 'quiz' started as a bet! Want to know more quirky study trivia? 🤓",
         "Taking a short laugh break boosts memory retention. Ready for a study joke? 🃏",
-        "Curiosity sparks dopamine — the brain's reward chemical. Learning is literally addictive! 🎉"
+        "Curiosity sparks dopamine — the brain’s reward chemical. Learning is literally addictive! 🎉"
     ],
     "user_reflection": [
-        "What's one thing you learned today that surprised you? 🤔",
+        "What’s one thing you learned today that surprised you? 🤔",
         "How did you feel during your study session? Tracking emotions helps improve focus. 📊",
-        "What's a small win you can celebrate today? Recognition fuels motivation! 🏆",
+        "What’s a small win you can celebrate today? Recognition fuels motivation! 🏆",
         "Are your study goals still relevant? Adjusting plans is a sign of wisdom, not weakness. 🔧"
     ],
-    "fallback": [
-        "I'm not sure I have a good answer to that — I'm still learning, just like you. 🌱  \
-        But that doesn't mean your question isn't valuable. Sometimes, asking the right question *is* the first step to learning. \
-        You might try rephrasing it, or explore with tools like web search, books, or even other AIs. Either way, I'm here to support you, not pretend I know everything. Let's figure it out together. 🤝"
-    ]
+   "fallback": [
+    "I'm not sure I have a good answer to that — I'm still learning, just like you. 🌱  \
+    But that doesn't mean your question isn't valuable. Sometimes, asking the right question *is* the first step to learning. \
+    You might try rephrasing it, or explore with tools like web search, books, or even other AIs. Either way, I'm here to support you, not pretend I know everything. Let's figure it out together. 🤝"
+]
+
 }
+
 
 KEYWORDS = {
     "smart_study": [
-        "study smart", "study tips", "effective study", "study strategies",
-        "meta learning", "learning how to learn", "smart studying", "study hacks",
-        "how to study smart and not hard", "give me some study hacks"
-    ],
+    "study smart", "study tips", "effective study", "study strategies",
+    "meta learning", "learning how to learn", "smart studying", "study hacks",
+    "how to study smart and not hard", "give me some study hacks"
+],
     "greetings": ["hello", "hi", "hey", "hiya", "greetings", "what's up", "howdy", "good morning", "good afternoon", "good evening", "sup", "yo"],
     "thanks": ["thank you", "thanks", "thx", "ty", "much appreciated", "many thanks", "grateful", "appreciate it", "thanks a lot", "thank you so much"],
     "farewell": ["goodbye", "bye", "see you", "farewell", "later", "take care", "until next time", "signing off", "talk later", "catch you later", "peace out"],
@@ -316,8 +291,8 @@ KEYWORDS = {
     "exam_exhaustion": ["studying all day", "study burnout", "exam stress", "too much studying", "i'm done with exams", "no strength left", "exam tired", "exam exhaustion", "exams tiring me"],
     "health_tips": ["health tips", "how to be healthy", "stay fit", "tips for health", "physical health", "mental health", "healthy mind", "health advice"],
     "study_balance": ["study and rest", "study balance", "study too much", "rest time", "overstudying", "balance studying", "study stress", "study fatigue"],
-    "night_stress": ["2am", "late night study", "can't focus", "i'm stuck", "midnight study", "overthinking at night", "late night stress", "can't sleep"],
-    "perfectionism": ["perfect", "must be perfect", "i failed", "can't mess up", "no mistakes allowed", "it has to be right", "perfectionism", "fear of failure"],
+    "night_stress": ["2am", "late night study", "can’t focus", "i'm stuck", "midnight study", "overthinking at night", "late night stress", "can't sleep"],
+    "perfectionism": ["perfect", "must be perfect", "i failed", "can’t mess up", "no mistakes allowed", "it has to be right", "perfectionism", "fear of failure"],
     "self_doubt": ["i'm not smart", "i can't do this", "maybe not for me", "not good enough", "i'll fail", "self doubt", "imposter syndrome"],
     "resilience": ["i'll try again", "i will not give up", "i failed but", "bounce back", "resilient", "keep going", "don't give up", "stay strong"],
     "emotion_checkin": ["how do i feel", "check my mood", "emotion check", "status check", "i feel weird", "how am i feeling", "mood check"],
@@ -349,6 +324,7 @@ KEYWORDS = {
     "fun_curiosity": ["fun fact", "study joke", "interesting fact", "did you know", "fun trivia", "curiosity", "learning fun", "fun study"],
     "user_reflection": ["reflect", "self reflection", "what did i learn", "how do i feel", "track progress", "self tracking", "reflection", "journal"]
 }
+
 
 def clean_keyword_list(keywords_dict):
     cleaned = {}
@@ -405,64 +381,41 @@ def detect_sentiment(text):
     return "neutral"
 
 def get_bot_reply(user_input):
-    try:
-        # First try the original intent detection
-        intent = find_intent(user_input, KEYWORDS)
-        
-        if intent:
-            if intent == "how_are_you":
-                return random.choice(RESPONSE_DATA.get("how_are_you", RESPONSE_DATA["fallback"]))
-            elif intent in RESPONSE_DATA:
-                return random.choice(RESPONSE_DATA.get(intent, RESPONSE_DATA["fallback"]))
-        
-        # Fall back to the more comprehensive detection system
-        intent = detect_intent(user_input)
-        goal_msg = update_goals(user_input)
-        if goal_msg:
-            return goal_msg
+    intent = detect_intent(user_input)
+    goal_msg = update_goals(user_input)
+    if goal_msg:
+        return goal_msg
 
-        sentiment = detect_sentiment(user_input)
-        st.session_state.last_sentiment = sentiment
+    sentiment = detect_sentiment(user_input)
+    st.session_state.last_sentiment = sentiment
 
-        if intent and intent in RESPONSE_DATA:
-            if intent == "subjects":
-                # detect specific subject mentioned
-                for subj in KEYWORDS.get("subjects", []):
-                    if subj in user_input.lower():
-                        st.session_state.context_topic = subj
-                        break
-                return RESPONSE_DATA["subjects"].get(
-                    st.session_state.context_topic, 
-                    random.choice(RESPONSE_DATA["fallback"])
-            else:
-                st.session_state.context_topic = None
-                return random.choice(RESPONSE_DATA.get(intent, RESPONSE_DATA["fallback"]))
+    if intent and intent in RESPONSE_DATA:
+        if intent == "subjects":
+            # detect specific subject mentioned
+            for subj in KEYWORDS["subjects"]:
+                if subj in user_input.lower():
+                    st.session_state.context_topic = subj
+                    break
+            return RESPONSE_DATA["subjects"].get(st.session_state.context_topic, random.choice(RESPONSE_DATA["fallback"]))
+        else:
+            st.session_state.context_topic = None
+            return random.choice(RESPONSE_DATA[intent])
 
-        if st.session_state.context_topic:
-            subj = st.session_state.context_topic
-            subject_response = RESPONSE_DATA["subjects"].get(subj, "")
-            if subject_response:
-                return subject_response + "\n\n(You asked about this before!)"
-            return random.choice(RESPONSE_DATA["fallback"])
+    if st.session_state.context_topic:
+        subj = st.session_state.context_topic
+        return RESPONSE_DATA["subjects"].get(subj, random.choice(RESPONSE_DATA["fallback"])) + "\n\n(You asked about this before!)"
 
-        if sentiment == "positive":
-            return "Glad to hear you're feeling good! Keep it up! 🎉"
-        elif sentiment == "negative":
-            return "I noticed you're feeling down. If you want, I can share some tips or just listen. 💙"
+    if sentiment == "positive":
+        return "Glad to hear you're feeling good! Keep it up! 🎉"
+    elif sentiment == "negative":
+        return "I noticed you're feeling down. If you want, I can share some tips or just listen. 💙"
 
-        # Enhanced fallback that tries to extract possible subjects
-        possible_subjects = [subj for subj in KEYWORDS.get("subjects", []) 
-                           if subj in user_input.lower()]
-        if possible_subjects:
-            subject_response = RESPONSE_DATA["subjects"].get(possible_subjects[0], "")
-            if subject_response:
-                return f"I see you mentioned {possible_subjects[0]}. Here are some tips:\n\n{subject_response}"
+    # Enhanced fallback that tries to extract possible subjects
+    possible_subjects = [subj for subj in KEYWORDS["subjects"] if subj in user_input.lower()]
+    if possible_subjects:
+        return f"I see you mentioned {possible_subjects[0]}. Here are some tips:\n\n{RESPONSE_DATA['subjects'].get(possible_subjects[0], '')}"
 
-        return random.choice(RESPONSE_DATA.get("fallback", ["Sorry, I didn't understand that. Could you rephrase?"]))
-    
-    except Exception as e:
-        print(f"Error generating bot reply: {e}")
-        return "Sorry, I encountered an error processing your request. Please try again."
+    return random.choice(RESPONSE_DATA["fallback"])
 
 with st.form('chat_form', clear_on_submit=True):
     user_input = st.text_input('Write your message…', key='input_field')
@@ -508,3 +461,5 @@ with st.sidebar:
 filename = f"chat_history_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
 chat_history_text = "\n".join([f"{m['role'].upper()}: {m['content']}\n" for m in st.session_state.messages])
 st.download_button("📥 Download Chat History", chat_history_text, file_name=filename)
+
+

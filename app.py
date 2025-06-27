@@ -252,53 +252,124 @@ RESPONSE_DATA = {
         "Feel free to send your feedback or questions through this <a href='https://docs.google.com/forms/d/1hYk968UCuX0iqsJujVNFGVkBaJUIhA67SXJKe0xWeuM/edit' target='_blank'>Google Form</a> 💬😊",
         "Aylin welcomes your messages! Use this <a href='https://docs.google.com/forms/d/1hYk968UCuX0iqsJujVNFGVkBaJUIhA67SXJKe0xWeuM/edit' target='_blank'>Google Form</a> 📬"
     ],
+
     "subjects": {
         "math": (
             "🧮 Math Tips:\n"
+            "General:\n"
             "1️⃣ Master core topics like algebra, geometry, number theory, and combinatorics.\n"
             "2️⃣ Practice problem-solving regularly — it's not just theory, it's application.\n"
-            "3️⃣ Review past Olympiad problems to understand common patterns.\n"
-            "4️⃣ Break complex problems into smaller steps.\n"
-            "5️⃣ Always check your solutions for mistakes."
+            "3️⃣ Always check your solutions carefully.\n"
+            "Olympiad:\n"
+            "4️⃣ Review past Olympiad problems to understand common patterns.\n"
+            "5️⃣ Develop creative approaches to problems and learn multiple solution methods.\n"
+            "6️⃣ Practice rigorous proofs and logical reasoning."
         ),
         "physics": (
             "⚛️ Physics Tips:\n"
+            "General:\n"
             "1️⃣ Understand fundamental concepts before memorizing formulas.\n"
-            "2️⃣ Solve plenty of problems covering mechanics, electromagnetism, thermodynamics.\n"
-            "3️⃣ Draw diagrams to visualize problems.\n"
-            "4️⃣ Practice applying concepts to real-world situations.\n"
-            "5️⃣ Review units and dimensional analysis carefully."
+            "2️⃣ Draw diagrams to visualize problems.\n"
+            "3️⃣ Review units and dimensional analysis carefully.\n"
+            "Olympiad:\n"
+            "4️⃣ Solve plenty of problems on mechanics, electromagnetism, and thermodynamics.\n"
+            "5️⃣ Practice connecting theory with real-world experiments.\n"
+            "6️⃣ Work on explaining solutions clearly and concisely."
         ),
         "chemistry": (
             "⚗️ Chemistry Tips:\n"
+            "General:\n"
             "1️⃣ Focus on chemical reactions, stoichiometry, and periodic table trends.\n"
             "2️⃣ Practice balancing equations and understanding reaction mechanisms.\n"
-            "3️⃣ Memorize common ions and molecules.\n"
-            "4️⃣ Conduct or visualize lab experiments mentally.\n"
-            "5️⃣ Link theory to practical applications."
+            "3️⃣ Link theory to practical applications.\n"
+            "Olympiad:\n"
+            "4️⃣ Memorize common ions and molecular structures.\n"
+            "5️⃣ Visualize lab experiments mentally to predict outcomes.\n"
+            "6️⃣ Solve complex multi-step synthesis problems."
         ),
         "biology": (
             "🧬 Biology Tips:\n"
+            "General:\n"
             "1️⃣ Learn cell biology, genetics, evolution, and ecology.\n"
             "2️⃣ Use diagrams and flowcharts for processes.\n"
-            "3️⃣ Memorize key terms but focus on understanding.\n"
-            "4️⃣ Relate concepts to everyday life for better retention.\n"
-            "5️⃣ Review past exam questions."
+            "3️⃣ Relate concepts to everyday life for better retention.\n"
+            "Olympiad:\n"
+            "4️⃣ Focus on detailed understanding of experimental setups.\n"
+            "5️⃣ Review past Olympiad questions for common themes.\n"
+            "6️⃣ Practice interpreting data and drawing conclusions."
         ),
         "computer_science": (
             "💻 CS Tips:\n"
+            "General:\n"
             "1️⃣ Learn algorithms and data structures thoroughly.\n"
             "2️⃣ Practice coding problems regularly.\n"
-            "3️⃣ Understand complexity and optimization.\n"
-            "4️⃣ Work on small projects to apply knowledge.\n"
-            "5️⃣ Participate in contests to improve speed and accuracy."
+            "3️⃣ Work on small projects to apply knowledge.\n"
+            "Olympiad:\n"
+            "4️⃣ Understand time and space complexity deeply.\n"
+            "5️⃣ Participate in contests to improve speed and accuracy.\n"
+            "6️⃣ Debug code methodically and learn from errors."
+        ),
+        "geography": (
+            "🌍 Geography Tips:\n"
+            "General:\n"
+            "1️⃣ Use maps to understand physical and human geography.\n"
+            "2️⃣ Study climate systems and their effects.\n"
+            "3️⃣ Relate geographic concepts to current events.\n"
+            "Olympiad:\n"
+            "4️⃣ Analyze spatial data and trends.\n"
+            "5️⃣ Practice interpreting charts and graphs.\n"
+            "6️⃣ Review case studies and environmental challenges."
+        ),
+        "language": (
+            "🗣 Language Learning Tips:\n"
+            "General:\n"
+            "1️⃣ Practice speaking daily, even to yourself.\n"
+            "2️⃣ Learn common phrases and idioms.\n"
+            "3️⃣ Immerse yourself with media like books and podcasts.\n"
+            "Olympiad:\n"
+            "4️⃣ Focus on grammar and advanced vocabulary.\n"
+            "5️⃣ Practice writing essays with clear structure.\n"
+            "6️⃣ Engage in active listening of diverse accents."
+        ),
+        "history": (
+            "🏛 History Tips:\n"
+            "General:\n"
+            "1️⃣ Create timelines to understand events' context.\n"
+            "2️⃣ Connect political, economic, and cultural factors.\n"
+            "3️⃣ Practice essay writing focused on arguments.\n"
+            "Olympiad:\n"
+            "4️⃣ Analyze causes and long-term effects critically.\n"
+            "5️⃣ Compare different historians’ interpretations.\n"
+            "6️⃣ Memorize key dates and influential figures."
+        ),
+        "economics": (
+            "💹 Economics Tips:\n"
+            "General:\n"
+            "1️⃣ Understand supply and demand, market structures.\n"
+            "2️⃣ Follow current economic news.\n"
+            "3️⃣ Practice drawing and interpreting graphs.\n"
+            "Olympiad:\n"
+            "4️⃣ Apply models to real-world scenarios.\n"
+            "5️⃣ Solve quantitative problems carefully.\n"
+            "6️⃣ Analyze policy impacts and economic theories."
+        ),
+        "literature": (
+            "📚 Literature Tips:\n"
+            "General:\n"
+            "1️⃣ Read actively, annotate themes and motifs.\n"
+            "2️⃣ Explore historical and cultural contexts.\n"
+            "3️⃣ Practice writing clear, evidence-supported essays.\n"
+            "Olympiad:\n"
+            "4️⃣ Analyze narrative techniques deeply.\n"
+            "5️⃣ Compare different genres and styles.\n"
+            "6️⃣ Discuss interpretations with peers for deeper insight."
         )
     },
-    "emotional_support": [
-        "It's okay to feel overwhelmed sometimes. You're stronger than you think. 💪❤️",
-        "Take a deep breath. You're doing your best, and that's enough. 🌬️✨",
-        "Remember, progress isn't always linear. Be kind to yourself. 🌱",
-        "Whenever you feel stuck, reach out — you're not alone in this. 🤝"
+    "love": [
+        "Thank you! Your support means a lot! 💖",
+        "I appreciate you! Let's keep learning together! 🤓",
+        "Sending good vibes your way! 🤗",
+        "You're awesome! Keep shining! ✨"
     ]
 }
 
@@ -320,6 +391,7 @@ KEYWORDS = {
         "how are you", "how do you feel", "how's it going", "how you doing", "how are things",
         "what's up", "how have you been", "how r u", "how ya doing", "how's everything"
     ],
+    "love": ["love", "thanks", "thank you", "appreciate", "grateful", "support", "like", "❤️", "💖", "💕", "thank", "love you"],
     "burnout": [
         "burnout", "burned out", "exhausted", "tired", "worn out", "overwhelmed", "fatigue",
         "drained", "burnt out", "stressed out", "feeling burnt", "mental exhaustion", "energy low"

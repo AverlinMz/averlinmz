@@ -688,7 +688,8 @@ with st.form('chat_form', clear_on_submit=True):
     if st.form_submit_button('Send') and user_input.strip():
         st.session_state.messages.append({'role': 'user', 'content': user_input})
         
-                bot_reply = get_bot_reply(user_input)
+        bot_reply = get_bot_reply(user_input)  # ✅ Correct
+
 
         # Clean bot reply for TTS only
         clean_reply = remove_emojis(bot_reply)

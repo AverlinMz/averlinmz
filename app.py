@@ -7,6 +7,7 @@ import re
 import tempfile
 import os
 from gtts import gTTS
+from fuzzywuzzy import fuzz, process
 from difflib import get_close_matches
 
 # Initialize session state
@@ -31,51 +32,140 @@ def remove_emojis(text):
                                flags=re.UNICODE)
     return emoji_pattern.sub(r'', text)
 
-st.set_page_config(
-    page_title="AverlinMz Chatbot",
-    page_icon="https://i.imgur.com/mJ1X49g_d.webp",
-    layout="wide",
-    initial_sidebar_state="collapsed"
-)
+# Text preprocessing with common text speak conversions
+def preprocess_text(text):
+    text = text.lower().strip()
+    # Common text speak substitutions
+    substitutions = {
+        ' u ': ' you ',
+        ' r ': ' are ',
+        ' ur ': ' your ',
+        ' hw ': ' how ',
+        ' wat ': ' what ',
+        ' wen ': ' when ',
+        ' wher ': ' where ',
+        ' y ': ' why ',
+        ' pls ': ' please ',
+        ' thx ': ' thanks ',
+        ' tysm ': ' thank you so much ',
+        ' ty ': ' thank you ',
+        ' rly ': ' really ',
+        ' btw ': ' by the way ',
+        ' tho ': ' though ',
+        ' afaik ': ' as far as i know ',
+        ' ik ': ' i know ',
+        ' idk ': ' i dont know ',
+    }
+    
+    for wrong, right in substitutions.items():
+        text = text.replace(wrong, right)
+    
+    # Remove repeated characters (like 'sooo' -> 'soo')
+    text = re.sub(r'(.)\1{2,}', r'\1\1', text)
+    
+    return text
 
-theme = st.sidebar.selectbox("🎨 Choose a theme", ["Default", "Night", "Blue"])
-if theme == "Night":
-    st.markdown("""<style>body, .stApp { background:#111; color:#fff; } .user {background:#333;color:#fff;} .bot {background:#444;color:#fff;}</style>""", unsafe_allow_html=True)
-elif theme == "Blue":
-    st.markdown("""<style>body, .stApp { background:#e0f7fa; } .user {background:#81d4fa;color:#01579b;} .bot {background:#b2ebf2;color:#004d40;}</style>""", unsafe_allow_html=True)
+def clean_text(text):
+    text = preprocess_text(text)
+    return text.translate(str.maketrans('', '', string.punctuation))
 
-st.markdown("""
-<style>
-.chat-container {max-width:900px;margin:0 auto;padding:20px;display:flex;flex-direction:column;}
-.title-container {
-  text-align:center;
-  padding-bottom:10px;
-  font-family:'Poppins',sans-serif;
-  font-weight:600;
-  animation: slideUpFadeIn 1s ease forwards;
-}
-.title-container h1 {margin:0;}
-.chat-window{flex-grow:1;max-height:60vh;overflow-y:auto;padding:15px;display:flex;flex-direction:column;gap:15px;}
-.user, .bot {align-self:center;width:100%;word-wrap:break-word;box-shadow:0 2px 4px rgba(0,0,0,0.1);font-family:'Poppins',sans-serif;}
-.user{background:#D1F2EB;color:#0B3D2E;padding:12px 16px;border-radius:18px 18px 4px 18px;}
-.bot{background:#EFEFEF;color:#333;padding:12px 16px;border-radius:18px 18px 18px 4px;animation:typing 1s ease-in-out;}
-@keyframes typing {0%{opacity:0;}100%{opacity:1;}}
-@keyframes slideUpFadeIn {
-  0% {opacity:0; transform: translateY(30px);}
-  100% {opacity:1; transform: translateY(0);}
-}
-</style>
-""", unsafe_allow_html=True)
+# Enhanced fuzzy intent detection
+def detect_intent(text):
+    msg = clean_text(text)
+    
+    # First check for exact matches for efficiency
+    for intent, kws in KEYWORDS_CLEANED.items():
+        if any(kw in msg for kw in kws):
+            return intent
+    
+    # Then use fuzzy matching
+    best_match = None
+    highest_score = 0
+    
+    # Check the full message first
+    for intent, kws in KEYWORDS_CLEANED.items():
+        # Find best match in this keyword list using partial ratio
+        match, score = process.extractOne(msg, kws, scorer=fuzz.partial_ratio)
+        if score > 80 and score > highest_score:  # 80% similarity threshold
+            highest_score = score
+            best_match = intent
+    
+    # If no good match found, check individual words
+    if not best_match:
+        words = msg.split()
+        for word in words:
+            for intent, kws in KEYWORDS_CLEANED.items():
+                match, score = process.extractOne(word, kws, scorer=fuzz.ratio)
+                if score > 85 and score > highest_score:
+                    highest_score = score
+                    best_match = intent
+    
+    # Special case for subject detection
+    for subj in KEYWORDS["subjects"]:
+        if subj in msg:
+            return "subjects"
+    
+    return best_match
 
-st.markdown("""
-<div class="title-container">
-  <img src="https://i.imgur.com/mJ1X49g_d.webp" alt="Chatbot Image" style="width:150px;border-radius:20px;margin-bottom:10px;"/>
-  <h1>AverlinMz – Study Chatbot</h1>
-</div>
-""", unsafe_allow_html=True)
+def update_goals(user_input):
+    msg = clean_text(user_input)
+    goal_keywords = ["goal", "aim", "plan", "objective", "target", "resolution", "ambition", "purpose", "intention"]
+    if any(kw in msg for kw in goal_keywords):
+        if user_input not in st.session_state.goals:
+            st.session_state.goals.append(user_input)
+            return "Got it! I've added that to your study goals."
+        else:
+            return "You already mentioned this goal."
+    return None
 
+def detect_sentiment(text):
+    positive = ["good", "great", "awesome", "love", "happy", "fine", "well", "fantastic", "wonderful", "excellent", "perfect", "super", "amazing", "terrific"]
+    negative = ["bad", "sad", "tired", "depressed", "down", "exhausted", "stressed", "anxious", "overwhelmed", "frustrated", "awful", "terrible", "horrible"]
+    txt = clean_text(text)
+    if any(word in txt for word in positive): return "positive"
+    if any(word in txt for word in negative): return "negative"
+    return "neutral"
+
+def get_bot_reply(user_input):
+    intent = detect_intent(user_input)
+    goal_msg = update_goals(user_input)
+    if goal_msg:
+        return goal_msg
+
+    sentiment = detect_sentiment(user_input)
+    st.session_state.last_sentiment = sentiment
+
+    if intent and intent in RESPONSE_DATA:
+        if intent == "subjects":
+            # detect specific subject mentioned
+            for subj in KEYWORDS["subjects"]:
+                if subj in user_input.lower():
+                    st.session_state.context_topic = subj
+                    break
+            return RESPONSE_DATA["subjects"].get(st.session_state.context_topic, random.choice(RESPONSE_DATA["fallback"]))
+        else:
+            st.session_state.context_topic = None
+            return random.choice(RESPONSE_DATA[intent])
+
+    if st.session_state.context_topic:
+        subj = st.session_state.context_topic
+        return RESPONSE_DATA["subjects"].get(subj, random.choice(RESPONSE_DATA["fallback"])) + "\n\n(You asked about this before!)"
+
+    if sentiment == "positive":
+        return "Glad to hear you're feeling good! Keep it up! 🎉"
+    elif sentiment == "negative":
+        return "I noticed you're feeling down. If you want, I can share some tips or just listen. 💙"
+
+    # Enhanced fallback that tries to extract possible subjects
+    possible_subjects = [subj for subj in KEYWORDS["subjects"] if subj in user_input.lower()]
+    if possible_subjects:
+        return f"I see you mentioned {possible_subjects[0]}. Here are some tips:\n\n{RESPONSE_DATA['subjects'].get(possible_subjects[0], '')}"
+
+    return random.choice(RESPONSE_DATA["fallback"])
+
+# Response data and keywords (truncated for brevity - include your full RESPONSE_DATA and KEYWORDS dictionaries here)
 RESPONSE_DATA = {
-    "greetings": [
+        "greetings": [
         "Hey! 👋 How's your day shaping up? Ready to tackle some study questions? 📚",
         "Hello! 😊 What topic shall we explore today? 🤔",
         "Hi there! Let's make your study session productive! 💡",
@@ -276,9 +366,8 @@ RESPONSE_DATA = {
 
 }
 
-
 KEYWORDS = {
-    "smart_study": [
+   "smart_study": [
     "study smart", "study tips", "effective study", "study strategies",
     "meta learning", "learning how to learn", "smart studying", "study hacks",
     "how to study smart and not hard", "give me some study hacks"
@@ -323,8 +412,8 @@ KEYWORDS = {
     "smart_study": ["study smart", "study tips", "effective study", "study strategies", "meta learning", "learning how to learn", "smart studying", "study hacks"],
     "fun_curiosity": ["fun fact", "study joke", "interesting fact", "did you know", "fun trivia", "curiosity", "learning fun", "fun study"],
     "user_reflection": ["reflect", "self reflection", "what did i learn", "how do i feel", "track progress", "self tracking", "reflection", "journal"]
-}
 
+}
 
 def clean_keyword_list(keywords_dict):
     cleaned = {}
@@ -334,88 +423,49 @@ def clean_keyword_list(keywords_dict):
 
 KEYWORDS_CLEANED = clean_keyword_list(KEYWORDS)
 
-def clean_text(text):
-    return text.lower().translate(str.maketrans('', '', string.punctuation)).strip()
+# Streamlit UI
+st.set_page_config(
+    page_title="AverlinMz Chatbot",
+    page_icon="https://i.imgur.com/mJ1X49g_d.webp",
+    layout="wide",
+    initial_sidebar_state="collapsed"
+)
 
-def detect_intent(text):
-    msg = clean_text(text)
-    
-    # First check for exact matches
-    for intent, kws in KEYWORDS_CLEANED.items():
-        if any(kw in msg for kw in kws):
-            return intent
-    
-    # Then check for similar words using fuzzy matching
-    words = msg.split()
-    for word in words:
-        for intent, kws in KEYWORDS_CLEANED.items():
-            # Find close matches with 65% similarity threshold (lowered for broader matching)
-            matches = get_close_matches(word, kws, n=1, cutoff=0.65)
-            if matches:
-                return intent
-    
-    # Special case for subject detection with partial matching
-    for subj in KEYWORDS["subjects"]:
-        if subj in msg:
-            return "subjects"
-    
-    return None
+theme = st.sidebar.selectbox("🎨 Choose a theme", ["Default", "Night", "Blue"])
+if theme == "Night":
+    st.markdown("""<style>body, .stApp { background:#111; color:#fff; } .user {background:#333;color:#fff;} .bot {background:#444;color:#fff;}</style>""", unsafe_allow_html=True)
+elif theme == "Blue":
+    st.markdown("""<style>body, .stApp { background:#e0f7fa; } .user {background:#81d4fa;color:#01579b;} .bot {background:#b2ebf2;color:#004d40;}</style>""", unsafe_allow_html=True)
 
-def update_goals(user_input):
-    msg = clean_text(user_input)
-    goal_keywords = ["goal", "aim", "plan", "objective", "target", "resolution", "ambition", "purpose", "intention"]
-    if any(kw in msg for kw in goal_keywords):
-        if user_input not in st.session_state.goals:
-            st.session_state.goals.append(user_input)
-            return "Got it! I've added that to your study goals."
-        else:
-            return "You already mentioned this goal."
-    return None
+st.markdown("""
+<style>
+.chat-container {max-width:900px;margin:0 auto;padding:20px;display:flex;flex-direction:column;}
+.title-container {
+  text-align:center;
+  padding-bottom:10px;
+  font-family:'Poppins',sans-serif;
+  font-weight:600;
+  animation: slideUpFadeIn 1s ease forwards;
+}
+.title-container h1 {margin:0;}
+.chat-window{flex-grow:1;max-height:60vh;overflow-y:auto;padding:15px;display:flex;flex-direction:column;gap:15px;}
+.user, .bot {align-self:center;width:100%;word-wrap:break-word;box-shadow:0 2px 4px rgba(0,0,0,0.1);font-family:'Poppins',sans-serif;}
+.user{background:#D1F2EB;color:#0B3D2E;padding:12px 16px;border-radius:18px 18px 4px 18px;}
+.bot{background:#EFEFEF;color:#333;padding:12px 16px;border-radius:18px 18px 18px 4px;animation:typing 1s ease-in-out;}
+@keyframes typing {0%{opacity:0;}100%{opacity:1;}}
+@keyframes slideUpFadeIn {
+  0% {opacity:0; transform: translateY(30px);}
+  100% {opacity:1; transform: translateY(0);}
+}
+</style>
+""", unsafe_allow_html=True)
 
-def detect_sentiment(text):
-    positive = ["good", "great", "awesome", "love", "happy", "fine", "well", "fantastic", "wonderful", "excellent", "perfect", "super", "amazing", "terrific"]
-    negative = ["bad", "sad", "tired", "depressed", "down", "exhausted", "stressed", "anxious", "overwhelmed", "frustrated", "awful", "terrible", "horrible"]
-    txt = clean_text(text)
-    if any(word in txt for word in positive): return "positive"
-    if any(word in txt for word in negative): return "negative"
-    return "neutral"
-
-def get_bot_reply(user_input):
-    intent = detect_intent(user_input)
-    goal_msg = update_goals(user_input)
-    if goal_msg:
-        return goal_msg
-
-    sentiment = detect_sentiment(user_input)
-    st.session_state.last_sentiment = sentiment
-
-    if intent and intent in RESPONSE_DATA:
-        if intent == "subjects":
-            # detect specific subject mentioned
-            for subj in KEYWORDS["subjects"]:
-                if subj in user_input.lower():
-                    st.session_state.context_topic = subj
-                    break
-            return RESPONSE_DATA["subjects"].get(st.session_state.context_topic, random.choice(RESPONSE_DATA["fallback"]))
-        else:
-            st.session_state.context_topic = None
-            return random.choice(RESPONSE_DATA[intent])
-
-    if st.session_state.context_topic:
-        subj = st.session_state.context_topic
-        return RESPONSE_DATA["subjects"].get(subj, random.choice(RESPONSE_DATA["fallback"])) + "\n\n(You asked about this before!)"
-
-    if sentiment == "positive":
-        return "Glad to hear you're feeling good! Keep it up! 🎉"
-    elif sentiment == "negative":
-        return "I noticed you're feeling down. If you want, I can share some tips or just listen. 💙"
-
-    # Enhanced fallback that tries to extract possible subjects
-    possible_subjects = [subj for subj in KEYWORDS["subjects"] if subj in user_input.lower()]
-    if possible_subjects:
-        return f"I see you mentioned {possible_subjects[0]}. Here are some tips:\n\n{RESPONSE_DATA['subjects'].get(possible_subjects[0], '')}"
-
-    return random.choice(RESPONSE_DATA["fallback"])
+st.markdown("""
+<div class="title-container">
+  <img src="https://i.imgur.com/mJ1X49g_d.webp" alt="Chatbot Image" style="width:150px;border-radius:20px;margin-bottom:10px;"/>
+  <h1>AverlinMz – Study Chatbot</h1>
+</div>
+""", unsafe_allow_html=True)
 
 with st.form('chat_form', clear_on_submit=True):
     user_input = st.text_input('Write your message…', key='input_field')
@@ -461,5 +511,3 @@ with st.sidebar:
 filename = f"chat_history_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
 chat_history_text = "\n".join([f"{m['role'].upper()}: {m['content']}\n" for m in st.session_state.messages])
 st.download_button("📥 Download Chat History", chat_history_text, file_name=filename)
-
-

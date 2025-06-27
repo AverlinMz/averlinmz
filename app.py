@@ -163,9 +163,9 @@ def get_bot_reply(user_input):
 
     return random.choice(RESPONSE_DATA["fallback"])
 
-# Response data and keywords (truncated for brevity - include your full RESPONSE_DATA and KEYWORDS dictionaries here)
+# Response data and keywords
 RESPONSE_DATA = {
-        "greetings": [
+    "greetings": [
         "Hey! 👋 How's your day shaping up? Ready to tackle some study questions? 📚",
         "Hello! 😊 What topic shall we explore today? 🤔",
         "Hi there! Let's make your study session productive! 💡",
@@ -367,7 +367,7 @@ RESPONSE_DATA = {
 }
 
 KEYWORDS = {
-   "smart_study": [
+    "smart_study": [
     "study smart", "study tips", "effective study", "study strategies",
     "meta learning", "learning how to learn", "smart studying", "study hacks",
     "how to study smart and not hard", "give me some study hacks"

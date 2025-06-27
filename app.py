@@ -74,7 +74,8 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-RESPONSE_DATA = {
+
+  RESPONSE_DATA = {
     "greetings": [
         "Hey! 👋 How's your day shaping up? Ready to tackle some study questions? 📚",
         "Hello! 😊 What topic shall we explore today? 🤔",
@@ -204,7 +205,7 @@ RESPONSE_DATA = {
     ],
     "introduction": [
         "I'm AverlinMz, your study chatbot, created by Aylin Muzaffarli from Azerbaijan. 🇦🇿🤖 Learn more: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>official website</a> 🌐",
-        "Hello! I'm here to support your study journey. �✨ Visit my site: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>AverlinMz Website</a> 💻",
+        "Hello! I'm here to support your study journey. ✨ Visit my site: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>AverlinMz Website</a> 💻",
         "Created by Aylin, I help with study tips and motivation. 💡❤️ Check this out: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Learn more</a> 📖",
         "Nice to meet you! Let's learn and grow together. 🌱📘 Want to know more? <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Click here</a> 🚀"
     ],
@@ -268,61 +269,50 @@ RESPONSE_DATA = {
         "What’s a small win you can celebrate today? Recognition fuels motivation! 🏆",
         "Are your study goals still relevant? Adjusting plans is a sign of wisdom, not weakness. 🔧"
     ],
-   "fallback": [
-    "I'm not sure I have a good answer to that — I'm still learning, just like you. 🌱  \
-    But that doesn't mean your question isn't valuable. Sometimes, asking the right question *is* the first step to learning. \
-    You might try rephrasing it, or explore with tools like web search, books, or even other AIs. Either way, I'm here to support you, not pretend I know everything. Let's figure it out together. 🤝"
-]
-
+    "fallback": [
+        "Sorry, I didn't understand that. Can you try asking differently? 🤔",
+        "Hmm, I’m not sure how to respond to that yet. Let’s keep the focus on studies! 📚",
+        "I didn’t quite get that. Could you rephrase or ask something else? 💡"
+    ]
 }
 
 
 KEYWORDS = {
-    "smart_study": [
-    "study smart", "study tips", "effective study", "study strategies",
-    "meta learning", "learning how to learn", "smart studying", "study hacks",
-    "how to study smart and not hard", "give me some study hacks"
-],
-    "greetings": ["hello", "hi", "hey", "hiya", "greetings", "what's up", "howdy", "good morning", "good afternoon", "good evening", "sup", "yo"],
-    "thanks": ["thank you", "thanks", "thx", "ty", "much appreciated", "many thanks", "grateful", "appreciate it", "thanks a lot", "thank you so much"],
-    "farewell": ["goodbye", "bye", "see you", "farewell", "later", "take care", "until next time", "signing off", "talk later", "catch you later", "peace out"],
-    "how_are_you": ["how are you", "how's it going", "how do you do", "how have you been", "what's new", "how's life", "how's everything", "how're things"],
-    "burnout": ["i'm tired", "burnt out", "no energy", "exhausted", "need a break", "i can't do this anymore", "mentally drained", "burnout", "overwhelmed"],
-    "exam_exhaustion": ["studying all day", "study burnout", "exam stress", "too much studying", "i'm done with exams", "no strength left", "exam tired", "exam exhaustion", "exams tiring me"],
-    "health_tips": ["health tips", "how to be healthy", "stay fit", "tips for health", "physical health", "mental health", "healthy mind", "health advice"],
-    "study_balance": ["study and rest", "study balance", "study too much", "rest time", "overstudying", "balance studying", "study stress", "study fatigue"],
-    "night_stress": ["2am", "late night study", "can’t focus", "i'm stuck", "midnight study", "overthinking at night", "late night stress", "can't sleep"],
-    "perfectionism": ["perfect", "must be perfect", "i failed", "can’t mess up", "no mistakes allowed", "it has to be right", "perfectionism", "fear of failure"],
-    "self_doubt": ["i'm not smart", "i can't do this", "maybe not for me", "not good enough", "i'll fail", "self doubt", "imposter syndrome"],
-    "resilience": ["i'll try again", "i will not give up", "i failed but", "bounce back", "resilient", "keep going", "don't give up", "stay strong"],
-    "emotion_checkin": ["how do i feel", "check my mood", "emotion check", "status check", "i feel weird", "how am i feeling", "mood check"],
-    "daily_review": ["daily review", "today summary", "end of day", "what i did today", "check today", "reflection", "journal", "review day"],
-    "set_goal": ["my goal is", "i plan to", "today i want", "i aim to", "goal setting", "set goal", "goal for today"],
-    "user_feeling_good": ["i'm good", "great", "happy", "doing well", "awesome", "fine", "fantastic", "wonderful", "excellent", "perfect", "super", "amazing", "terrific"],
-    "user_feeling_bad": ["i'm sad", "not good", "tired", "depressed", "down", "exhausted", "stressed", "anxious", "overwhelmed", "frustrated", "awful", "terrible", "horrible", "bad mood"],
-    "love": ["i love you", "love you", "luv you", "like you", "adore you", "you're amazing", "you're awesome", "you're great", "you're wonderful", "thanks for being here"],
-    "exam_prep": ["exam tips", "study for test", "prepare for exam", "how to study", "exam advice", "test preparation", "studying help", "exam strategies", "test tips", "study techniques", "best way to study", "exam prep"],
-    "passed_exam": ["i passed", "i did it", "exam success", "cleared the test", "exam results", "got good marks", "aced the exam", "passed with flying colors", "nailed the test", "killed the exam"],
-    "capabilities": ["what can you do", "your abilities", "features", "help me", "what do you offer", "your functions", "what help", "your skills"],
-    "introduction": ["introduce", "who are you", "about you", "yourself", "tell me about yourself", "what are you", "your purpose", "your identity"],
-    "creator_info": ["who is aylin", "about aylin", "creator info", "who made you", "who created you", "who built you", "who programmed you", "who developed you"],
-    "contact_creator": ["how can i contact aylin", "contact aylin", "how to contact", "reach aylin", "get in touch with creator", "aylin's contact", "aylin's info", "reach the maker"],
-    "ack_creator": ["thank aylin", "thanks aylin", "thank you aylin", "appreciate aylin", "grateful to aylin", "kudos to aylin", "props to aylin"],
-    "subjects": ["math", "physics", "chemistry", "biology", "history", "language", "programming", "literature", "geography", "economics",
-                "mathematics", "physic", "chem", "bio", "hist", "lang", "code", "lit", "geo", "econ",
-                "algebra", "calculus", "trigonometry", "statistics", "quantum", "mechanics", "thermodynamics",
-                "organic", "inorganic", "biochemistry", "genetics", "zoology", "botany", "anatomy",
-                "world history", "ancient", "medieval", "modern", "political",
-                "english", "spanish", "french", "german", "russian", "linguistics",
-                "python", "java", "javascript", "c++", "coding", "web development",
-                "poetry", "novel", "drama", "fiction", "shakespeare",
-                "physical geography", "human geography", "cartography", "gis",
-                "microeconomics", "macroeconomics", "finance", "business"],
-    "emotional_support": ["feeling overwhelmed", "need support", "mental health", "emotional help", "feeling stressed", "anxiety", "depression", "emotional support", "feeling down"],
-    "growth_mindset": ["growth mindset", "learning from mistakes", "keep growing", "improve myself", "challenge myself", "curious", "embrace failure", "growth", "mindset"],
-    "smart_study": ["study smart", "study tips", "effective study", "study strategies", "meta learning", "learning how to learn", "smart studying", "study hacks"],
-    "fun_curiosity": ["fun fact", "study joke", "interesting fact", "did you know", "fun trivia", "curiosity", "learning fun", "fun study"],
-    "user_reflection": ["reflect", "self reflection", "what did i learn", "how do i feel", "track progress", "self tracking", "reflection", "journal"]
+    "greetings": ["hi", "hello", "hey", "good morning", "good afternoon", "good evening", "greetings", "yo"],
+    "thanks": ["thanks", "thank you", "thx", "thankful", "appreciate"],
+    "farewell": ["bye", "goodbye", "see you", "farewell", "later", "catch you", "take care"],
+    "how_are_you": ["how are you", "how do you feel", "how's it going", "how you doing", "how are things"],
+    "burnout": ["burnout", "exhausted", "tired", "overwhelmed", "fatigue", "drained"],
+    "exam_exhaustion": ["exams", "exam stress", "exam tired", "study exhaustion", "test fatigue", "exam anxiety"],
+    "health_tips": ["health", "wellbeing", "well-being", "self-care", "rest", "hydrate", "sleep", "exercise"],
+    "study_balance": ["balance", "study rest", "take break", "overstudy", "study too much", "burned out"],
+    "night_stress": ["night", "late night", "insomnia", "can't sleep", "anxiety night", "stress at night"],
+    "perfectionism": ["perfect", "perfectionism", "too perfect", "can't finish", "always wrong", "perfect is hard"],
+    "self_doubt": ["self doubt", "doubt myself", "not sure", "uncertain", "confidence", "insecure"],
+    "resilience": ["resilience", "keep going", "bounce back", "don't give up", "push through", "keep fighting"],
+    "emotion_checkin": ["feelings", "emotions", "mood", "emotion check", "how do I feel"],
+    "daily_review": ["today", "daily review", "reflection", "how was today", "what did I do"],
+    "set_goal": ["goal", "set goal", "target", "aim", "objective", "plan for today"],
+    "user_feeling_good": ["good", "great", "happy", "awesome", "excited", "fine", "well"],
+    "user_feeling_bad": ["bad", "sad", "tired", "down", "unhappy", "stressed", "anxious", "worried"],
+    "love": ["love you", "thanks", "appreciate you", "like you", "grateful"],
+    "exam_prep": ["exam prep", "study for exams", "test prep", "preparing for exam", "exam tips"],
+    "passed_exam": ["passed exam", "exam result", "exam success", "I passed", "got good grade", "success"],
+    "capabilities": ["what can you do", "capabilities", "help", "assist", "features", "what are you"],
+    "introduction": ["who are you", "introduce yourself", "about you", "your name", "creator"],
+    "creator_info": ["creator", "who made you", "author", "developer", "owner"],
+    "ack_creator": ["credit", "acknowledge", "thanks to", "creator credit"],
+    "contact_creator": ["contact", "reach", "feedback", "message", "form"],
+    "subjects": [
+        "math", "physics", "chemistry", "biology", "history", "language",
+        "programming", "literature", "geography", "economics"
+    ],
+    "emotional_support": ["overwhelmed", "stress", "sad", "anxious", "frustrated", "upset"],
+    "growth_mindset": ["mistakes", "fail", "failure", "try again", "learning", "progress", "growth"],
+    "smart_study": ["study tips", "study advice", "learn better", "study smarter", "study strategy"],
+    "fun_curiosity": ["fun fact", "did you know", "curious", "interesting", "trivia", "joke"],
+    "user_reflection": ["reflect", "reflection", "learned today", "feelings about study", "goals progress"],
+    "fallback": []  # Usually triggered when none of the above matches
 }
 
 

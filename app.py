@@ -103,6 +103,12 @@ RESPONSE_DATA = {
         "Embrace a growth mindset to thrive:\n1️⃣ See mistakes as learning opportunities, not failures.\n2️⃣ Face challenges confidently — every effort builds skill.\n3️⃣ Celebrate small wins to keep motivation high! 🚀🌱",
         "Build resilience and confidence:\n1️⃣ Change strategies or ask for feedback when stuck.\n2️⃣ View failure as a step toward success.\n3️⃣ Remember, progress takes time — be patient and persistent! 💪🌈"
     ],
+     "fallback": [
+        "Sorry, I didn't understand that. Could you rephrase?",
+        "I'm not sure how to answer that, but I'm here to help!",
+        "Hmm, that’s new to me. Let's try something else.",
+        "Could you please clarify your question?"
+    ]
     "stress_management": [
         "Handle stress with simple strategies:\n1️⃣ Practice deep breathing or mindfulness breaks to calm your mind.\n2️⃣ Move your body — a short walk or stretch releases tension.\n3️⃣ Keep a balanced routine with hobbies and social time to recharge. 🌬️🚶‍♂️🎨",
         "Maintain emotional well-being:\n1️⃣ Prioritize a healthy sleep schedule — avoid late-night studying.\n2️⃣ Unwind before bed with relaxing activities.\n3️⃣ Talk to someone you trust or journal your feelings when anxiety builds up. 🛌💬📝"

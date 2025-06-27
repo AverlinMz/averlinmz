@@ -405,53 +405,64 @@ def detect_sentiment(text):
     return "neutral"
 
 def get_bot_reply(user_input):
-    # First try the original intent detection
-    intent = find_intent(user_input, KEYWORDS)
+    try:
+        # First try the original intent detection
+        intent = find_intent(user_input, KEYWORDS)
+        
+        if intent:
+            if intent == "how_are_you":
+                return random.choice(RESPONSE_DATA.get("how_are_you", RESPONSE_DATA["fallback"]))
+            elif intent in RESPONSE_DATA:
+                return random.choice(RESPONSE_DATA.get(intent, RESPONSE_DATA["fallback"]))
+        
+        # Fall back to the more comprehensive detection system
+        intent = detect_intent(user_input)
+        goal_msg = update_goals(user_input)
+        if goal_msg:
+            return goal_msg
+
+        sentiment = detect_sentiment(user_input)
+        st.session_state.last_sentiment = sentiment
+
+        if intent and intent in RESPONSE_DATA:
+            if intent == "subjects":
+                # detect specific subject mentioned
+                for subj in KEYWORDS.get("subjects", []):
+                    if subj in user_input.lower():
+                        st.session_state.context_topic = subj
+                        break
+                return RESPONSE_DATA["subjects"].get(
+                    st.session_state.context_topic, 
+                    random.choice(RESPONSE_DATA["fallback"])
+            else:
+                st.session_state.context_topic = None
+                return random.choice(RESPONSE_DATA.get(intent, RESPONSE_DATA["fallback"]))
+
+        if st.session_state.context_topic:
+            subj = st.session_state.context_topic
+            subject_response = RESPONSE_DATA["subjects"].get(subj, "")
+            if subject_response:
+                return subject_response + "\n\n(You asked about this before!)"
+            return random.choice(RESPONSE_DATA["fallback"])
+
+        if sentiment == "positive":
+            return "Glad to hear you're feeling good! Keep it up! 🎉"
+        elif sentiment == "negative":
+            return "I noticed you're feeling down. If you want, I can share some tips or just listen. 💙"
+
+        # Enhanced fallback that tries to extract possible subjects
+        possible_subjects = [subj for subj in KEYWORDS.get("subjects", []) 
+                           if subj in user_input.lower()]
+        if possible_subjects:
+            subject_response = RESPONSE_DATA["subjects"].get(possible_subjects[0], "")
+            if subject_response:
+                return f"I see you mentioned {possible_subjects[0]}. Here are some tips:\n\n{subject_response}"
+
+        return random.choice(RESPONSE_DATA.get("fallback", ["Sorry, I didn't understand that. Could you rephrase?"]))
     
-    if intent:
-        if intent == "how_are_you":
-            import random
-            response = random.choice(RESPONSE_DATA["how_are_you"])
-            return response
-        elif intent in RESPONSE_DATA:
-            return random.choice(RESPONSE_DATA[intent])
-    
-    # Fall back to the more comprehensive detection system
-    intent = detect_intent(user_input)
-    goal_msg = update_goals(user_input)
-    if goal_msg:
-        return goal_msg
-
-    sentiment = detect_sentiment(user_input)
-    st.session_state.last_sentiment = sentiment
-
-    if intent and intent in RESPONSE_DATA:
-        if intent == "subjects":
-            # detect specific subject mentioned
-            for subj in KEYWORDS["subjects"]:
-                if subj in user_input.lower():
-                    st.session_state.context_topic = subj
-                    break
-            return RESPONSE_DATA["subjects"].get(st.session_state.context_topic, random.choice(RESPONSE_DATA["fallback"]))
-        else:
-            st.session_state.context_topic = None
-            return random.choice(RESPONSE_DATA[intent])
-
-    if st.session_state.context_topic:
-        subj = st.session_state.context_topic
-        return RESPONSE_DATA["subjects"].get(subj, random.choice(RESPONSE_DATA["fallback"])) + "\n\n(You asked about this before!)"
-
-    if sentiment == "positive":
-        return "Glad to hear you're feeling good! Keep it up! 🎉"
-    elif sentiment == "negative":
-        return "I noticed you're feeling down. If you want, I can share some tips or just listen. 💙"
-
-    # Enhanced fallback that tries to extract possible subjects
-    possible_subjects = [subj for subj in KEYWORDS["subjects"] if subj in user_input.lower()]
-    if possible_subjects:
-        return f"I see you mentioned {possible_subjects[0]}. Here are some tips:\n\n{RESPONSE_DATA['subjects'].get(possible_subjects[0], '')}"
-
-    return random.choice(RESPONSE_DATA["fallback"])
+    except Exception as e:
+        print(f"Error generating bot reply: {e}")
+        return "Sorry, I encountered an error processing your request. Please try again."
 
 with st.form('chat_form', clear_on_submit=True):
     user_input = st.text_input('Write your message…', key='input_field')

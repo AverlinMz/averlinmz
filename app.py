@@ -256,18 +256,97 @@ RESPONSE_DATA = {
         "Feel free to send your feedback or questions through this <a href='https://docs.google.com/forms/d/1hYk968UCuX0iqsJujVNFGVkBaJUIhA67SXJKe0xWeuM/edit' target='_blank'>Google Form</a> 💬😊",
         "Aylin welcomes your messages! Use this <a href='https://docs.google.com/forms/d/1hYk968UCuX0iqsJujVNFGVkBaJUIhA67SXJKe0xWeuM/edit' target='_blank'>Google Form</a> 📬🤗"
     ],
-    "subjects": {
-        "math": "🧮 Math Tips:\n- Practice daily with diverse problems\n- Understand concepts before memorizing formulas\n- Break complex problems into smaller steps\n- Review mistakes to learn from them\n- Use visual aids like graphs and diagrams",
-        "physics": "🧪 Physics Tips:\n- Master fundamental concepts first\n- Draw diagrams for visualization\n- Understand units and dimensions\n- Relate theories to real-world examples\n- Practice derivations regularly",
-        "chemistry": "⚗️ Chemistry Tips:\n- Understand periodic trends thoroughly\n- Practice balancing equations daily\n- Use mnemonics for memorization\n- Connect concepts between organic/inorganic/phys chem\n- Do hands-on experiments when possible",
-        "biology": "🧬 Biology Tips:\n- Create concept maps for complex processes\n- Use flashcards for terminology\n- Draw and label diagrams repeatedly\n- Understand before memorizing\n- Relate concepts to real-life examples",
-        "history": "🏛 History Tips:\n- Create timelines for events\n- Understand causes and effects\n- Connect events to geographical contexts\n- Use storytelling techniques to remember\n- Relate past events to current affairs",
-        "language": "🗣 Language Learning Tips:\n- Practice speaking daily, even to yourself\n- Learn phrases not just words\n- Immerse yourself with media in target language\n- Keep a vocabulary journal\n- Don't fear mistakes - they're part of learning",
-        "programming": "💻 Programming Tips:\n- Code daily, even small projects\n- Read others' code to learn\n- Understand concepts before frameworks\n- Practice debugging skills\n- Work on real-world projects",
-        "literature": "📚 Literature Tips:\n- Read actively with annotations\n- Analyze themes and motifs\n- Connect texts to historical context\n- Practice close reading techniques\n- Discuss interpretations with others",
-        "geography": "🌍 Geography Tips:\n- Use maps frequently\n- Understand climate patterns\n- Connect physical and human geography\n- Create mind maps for concepts\n- Relate theories to current events",
-        "economics": "💹 Economics Tips:\n- Understand basic principles first\n- Follow current economic news\n- Practice graphing concepts\n- Connect micro and macro concepts\n- Apply theories to real-world scenarios"
-    },
+    subjects = {
+    "math": "🧮 Math Tips:\n"
+            "1️⃣ Master core topics: algebra, number theory, combinatorics, geometry, inequalities, functional equations. Understand key theorems deeply (e.g., AM-GM, Pigeonhole).\n"
+            "2️⃣ Practice rigorous proofs and reasoning techniques — induction, contradiction, extremal principles. Focus on creativity beyond standard exercises.\n"
+            "3️⃣ Solve progressively challenging problems from trusted sources. Struggling through hard problems builds true skill.\n"
+            "4️⃣ Analyze multiple solution paths, including elegant shortcuts and alternative methods. Reflect on mistakes and missed insights.\n"
+            "5️⃣ Develop time management skills for problem-solving under pressure. Know when to move on or rethink approaches.\n"
+            "6️⃣ Discuss solutions and proofs with peers or mentors. Explaining ideas aloud sharpens understanding.\n"
+            "7️⃣ Keep a detailed problem log: attempts, solutions, errors, and lessons learned. Review regularly to track progress.",
+
+    "physics": "🧪 Physics Tips:\n"
+               "1️⃣ Build a solid conceptual foundation in classical mechanics, electromagnetism, thermodynamics, optics, and quantum basics. Understand principles, not just formulas.\n"
+               "2️⃣ Derive key formulas yourself to internalize assumptions and deepen comprehension.\n"
+               "3️⃣ Solve both theoretical and practical problems. Experiment skills and data interpretation are crucial.\n"
+               "4️⃣ Visualize problems with diagrams and free body forces; it clarifies complex ideas.\n"
+               "5️⃣ Study dimensional analysis and units carefully to avoid errors.\n"
+               "6️⃣ Connect physics concepts to real-world applications to enhance intuition.\n"
+               "7️⃣ Review mistakes thoroughly; understanding errors is key to improvement.",
+
+    "chemistry": "⚗️ Chemistry Tips:\n"
+                 "1️⃣ Understand periodic trends, atomic structure, and bonding thoroughly.\n"
+                 "2️⃣ Practice balancing complex reactions and predicting products accurately.\n"
+                 "3️⃣ Memorize key functional groups and reaction mechanisms with purpose.\n"
+                 "4️⃣ Relate organic, inorganic, and physical chemistry concepts cohesively.\n"
+                 "5️⃣ Apply concepts through problem-solving, especially stoichiometry and thermodynamics.\n"
+                 "6️⃣ Conduct or simulate experiments to visualize chemical processes.\n"
+                 "7️⃣ Develop systematic approaches to tackle multi-step synthesis problems.",
+
+    "biology": "🧬 Biology Tips:\n"
+               "1️⃣ Build clear mental models for complex processes like cellular respiration, photosynthesis, and genetics.\n"
+               "2️⃣ Use diagrams extensively to map structures and physiological pathways.\n"
+               "3️⃣ Connect concepts across molecular biology, ecology, and evolution for integrated understanding.\n"
+               "4️⃣ Memorize terminology with flashcards, but focus on understanding functions.\n"
+               "5️⃣ Relate biological systems to real-life examples for better retention.\n"
+               "6️⃣ Practice interpreting experimental data and drawing conclusions.\n"
+               "7️⃣ Review past questions to identify common patterns and themes.",
+
+    "history": "🏛 History Tips:\n"
+               "1️⃣ Create detailed timelines to understand the sequence and context of events.\n"
+               "2️⃣ Analyze causes, effects, and long-term consequences critically.\n"
+               "3️⃣ Connect political, economic, and cultural factors for holistic perspectives.\n"
+               "4️⃣ Use storytelling techniques to remember complex narratives.\n"
+               "5️⃣ Relate historical events to contemporary issues for relevance.\n"
+               "6️⃣ Practice essay writing focusing on argument structure and evidence.\n"
+               "7️⃣ Compare different historians’ interpretations to develop analytical skills.",
+
+    "language": "🗣 Language Learning Tips:\n"
+                "1️⃣ Practice speaking daily, even to yourself, to build fluency.\n"
+                "2️⃣ Learn phrases and idioms, not just individual words.\n"
+                "3️⃣ Immerse yourself with media: books, podcasts, shows in the target language.\n"
+                "4️⃣ Keep a vocabulary journal with context sentences.\n"
+                "5️⃣ Don’t fear mistakes; they’re essential for learning.\n"
+                "6️⃣ Use spaced repetition for long-term retention.\n"
+                "7️⃣ Practice listening actively to different accents and speeds.",
+
+    "programming": "💻 Programming Tips:\n"
+                   "1️⃣ Code daily, starting with small projects to build consistency.\n"
+                   "2️⃣ Read and analyze others’ code to learn different styles and approaches.\n"
+                   "3️⃣ Understand core concepts deeply before moving to frameworks.\n"
+                   "4️⃣ Practice debugging methodically; learn to read error messages.\n"
+                   "5️⃣ Work on projects that solve real problems to stay motivated.\n"
+                   "6️⃣ Write clean, commented code to improve readability.\n"
+                   "7️⃣ Keep updating yourself with algorithm and data structure challenges.",
+
+    "literature": "📚 Literature Tips:\n"
+                  "1️⃣ Read actively by annotating texts and noting themes.\n"
+                  "2️⃣ Analyze motifs, symbols, and narrative techniques deeply.\n"
+                  "3️⃣ Connect works to their historical and cultural contexts.\n"
+                  "4️⃣ Practice close reading and textual analysis.\n"
+                  "5️⃣ Discuss interpretations with peers to broaden perspectives.\n"
+                  "6️⃣ Write essays focusing on clear arguments supported by evidence.\n"
+                  "7️⃣ Explore different literary genres and styles.",
+
+    "geography": "🌍 Geography Tips:\n"
+                 "1️⃣ Use maps regularly to understand spatial relationships.\n"
+                 "2️⃣ Study climate systems and their impact on human activity.\n"
+                 "3️⃣ Integrate physical geography with human geography concepts.\n"
+                 "4️⃣ Create mind maps linking topics like urbanization, resources, and environment.\n"
+                 "5️⃣ Relate theories to current global issues like climate change.\n"
+                 "6️⃣ Practice interpreting geographic data and charts.\n"
+                 "7️⃣ Stay updated with geographical news and case studies.",
+
+    "economics": "💹 Economics Tips:\n"
+                 "1️⃣ Grasp basic principles: supply & demand, market structures, elasticity.\n"
+                 "2️⃣ Follow current economic news to see theories in action.\n"
+                 "3️⃣ Practice drawing and analyzing graphs carefully.\n"
+                 "4️⃣ Understand micro and macroeconomics links thoroughly.\n"
+                 "5️⃣ Apply models to real-world scenarios to build intuition.\n"
+                 "6️⃣ Work on quantitative problems involving data interpretation.\n"
+                 "7️⃣ Review policy impacts and their economic rationale."
+},
     "emotional_support": [
         "It's okay to feel overwhelmed. You're not alone in this — let’s take it one step at a time. 🤗",
         "Your feelings are valid. Taking care of your mind is just as important as your studies. 🧠❤️",

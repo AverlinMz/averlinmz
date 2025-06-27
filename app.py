@@ -97,7 +97,7 @@ RESPONSE_DATA = {
         "I'm doing well, thanks! How are you feeling today? 🙂",
         "All good here! How about you? 🤗",
         "Feeling ready to help! What about you? ⚡",
-        "Doing great! How's your mood? 🌈"
+        "Doing great! What's your mood? 🌈"
     ],
     "burnout": [
         "You're pushing hard — maybe too hard. A short break can recharge you more than another hour of stress. 🌱",
@@ -204,9 +204,9 @@ RESPONSE_DATA = {
     ],
     "introduction": [
         "I'm AverlinMz, your study chatbot, created by Aylin Muzaffarli from Azerbaijan. 🇦🇿🤖 Learn more: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>official website</a> 🌐",
-        "Hello! I'm here to support your study journey. �✨ Visit my site: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>AverlinMz Website</a> 💻",
+        "Hello! I'm here to support your study journey. 🌟 Visit my site: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>AverlinMz Website</a> 💻",
         "Created by Aylin, I help with study tips and motivation. 💡❤️ Check this out: <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Learn more</a> 📖",
-        "Nice to meet you! Let's learn and grow together. 🌱📘 Want to know more? <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target='_blank'>Click here</a> 🚀"
+        "Nice to meet you! Let's learn and grow together. 🌱📘 Want to know more? <a href='https://aylinmuzaffarli.github.io/averlinmz-site/' target=_blank'>Click here</a> 🚀"
     ],
     "creator_info": [
         "Created by Aylin — passionate about science, tech, and helping others learn. 🔬💻",
@@ -217,7 +217,7 @@ RESPONSE_DATA = {
     "ack_creator": [
         "All credit goes to Aylin Muzaffarli! 🌟🙌",
         "Proudly created by Aylin — thanks for noticing! 💙🎉",
-        "A big shoutout to Aylin for this chatbot! 🎊🤖",
+        "A big shoutout to Aylin for this chatbot! 🎉🤖",
         "Aylin's hard work made this possible. 👏🚀"
     ],
     "contact_creator": [
@@ -232,7 +232,7 @@ RESPONSE_DATA = {
         "chemistry": "⚗️ Chemistry Tips:\n- Understand periodic trends thoroughly\n- Practice balancing equations daily\n- Use mnemonics for memorization\n- Connect concepts between organic/inorganic/phys chem\n- Do hands-on experiments when possible",
         "biology": "🧬 Biology Tips:\n- Create concept maps for complex processes\n- Use flashcards for terminology\n- Draw and label diagrams repeatedly\n- Understand before memorizing\n- Relate concepts to real-life examples",
         "history": "🏛 History Tips:\n- Create timelines for events\n- Understand causes and effects\n- Connect events to geographical contexts\n- Use storytelling techniques to remember\n- Relate past events to current affairs",
-        "language": "🗣 Language Learning Tips:\n- Practice speaking daily, even to yourself\n- Learn phrases not just words\n- Immerse yourself with media in target language\n- Keep a vocabulary journal\n- Don't fear mistakes - they're part of learning",
+        "": "🗣 Language Learning Tips:\n- Practice speaking daily, even to yourself\n- Learn phrases not just words\n- Immerse yourself with media in target language\n- Keep a vocabulary journal\n- Don't fear mistakes - they're part of learning",
         "programming": "💻 Programming Tips:\n- Code daily, even small projects\n- Read others' code to learn\n- Understand concepts before frameworks\n- Practice debugging skills\n- Work on real-world projects",
         "literature": "📚 Literature Tips:\n- Read actively with annotations\n- Analyze themes and motifs\n- Connect texts to historical context\n- Practice close reading techniques\n- Discuss interpretations with others",
         "geography": "🌍 Geography Tips:\n- Use maps frequently\n- Understand climate patterns\n- Connect physical and human geography\n- Create mind maps for concepts\n- Relate theories to current events",
@@ -254,7 +254,7 @@ RESPONSE_DATA = {
         "Active recall beats passive reading — test yourself often! 🧠",
         "Switch subjects to keep your brain fresh and focused. Variety helps retention. 🔄",
         "Set specific, achievable goals to avoid overwhelm. Clarity fuels action. 🎯",
-        "Teach what you learn — explaining concepts deepens understanding. 👩‍🏫"
+        "Teach what you know — explaining concepts deepens understanding. 👩‍🏫"
     ],
     "fun_curiosity": [
         "Did you know? The brain’s neurons can make a thousand new connections every second! 🤯",
@@ -268,21 +268,19 @@ RESPONSE_DATA = {
         "What’s a small win you can celebrate today? Recognition fuels motivation! 🏆",
         "Are your study goals still relevant? Adjusting plans is a sign of wisdom, not weakness. 🔧"
     ],
-   "fallback": [
-    "I'm not sure I have a good answer to that — I'm still learning, just like you. 🌱  \
-    But that doesn't mean your question isn't valuable. Sometimes, asking the right question *is* the first step to learning. \
-    You might try rephrasing it, or explore with tools like web search, books, or even other AIs. Either way, I'm here to support you, not pretend I know everything. Let's figure it out together. 🤝"
-]
-
+    "fallback": [
+        "I'm not sure I have a good answer to that — I'm still learning, just like you. 🌱  \
+        But that doesn't mean your question isn't valuable. Sometimes, asking the right question *is* the first step to learning. \
+        You might try rephrasing it, or explore with tools like web search, books, or even other AIs. Either way, I'm here to support you, not pretend I know everything. Let's figure it out together. 🤝"
+    ]
 }
-
 
 KEYWORDS = {
     "smart_study": [
-    "study smart", "study tips", "effective study", "study strategies",
-    "meta learning", "learning how to learn", "smart studying", "study hacks",
-    "how to study smart and not hard", "give me some study hacks"
-],
+        "study smart", "study tips", "effective study", "study strategies",
+        "meta learning", "learning how to learn", "smart studying", "study hacks",
+        "how to study smart and not hard", "give me some study hacks"
+    ],
     "greetings": ["hello", "hi", "hey", "hiya", "greetings", "what's up", "howdy", "good morning", "good afternoon", "good evening", "sup", "yo"],
     "thanks": ["thank you", "thanks", "thx", "ty", "much appreciated", "many thanks", "grateful", "appreciate it", "thanks a lot", "thank you so much"],
     "farewell": ["goodbye", "bye", "see you", "farewell", "later", "take care", "until next time", "signing off", "talk later", "catch you later", "peace out"],
@@ -290,9 +288,9 @@ KEYWORDS = {
     "burnout": ["i'm tired", "burnt out", "no energy", "exhausted", "need a break", "i can't do this anymore", "mentally drained", "burnout", "overwhelmed"],
     "exam_exhaustion": ["studying all day", "study burnout", "exam stress", "too much studying", "i'm done with exams", "no strength left", "exam tired", "exam exhaustion", "exams tiring me"],
     "health_tips": ["health tips", "how to be healthy", "stay fit", "tips for health", "physical health", "mental health", "healthy mind", "health advice"],
-    "study_balance": ["study and rest", "study balance", "study too much", "rest time", "overstudying", "balance studying", "study stress", "study fatigue"],
-    "night_stress": ["2am", "late night study", "can’t focus", "i'm stuck", "midnight study", "overthinking at night", "late night stress", "can't sleep"],
-    "perfectionism": ["perfect", "must be perfect", "i failed", "can’t mess up", "no mistakes allowed", "it has to be right", "perfectionism", "fear of failure"],
+    "study_balance": ["study and rest", "study balance", "study too much", "rest time", "overstudying", "balance studying", "study stress"],
+    "night_stress": ["late night study", "can’t focus", "i'm stuck", "midnight study", "overthinking at night", "late night stress", "can't sleep"],
+    "perfectionism": ["perfect", "must be perfect", "i failed", "can’t mess up", "it has to be right", "perfectionism", "fear of failure"],
     "self_doubt": ["i'm not smart", "i can't do this", "maybe not for me", "not good enough", "i'll fail", "self doubt", "imposter syndrome"],
     "resilience": ["i'll try again", "i will not give up", "i failed but", "bounce back", "resilient", "keep going", "don't give up", "stay strong"],
     "emotion_checkin": ["how do i feel", "check my mood", "emotion check", "status check", "i feel weird", "how am i feeling", "mood check"],
@@ -321,10 +319,9 @@ KEYWORDS = {
     "emotional_support": ["feeling overwhelmed", "need support", "mental health", "emotional help", "feeling stressed", "anxiety", "depression", "emotional support", "feeling down"],
     "growth_mindset": ["growth mindset", "learning from mistakes", "keep growing", "improve myself", "challenge myself", "curious", "embrace failure", "growth", "mindset"],
     "smart_study": ["study smart", "study tips", "effective study", "study strategies", "meta learning", "learning how to learn", "smart studying", "study hacks"],
-    "fun_curiosity": ["fun fact", "study joke", "interesting fact", "did you know", "fun trivia", "curiosity", "learning fun", "fun study"],
+    "fun_curiosity": ["fun fact", "study joke", "interesting fact", "did you know", "fun trivia", "curiosity", "learning fun"],
     "user_reflection": ["reflect", "self reflection", "what did i learn", "how do i feel", "track progress", "self tracking", "reflection", "journal"]
 }
-
 
 def clean_keyword_list(keywords_dict):
     cleaned = {}
@@ -385,10 +382,8 @@ def get_bot_reply(user_input):
     goal_msg = update_goals(user_input)
     if goal_msg:
         return goal_msg
-
     sentiment = detect_sentiment(user_input)
     st.session_state.last_sentiment = sentiment
-
     if intent and intent in RESPONSE_DATA:
         if intent == "subjects":
             # detect specific subject mentioned
@@ -400,21 +395,17 @@ def get_bot_reply(user_input):
         else:
             st.session_state.context_topic = None
             return random.choice(RESPONSE_DATA[intent])
-
     if st.session_state.context_topic:
         subj = st.session_state.context_topic
         return RESPONSE_DATA["subjects"].get(subj, random.choice(RESPONSE_DATA["fallback"])) + "\n\n(You asked about this before!)"
-
     if sentiment == "positive":
         return "Glad to hear you're feeling good! Keep it up! 🎉"
     elif sentiment == "negative":
         return "I noticed you're feeling down. If you want, I can share some tips or just listen. 💙"
-
     # Enhanced fallback that tries to extract possible subjects
     possible_subjects = [subj for subj in KEYWORDS["subjects"] if subj in user_input.lower()]
     if possible_subjects:
         return f"I see you mentioned {possible_subjects[0]}. Here are some tips:\n\n{RESPONSE_DATA['subjects'].get(possible_subjects[0], '')}"
-
     return random.choice(RESPONSE_DATA["fallback"])
 
 with st.form('chat_form', clear_on_submit=True):
@@ -432,7 +423,6 @@ with st.form('chat_form', clear_on_submit=True):
             audio_bytes = open(tts_file.name, "rb").read()
         st.audio(audio_bytes, format="audio/mp3")
         os.unlink(tts_file.name)
-
 st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
 msgs = st.session_state.messages
 # Display chat messages in reverse chronological order (newest at bottom)
@@ -461,4 +451,3 @@ with st.sidebar:
 filename = f"chat_history_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
 chat_history_text = "\n".join([f"{m['role'].upper()}: {m['content']}\n" for m in st.session_state.messages])
 st.download_button("📥 Download Chat History", chat_history_text, file_name=filename)
-

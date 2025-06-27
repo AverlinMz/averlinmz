@@ -462,10 +462,12 @@ KEYWORDS_CLEANED = clean_keyword_list(KEYWORDS)
 def clean_text(text):
     return text.lower().translate(str.maketrans('', '', string.punctuation)).strip()
 
-def detect_intent(text):
-    msg = clean_text(text)
+import re
+from difflib import get_close_matches
 
-    # Priority order matters: specific before general
+def detect_intent(text):
+    msg = text.lower().strip()  # clean_text could be more advanced if you want
+
     priority_order = [
         "introduction",
         "how_are_you",
@@ -497,34 +499,45 @@ def detect_intent(text):
         "emotional_support",
         "growth_mindset",
         "smart_study",
+        "time_management",  # moved here explicitly
+        "problem_solving_mindset",
+        "metacognition",
+        "stress_management",
         "subjects",
         "fallback"  # fallback last
     ]
 
-    # 1) Check for exact phrase match with word boundaries for each keyword
+    # Assume KEYWORDS_CLEANED is a dict: intent -> list of keywords/phrases (lowercase)
+    # And KEYWORDS is the original keywords dict for special partial matching if needed
+
+    # 1) Try exact phrase matching with whole word boundaries
     for intent in priority_order:
         kws = KEYWORDS_CLEANED.get(intent, [])
         for kw in kws:
-            # Use regex to match whole word or phrase
             pattern = r'\b' + re.escape(kw) + r'\b'
             if re.search(pattern, msg):
+                print(f"DEBUG: Exact match keyword '{kw}' for intent '{intent}'")
                 return intent
 
-    # 2) Fuzzy matching fallback
+    # 2) Fuzzy matching fallback for each word in input
     words = msg.split()
     for word in words:
         for intent in priority_order:
             kws = KEYWORDS_CLEANED.get(intent, [])
             matches = get_close_matches(word, kws, n=1, cutoff=0.65)
             if matches:
+                print(f"DEBUG: Fuzzy match word '{word}' close to '{matches[0]}' for intent '{intent}'")
                 return intent
 
-    # 3) Check subjects separately (partial match allowed)
-    for subj in KEYWORDS["subjects"]:
+    # 3) Special partial matching for subjects (if you want)
+    for subj in KEYWORDS.get("subjects", []):
         if subj in msg:
+            print(f"DEBUG: Partial subject match '{subj}'")
             return "subjects"
 
-    return None
+    # 4) Fallback if no match found
+    print("DEBUG: No intent matched — fallback")
+    return "fallback"
 
 
 def update_goals(user_input):

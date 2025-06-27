@@ -105,6 +105,12 @@ RESPONSE_DATA = {
         "Even your brain has a battery. When it's drained, rest is productive. Let’s reset — you’ll come back stronger. 🔋",
         "Breaks aren’t wasted time. They're investments in your energy. Use them wisely. 💫"
     ],
+    "love": [
+    "Thanks! Your support means a lot — I'm here to help you succeed! 💖🚀",
+    "I appreciate that! Let's keep learning together! 🤓📚",
+    "Sending good vibes your way! 🤗✨",
+    "Grateful for you! Let's ace those studies! 🏆"
+],
     "exam_exhaustion": [
         "When exams take everything from you, give something back to yourself — like sleep, or joy, or a quiet moment. ☁️",
         "This exam won't define your life. Resting today might save your focus for tomorrow. 🧠✨",
@@ -276,6 +282,7 @@ RESPONSE_DATA = {
 }
 
 KEYWORDS = {
+    "love": ["i love you", "love you", "luv you", "like you", "adore you", "you're amazing", "you're awesome", "you're great", "you're wonderful", "thanks for being here"],
     "smart_study": [
         "study smart", "study tips", "effective study", "study strategies",
         "meta learning", "learning how to learn", "smart studying", "study hacks",
@@ -322,38 +329,64 @@ KEYWORDS = {
     "fun_curiosity": ["fun fact", "study joke", "interesting fact", "did you know", "fun trivia", "curiosity", "learning fun"],
     "user_reflection": ["reflect", "self reflection", "what did i learn", "how do i feel", "track progress", "self tracking", "reflection", "journal"]
 }
+# After your KEYWORDS dictionary, add this:
+KEYWORDS_CLEANED = clean_keyword_list(KEYWORDS)  # <-- Add this line
 
-def clean_keyword_list(keywords_dict):
+def clean_keyword_list(keywords_dict):  # <-- Replace this function
     cleaned = {}
     for intent, phrases in keywords_dict.items():
-        cleaned[intent] = [p.lower().translate(str.maketrans('', '', string.punctuation)).strip() for p in phrases]
+        # Create a flattened list of all keywords for this intent
+        all_keywords = []
+        for phrase in phrases:
+            # Split multi-word phrases into individual words
+            words = phrase.split()
+            all_keywords.extend(words)
+            # Also add the full phrase
+            all_keywords.append(phrase)
+        # Remove duplicates and clean
+        cleaned[intent] = list(set(
+            kw.lower().translate(str.maketrans('', '', string.punctuation)).strip()
+            for kw in all_keywords
+        ))
     return cleaned
 
-KEYWORDS_CLEANED = clean_keyword_list(KEYWORDS)
-
-def clean_text(text):
-    return text.lower().translate(str.maketrans('', '', string.punctuation)).strip()
-
-def detect_intent(text):
+def detect_intent(text):  # <-- Replace this function
     msg = clean_text(text)
     
-    # First check for exact matches
+    # First check for exact matches in full phrases
     for intent, kws in KEYWORDS_CLEANED.items():
         if any(kw in msg for kw in kws):
             return intent
     
-    # Then check for similar words using fuzzy matching
-    words = msg.split()
-    for word in words:
+    # Split user input into words
+    user_words = msg.split()
+    
+    # Check each word against all keywords with fuzzy matching
+    for word in user_words:
         for intent, kws in KEYWORDS_CLEANED.items():
-            # Find close matches with 65% similarity threshold (lowered for broader matching)
+            # Find close matches with 70% similarity threshold
             matches = get_close_matches(word, kws, n=1, cutoff=0.65)
             if matches:
                 return intent
     
+    # Check for partial matches in multi-word phrases
+    for intent, kws in KEYWORDS_CLEANED.items():
+        for kw in kws:
+            if ' ' in kw:  # Only check multi-word phrases
+                # Split the keyword phrase into words
+                kw_words = kw.split()
+                # Check if all words in the keyword phrase are approximately present
+                matches = [get_close_matches(kw_word, user_words, n=1, cutoff=0.65) for kw_word in kw_words]
+                if all(matches):
+                    return intent
+    
     # Special case for subject detection with partial matching
     for subj in KEYWORDS["subjects"]:
         if subj in msg:
+            return "subjects"
+        # Also check with fuzzy matching
+        matches = get_close_matches(subj, user_words, n=1, cutoff=0.65)
+        if matches:
             return "subjects"
     
     return None

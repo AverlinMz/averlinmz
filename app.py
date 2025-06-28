@@ -1,4 +1,4 @@
-import streamlit as st
+ import streamlit as st
 import random
 import string
 from html import escape
@@ -31,9 +31,11 @@ def remove_emojis(text):
                                flags=re.UNICODE)
     return emoji_pattern.sub(r'', text)
 
+
 def strip_urls_for_tts(text):
     url_pattern = r'http[s]?://\S+|www\.\S+'
     return re.sub(url_pattern, '', text)
+
 
 st.set_page_config(
     page_title="AverlinMz Chatbot",
@@ -50,69 +52,20 @@ elif theme == "Blue":
 
 st.markdown("""
 <style>
-.chat-container {
-    max-width:900px;
-    margin:0 auto;
-    padding:20px;
-    display:flex;
-    flex-direction:column;
-    font-family:'Poppins',sans-serif;
-}
+.chat-container {max-width:900px;margin:0 auto;padding:20px;display:flex;flex-direction:column;}
 .title-container {
   text-align:center;
   padding-bottom:10px;
+  font-family:'Poppins',sans-serif;
   font-weight:600;
   animation: slideUpFadeIn 1s ease forwards;
 }
 .title-container h1 {margin:0;}
-.chat-window {
-  flex-grow:1;
-  max-height:60vh;
-  overflow-y:auto;
-  padding:15px;
-  display:flex;
-  flex-direction:column;
-  gap:15px;
-}
-
-/* Flying box effect: user left, bot right with slight animation */
-.user, .bot {
-  max-width: 75%;
-  word-wrap: break-word;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-  padding: 12px 16px;
-  border-radius: 18px;
-  font-size: 16px;
-  line-height: 1.4;
-  position: relative;
-  animation: slideInFade 0.5s ease forwards;
-}
-.user {
-  background: #D1F2EB;
-  color: #0B3D2E;
-  border-radius: 18px 18px 4px 18px;
-  align-self: flex-start;
-  animation-delay: 0.1s;
-}
-.bot {
-  background: #EFEFEF;
-  color: #333;
-  border-radius: 18px 18px 18px 4px;
-  align-self: flex-end;
-  animation-delay: 0.2s;
-}
-
-@keyframes slideInFade {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
+.chat-window{flex-grow:1;max-height:60vh;overflow-y:auto;padding:15px;display:flex;flex-direction:column;gap:15px;}
+.user, .bot {align-self:center;width:100%;word-wrap:break-word;box-shadow:0 2px 4px rgba(0,0,0,0.1);font-family:'Poppins',sans-serif;}
+.user{background:#D1F2EB;color:#0B3D2E;padding:12px 16px;border-radius:18px 18px 4px 18px;}
+.bot{background:#EFEFEF;color:#333;padding:12px 16px;border-radius:18px 18px 18px 4px;animation:typing 1s ease-in-out;}
+@keyframes typing {0%{opacity:0;}100%{opacity:1;}}
 @keyframes slideUpFadeIn {
   0% {opacity:0; transform: translateY(30px);}
   100% {opacity:1; transform: translateY(0);}
@@ -127,10 +80,8 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-
-# ===== Placeholders for your big RESPONSE_DATA and KEYWORDS =====
 RESPONSE_DATA = {
-     "how_are_you": [
+      "how_are_you": [
         "I'm doing well, thanks! How are you feeling today? 🙂",
         "All good here! How about you? 🤗",
         "Feeling ready to help! What about you? ⚡",
@@ -432,7 +383,8 @@ RESPONSE_DATA = {
     "Make sure your study environment is quiet and free from interruptions. Sometimes background music without lyrics can help. 🎧",
     "Keep your mind fresh by staying hydrated, taking regular breaks, and getting enough sleep. Your brain needs fuel to focus well. 💧😴",
 ]
-}
+
+  } 
 KEYWORDS = {
   "greetings": [
         "hi", "hello", "hey", "hiya", "howdy", "good morning", "good afternoon", "good evening",
@@ -590,7 +542,10 @@ KEYWORDS = {
     "fallback": []
    }
 
-# Clean keywords for matching
+
+
+
+
 def clean_keyword_list(keywords_dict):
     cleaned = {}
     for intent, phrases in keywords_dict.items():
@@ -602,8 +557,11 @@ KEYWORDS_CLEANED = clean_keyword_list(KEYWORDS)
 def clean_text(text):
     return text.lower().translate(str.maketrans('', '', string.punctuation)).strip()
 
+import re
+from difflib import get_close_matches
+
 def detect_intent(text):
-    msg = text.lower().strip()
+    msg = text.lower().strip()  # clean_text could be more advanced if you want
 
     priority_order = [
         "introduction",
@@ -636,13 +594,16 @@ def detect_intent(text):
         "emotional_support",
         "growth_mindset",
         "smart_study",
-        "time_management",
+        "time_management",  # moved here explicitly
         "problem_solving_mindset",
         "metacognition",
         "stress_management",
         "subjects",
-        "fallback"
+        "fallback"  # fallback last
     ]
+
+    # Assume KEYWORDS_CLEANED is a dict: intent -> list of keywords/phrases (lowercase)
+    # And KEYWORDS is the original keywords dict for special partial matching if needed
 
     # 1) Try exact phrase matching with whole word boundaries
     for intent in priority_order:
@@ -650,7 +611,7 @@ def detect_intent(text):
         for kw in kws:
             pattern = r'\b' + re.escape(kw) + r'\b'
             if re.search(pattern, msg):
-                #print(f"DEBUG: Exact match '{kw}' for intent '{intent}'")
+                print(f"DEBUG: Exact match keyword '{kw}' for intent '{intent}'")
                 return intent
 
     # 2) Fuzzy matching fallback for each word in input
@@ -660,18 +621,19 @@ def detect_intent(text):
             kws = KEYWORDS_CLEANED.get(intent, [])
             matches = get_close_matches(word, kws, n=1, cutoff=0.65)
             if matches:
-                #print(f"DEBUG: Fuzzy match '{word}' close to '{matches[0]}' for intent '{intent}'")
+                print(f"DEBUG: Fuzzy match word '{word}' close to '{matches[0]}' for intent '{intent}'")
                 return intent
 
-    # 3) Special partial matching for subjects
+    # 3) Special partial matching for subjects (if you want)
     for subj in KEYWORDS.get("subjects", []):
         if subj in msg:
-            #print(f"DEBUG: Partial subject match '{subj}'")
+            print(f"DEBUG: Partial subject match '{subj}'")
             return "subjects"
 
     # 4) Fallback if no match found
-    #print("DEBUG: No intent matched — fallback")
+    print("DEBUG: No intent matched — fallback")
     return "fallback"
+
 
 def update_goals(user_input):
     msg = clean_text(user_input)
@@ -692,6 +654,11 @@ def detect_sentiment(text):
     if any(word in txt for word in negative): return "negative"
     return "neutral"
 
+def strip_urls_for_tts(text):
+    url_pattern = r'http[s]?://\S+|www\.\S+'
+    return re.sub(url_pattern, '', text)
+
+
 def get_bot_reply(user_input):
     intent = detect_intent(user_input)
     goal_msg = update_goals(user_input)
@@ -703,13 +670,13 @@ def get_bot_reply(user_input):
 
     if intent and intent in RESPONSE_DATA:
         if intent == "subjects":
-            for subj in KEYWORDS.get("subjects", []):
+            for subj in KEYWORDS["subjects"]:
                 if subj in user_input.lower():
                     st.session_state.context_topic = subj
                     break
             return RESPONSE_DATA["subjects"].get(
-                st.session_state.context_topic,
-                random.choice(RESPONSE_DATA.get("fallback", ["Sorry, I didn't understand that."]))
+                st.session_state.context_topic, 
+                random.choice(RESPONSE_DATA["fallback"])
             )
         else:
             st.session_state.context_topic = None
@@ -718,8 +685,8 @@ def get_bot_reply(user_input):
     if st.session_state.context_topic:
         subj = st.session_state.context_topic
         return RESPONSE_DATA["subjects"].get(
-            subj,
-            random.choice(RESPONSE_DATA.get("fallback", ["Sorry, I didn't understand that."]))
+            subj, 
+            random.choice(RESPONSE_DATA["fallback"])
         ) + "\n\n(You asked about this before!)"
 
     if sentiment == "positive":
@@ -727,19 +694,20 @@ def get_bot_reply(user_input):
     elif sentiment == "negative":
         return "I noticed you're feeling down. If you want, I can share some tips or just listen. 💙"
 
-    possible_subjects = [subj for subj in KEYWORDS.get("subjects", []) if subj in user_input.lower()]
+    possible_subjects = [
+        subj for subj in KEYWORDS["subjects"] if subj in user_input.lower()
+    ]
     if possible_subjects:
         return f"I see you mentioned {possible_subjects[0]}. Here are some tips:\n\n{RESPONSE_DATA['subjects'].get(possible_subjects[0], '')}"
 
-    return random.choice(RESPONSE_DATA.get("fallback", ["Sorry, I didn't understand that."]))
-
+    return random.choice(RESPONSE_DATA["fallback"])
 
 with st.form('chat_form', clear_on_submit=True):
     user_input = st.text_input('Write your message…', key='input_field')
     if st.form_submit_button('Send') and user_input.strip():
         st.session_state.messages.append({'role': 'user', 'content': user_input})
 
-        bot_reply = get_bot_reply(user_input)
+        bot_reply = get_bot_reply(user_input)  # FIXED INDENTATION
 
         # Clean bot reply for TTS only
         clean_reply = remove_emojis(bot_reply)
@@ -756,18 +724,17 @@ with st.form('chat_form', clear_on_submit=True):
         st.audio(audio_bytes, format="audio/mp3")
         os.unlink(tts_file.name)
 
+
+
 st.markdown('<div class="chat-container"><div class="chat-window">', unsafe_allow_html=True)
 msgs = st.session_state.messages
 
-# Display chat messages oldest first, user left, bot right with flying box style
-for i in range(len(msgs)):
-    msg = msgs[i]
-    role = msg['role']
-    content = msg['content']
-    if role == 'user':
-        st.markdown(f'<div class="user">{escape(content).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
-    else:
-        st.markdown(f'<div class="bot">{content.replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
+# Display chat messages in reverse chronological order (newest at bottom)
+for i in range(len(msgs) - 2, -1, -2):
+    user_msg = msgs[i]['content']
+    bot_msg = msgs[i+1]['content'] if i+1 < len(msgs) else ''
+    st.markdown(f'<div class="user">{escape(user_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="bot">{bot_msg.replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
 st.markdown('</div></div>', unsafe_allow_html=True)
 
 with st.sidebar:
@@ -787,4 +754,4 @@ with st.sidebar:
 # Chat download button
 filename = f"chat_history_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
 chat_history_text = "\n".join([f"{m['role'].upper()}: {m['content']}\n" for m in st.session_state.messages])
-st.download_button("📥 Download Chat History", chat_history_text, file_name=filename)
+st.download_button("📥 Download Chat History", chat_history_text, file_name=filename) 

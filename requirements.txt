@@ -1,8 +1,6 @@
-streamlit
-gtts
-requests
-huggingface_hub
 streamlit>=1.22.0
 gtts>=2.3.1
+requests
+huggingface_hub
 fuzzywuzzy>=0.18.0
 python-Levenshtein>=0.12.2

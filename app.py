@@ -1,4 +1,4 @@
- import streamlit as st
+import streamlit as st
 import random
 import string
 from html import escape
@@ -81,7 +81,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 RESPONSE_DATA = {
-      "how_are_you": [
+    "how_are_you": [
         "I'm doing well, thanks! How are you feeling today? 🙂",
         "All good here! How about you? 🤗",
         "Feeling ready to help! What about you? ⚡",
@@ -383,10 +383,11 @@ RESPONSE_DATA = {
     "Make sure your study environment is quiet and free from interruptions. Sometimes background music without lyrics can help. 🎧",
     "Keep your mind fresh by staying hydrated, taking regular breaks, and getting enough sleep. Your brain needs fuel to focus well. 💧😴",
 ]
+}
 
-  } 
+
 KEYWORDS = {
-  "greetings": [
+    "greetings": [
         "hi", "hello", "hey", "hiya", "howdy", "good morning", "good afternoon", "good evening",
         "greetings", "yo", "sup", "what's up", "hey there", "hi there", "hello there"
     ],
@@ -540,10 +541,7 @@ KEYWORDS = {
         "coping", "stress relief", "stress reduction", "stay calm", "de-stress"
     ],
     "fallback": []
-   }
-
-
-
+}
 
 
 def clean_keyword_list(keywords_dict):
@@ -732,7 +730,7 @@ msgs = st.session_state.messages
 # Display chat messages in reverse chronological order (newest at bottom)
 for i in range(len(msgs) - 2, -1, -2):
     user_msg = msgs[i]['content']
-    bot_msg = msgs[i+1]['content'] if i+1 < len(msgs) else ''
+    bot_msg = msgs[i+1]['content'] if i+1 < len(: msgs) else ''
     st.markdown(f'<div class="user">{escape(user_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
     st.markdown(f'<div class="bot">{bot_msg.replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
 st.markdown('</div></div>', unsafe_allow_html=True)
@@ -754,4 +752,5 @@ with st.sidebar:
 # Chat download button
 filename = f"chat_history_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
 chat_history_text = "\n".join([f"{m['role'].upper()}: {m['content']}\n" for m in st.session_state.messages])
-st.download_button("📥 Download Chat History", chat_history_text, file_name=filename) 
+st.download_button("📥 Download Chat History", chat_history_text, file_name=filename)
+ 

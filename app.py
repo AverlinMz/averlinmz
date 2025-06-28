@@ -730,7 +730,7 @@ msgs = st.session_state.messages
 # Display chat messages in reverse chronological order (newest at bottom)
 for i in range(len(msgs) - 2, -1, -2):
     user_msg = msgs[i]['content']
-    bot_msg = msgs[i+1]['content'] if i+1 < len(: msgs) else ''
+    bot_msg = msgs[i+1]['content'] if i+1 < len(msgs) else ''
     st.markdown(f'<div class="user">{escape(user_msg).replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
     st.markdown(f'<div class="bot">{bot_msg.replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
 st.markdown('</div></div>', unsafe_allow_html=True)
